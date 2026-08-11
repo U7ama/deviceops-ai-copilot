@@ -1,0 +1,46 @@
+{
+  "name": "deviceops-ai-copilot",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Production-ready Applied AI reference implementation for synthetic device operations data.",
+  "engines": {
+    "node": "22.16.0",
+    "npm": ">=10.9.0"
+  },
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "dev": "npm run dev --workspace @deviceops/web",
+    "dev:worker": "npm run dev --workspace @deviceops/worker",
+    "dev:mcp": "npm run dev --workspace @deviceops/mcp",
+    "typecheck": "npm run typecheck --workspaces --if-present",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage",
+    "lint": "npm run lint --workspaces --if-present",
+    "verify": "npm run typecheck && npm run test && npm run build",
+    "db:generate": "drizzle-kit generate --config drizzle.config.ts",
+    "db:migrate": "node --import tsx scripts/migrate.ts",
+    "db:seed": "node --import tsx scripts/seed.ts",
+    "test:api-smoke": "node scripts/api-smoke.mjs",
+    "db:reset": "node --import tsx scripts/reset-dev.ts",
+    "contracts:export": "node --import tsx scripts/export-contracts.ts",
+    "contracts:check": "node --import tsx scripts/check-contracts.ts",
+    "eval": "node --import tsx scripts/run-evals.ts",
+    "load:test": "node --import tsx scripts/load-test.ts",
+    "stack:up": "docker compose up -d postgres n8n mailpit jaeger",
+    "stack:down": "docker compose down",
+    "stack:status": "docker compose ps"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.0",
+    "autocannon": "^8.0.0",
+    "drizzle-kit": "0.31.10",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "vitest": "^3.2.0"
+  }
+}

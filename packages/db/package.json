@@ -1,0 +1,20 @@
+{
+  "name": "@deviceops/db",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts",
+    "./schema": "./src/schema.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run src"
+  },
+  "dependencies": {
+    "@deviceops/contracts": "*",
+    "drizzle-orm": "0.45.2",
+    "pg-boss": "12.27.0",
+    "postgres": "^3.4.0"
+  }
+}

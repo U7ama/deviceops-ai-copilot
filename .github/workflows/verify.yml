@@ -1,0 +1,36 @@
+name: verify
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  core:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build --workspace @deviceops/web
+      - run: npm run contracts:check
+
+  companions:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.16.0
+          cache: npm
+          cache-dependency-path: deviceops-mobile/package-lock.json
+      - run: npm ci --prefix deviceops-mobile
+      - run: npm run verify --prefix deviceops-mobile
+      - run: npm ci --prefix deviceops-automations
+      - run: npm run verify --prefix deviceops-automations

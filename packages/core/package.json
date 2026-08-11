@@ -1,0 +1,20 @@
+{
+  "name": "@deviceops/core",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "exports": { ".": "./src/index.ts" },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json",
+    "test": "vitest run src"
+  },
+  "dependencies": {
+    "@deviceops/ai": "*",
+    "@deviceops/contracts": "*",
+    "@deviceops/db": "*",
+    "@deviceops/observability": "*",
+    "@deviceops/policy": "*",
+    "@deviceops/retrieval": "*",
+    "postgres": "^3.4.9"
+  }
+}

@@ -1,0 +1,11 @@
+FROM node:22.16.0-bookworm-slim
+ENV NODE_ENV=production
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY apps ./apps
+COPY packages ./packages
+COPY scripts ./scripts
+COPY drizzle.config.ts tsconfig.base.json .nvmrc ./
+RUN npm ci --omit=optional
+USER node
+CMD ["npm", "run", "start", "--workspace", "@deviceops/worker"]
