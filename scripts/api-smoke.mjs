@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import postgres from "postgres";
-import { createHash } from "node:crypto";
+import { createHash, createHmac, randomUUID } from "node:crypto";
 
 const baseUrl = process.env.SMOKE_BASE_URL ?? "http://localhost:3000";
 const password = process.env.SMOKE_PASSWORD;
@@ -163,6 +163,17 @@ async function main() {
   const approved = await approvedResponse.json();
   assert.ok(approved.incidentId, "approval must atomically create one incident");
 
+  const webhookSecret = process.env.SMOKE_WEBHOOK_SECRET;
+  assert.ok(webhookSecret, "SMOKE_WEBHOOK_SECRET is required");
+  const deliveryId = randomUUID();
+  const incidentEnvelope = signWebhook({ incidentId: approved.incidentId, summary: "Synthetic incident notification" }, deliveryId, webhookSecret);
+  const webhookResponse = await expectStatus(await fetch(`${baseUrl}/api/v1/webhooks/n8n/incident`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(incidentEnvelope) }), 202, "signed n8n incident");
+  assert.equal((await webhookResponse.json()).duplicate, false);
+  const duplicateWebhook = await expectStatus(await fetch(`${baseUrl}/api/v1/webhooks/n8n/incident`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(incidentEnvelope) }), 202, "duplicate n8n incident");
+  assert.equal((await duplicateWebhook.json()).duplicate, true);
+  const ackEnvelope = signWebhook({ incidentId: approved.incidentId, status: "delivered" }, deliveryId, webhookSecret);
+  await expectStatus(await fetch(`${baseUrl}/api/v1/webhooks/n8n/ack`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(ackEnvelope) }), 200, "signed n8n acknowledgement");
+
   await expectStatus(
     await request(manager, `/api/v1/approvals/${approvalEvent.data.approvalId}/decision`, {
       method: "POST",
@@ -202,11 +213,13 @@ async function main() {
       select
         (select count(*)::int from incidents where run_id = ${created.runId}) as incidents,
         (select count(*)::int from outbox_events where aggregate_id = ${approved.incidentId}) as incident_outbox,
-        (select count(*)::int from audit_events where target_id = ${approvalEvent.data.approvalId}) as approval_audits
+        (select count(*)::int from audit_events where target_id = ${approvalEvent.data.approvalId}) as approval_audits,
+        (select count(*)::int from webhook_deliveries where id = ${deliveryId} and state = 'delivered') as delivered_webhooks
     `;
     assert.equal(counts.incidents, 1, "approval replay must not duplicate incidents");
     assert.equal(counts.incident_outbox, 1, "incident must have one transactional outbox event");
     assert.ok(counts.approval_audits >= 1, "approval must produce an audit event");
+    assert.equal(counts.delivered_webhooks, 1, "signed webhook acknowledgement must be idempotent");
   } finally {
     await sql.end({ timeout: 5 });
   }
@@ -224,9 +237,18 @@ async function main() {
       separationOfDuties: "verified",
       approvalReplay: "verified",
       transactionalOutbox: "verified",
-      mediaQuarantine: "verified"
+      mediaQuarantine: "verified",
+      signedWebhook: "verified"
     }
   }, null, 2)}\n`);
+}
+
+function signWebhook(payload, deliveryId, secret) {
+  const timestamp = Math.floor(Date.now() / 1000);
+  const nonce = randomUUID().replaceAll('-', '');
+  const payloadBase64 = Buffer.from(JSON.stringify(payload)).toString('base64url');
+  const signature = createHmac('sha256', secret).update(`${timestamp}.${nonce}.${payloadBase64}`).digest('hex');
+  return { deliveryId, timestamp, nonce, payloadBase64, signature };
 }
 
 function parseSse(text) {
