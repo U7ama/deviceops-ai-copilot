@@ -44,6 +44,15 @@ npm run contracts:check
 
 The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, and one transactional outbox event. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression. Neither drill proves cloud deployment, real-provider quality, ClamAV availability, or EAS installation.
 
+The local HTTP and MCP checks are explicit about their evidence boundary:
+
+```bash
+npm run load:http   # real local HTTP concurrency against /healthz
+npm run test:mcp    # stdio MCP handshake, tool allow-list, and tenant-bound health resource
+```
+
+The HTTP benchmark is a local process/database-environment check, not a production-scale or cloud-capacity claim. The MCP smoke test verifies the adapter contract and read-only surface; authorized tool data calls still require a configured database context.
+
 ## Backup and restore drill
 
 The repository includes host-client-free scripts that run PostgreSQL tools inside the pinned Compose image:
