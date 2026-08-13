@@ -27,6 +27,11 @@ services:
       N8N_PORT: 5678
       N8N_PROTOCOL: http
       N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-local-deviceops-n8n-encryption-key-change-me}
+      N8N_WEBHOOK_SECRET: ${N8N_WEBHOOK_SECRET:-local-deviceops-n8n-webhook-secret-change-me}
+      DEVICEOPS_CORE_URL: ${DEVICEOPS_CORE_URL:-http://host.docker.internal:3000}
+      MAILPIT_API_URL: ${MAILPIT_API_URL:-http://host.docker.internal:8025/api/v1/send}
+      NODE_FUNCTION_ALLOW_BUILTIN: crypto
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
       N8N_DIAGNOSTICS_ENABLED: "false"
       N8N_PERSONALIZATION_ENABLED: "false"
       N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
@@ -84,4 +89,3 @@ volumes:
   deviceops_n8n:
   deviceops_mailpit:
   deviceops_clamav_signatures:
-
