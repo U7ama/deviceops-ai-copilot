@@ -44,6 +44,19 @@ npm run contracts:check
 
 The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, and one transactional outbox event. It does not prove cloud deployment, real-provider quality, ClamAV availability, EAS installation, or n8n execution.
 
+## Backup and restore drill
+
+The repository includes host-client-free scripts that run PostgreSQL tools inside the pinned Compose image:
+
+```bash
+chmod +x scripts/backup.sh scripts/restore.sh
+backup=$(scripts/backup.sh | awk '{print $3}')
+scripts/restore.sh "$backup" deviceops_restore
+docker compose exec -T postgres psql -U postgres -d deviceops_restore -c 'select count(*) from tenants;'
+```
+
+Restore only into a disposable database. Production operations should send encrypted backups to separate storage, test a restore on a schedule, and record RPO/RTO results; the local drill is evidence that the schema and data can be restored, not a production backup guarantee.
+
 ## Operational boundary
 
 Local media uses a WSL-ext4 filesystem and fixture-only scanning. Arbitrary uploads remain quarantined unless their hash is explicitly allowlisted. Production must use private S3 quarantine/clean prefixes and a real ClamAV service (or a reviewed managed scanner); scanner errors fail closed. The local `compose.yaml` is a development stack, not an RPO/RTO or availability guarantee.
