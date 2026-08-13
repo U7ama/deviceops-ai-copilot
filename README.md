@@ -42,7 +42,7 @@ npm run test:api-smoke
 npm run contracts:check
 ```
 
-The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, and one transactional outbox event. It does not prove cloud deployment, real-provider quality, ClamAV availability, EAS installation, or n8n execution.
+The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, and one transactional outbox event. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression. Neither drill proves cloud deployment, real-provider quality, ClamAV availability, or EAS installation.
 
 ## Backup and restore drill
 
