@@ -2,11 +2,13 @@ import { createHash, randomUUID } from "node:crypto";
 import { createAiProvider, type AiProvider } from "@deviceops/ai";
 import {
   DeviceStatusSchema,
+  DeviceSummarySchema,
   SafeDiagnosisSchema,
   contractHash,
   stableJson,
   type CreateRunRequest,
   type DeviceStatus,
+  type DeviceSummary,
   type RunEvent,
   type RunState,
   type SafeDiagnosis,
@@ -301,6 +303,58 @@ export async function getDeviceStatus(
       deviceId,
       observedAt: new Date(row.observed_at).toISOString(),
       simulated: true
+    });
+  });
+}
+
+export async function listDevices(actor: SessionUser): Promise<DeviceSummary[]> {
+  return withTenant({ tenantId: actor.tenantId, userId: actor.id }, async (transaction) => {
+    const rows = await transaction<Array<{
+      id: string;
+      room_id: string;
+      name: string;
+      manufacturer: string;
+      model: string;
+      kind: string;
+      room_name: string;
+      room_location: string;
+      payload: unknown;
+      observed_at: string | null;
+    }>>`
+      select d.id, d.room_id, d.name, d.manufacturer, d.model, d.kind,
+             r.name as room_name, r.location as room_location,
+             latest.payload, latest.observed_at
+      from devices d
+      join rooms r on r.id = d.room_id and r.tenant_id = d.tenant_id
+      left join lateral (
+        select s.payload, s.observed_at
+        from device_status_snapshots s
+        where s.tenant_id = d.tenant_id and s.device_id = d.id
+        order by s.observed_at desc
+        limit 1
+      ) latest on true
+      where d.tenant_id = ${actor.tenantId}
+      order by r.name asc, d.name asc
+    `;
+    return rows.map((row) => {
+      const status = row.observed_at
+        ? DeviceStatusSchema.safeParse({
+            ...(row.payload as Record<string, unknown>),
+            deviceId: row.id,
+            observedAt: new Date(row.observed_at).toISOString(),
+            simulated: true
+          })
+        : null;
+      return DeviceSummarySchema.parse({
+        id: row.id,
+        roomId: row.room_id,
+        name: row.name,
+        manufacturer: row.manufacturer,
+        model: row.model,
+        kind: row.kind,
+        room: { id: row.room_id, name: row.room_name, location: row.room_location },
+        status: status?.success ? status.data : null
+      });
     });
   });
 }

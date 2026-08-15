@@ -3,9 +3,6 @@
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 
-const ROOM_ID = '20000000-0000-4000-8000-000000000001';
-const DEVICE_ID = '30000000-0000-4000-8000-000000000001';
-
 type User = {
   email: string;
   displayName: string;
@@ -13,14 +10,24 @@ type User = {
   role: string;
   demoMode: boolean;
 };
+type Device = {
+  id: string;
+  roomId: string;
+  name: string;
+  manufacturer: string;
+  model: string;
+  room: { id: string; name: string; location: string };
+  status: { online: boolean; powerState: string; input: string | null; observedAt: string } | null;
+};
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
   const [csrf, setCsrf] = useState('');
-  const [email, setEmail] = useState('tech@alpha.test');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [question, setQuestion] = useState('The wall display is offline after a power interruption. What should I check?');
-  const [status, setStatus] = useState<Record<string, unknown> | null>(null);
+  const [devices, setDevices] = useState<Device[]>([]);
+  const [selectedDeviceId, setSelectedDeviceId] = useState('');
   const [runId, setRunId] = useState('');
   const [message, setMessage] = useState('');
   const [busy, setBusy] = useState(false);
@@ -37,9 +44,14 @@ export default function DashboardPage() {
 
   useEffect(() => {
     if (!user) return;
-    fetch(`/api/v1/devices/${DEVICE_ID}/status?roomId=${ROOM_ID}`)
-      .then(async (response) => response.ok ? setStatus((await response.json()).status) : undefined)
-      .catch(() => undefined);
+    fetch('/api/v1/devices')
+      .then(async (response) => {
+        if (!response.ok) throw new Error('Devices could not be loaded for this tenant.');
+        const body = await response.json() as { devices: Device[] };
+        setDevices(body.devices);
+        setSelectedDeviceId((current) => current || body.devices[0]?.id || '');
+      })
+      .catch((error) => setMessage(error instanceof Error ? error.message : 'Devices could not be loaded.'));
   }, [user]);
 
   async function login(event: FormEvent) {
@@ -67,7 +79,9 @@ export default function DashboardPage() {
 
   async function createRun(event: FormEvent) {
     event.preventDefault();
+    const selected = devices.find((device) => device.id === selectedDeviceId);
     if (!csrf) return setMessage('Refresh the session before creating a run.');
+    if (!selected) return setMessage('Select a device before creating a run.');
     setBusy(true);
     setMessage('Queueing a bounded diagnosis run…');
     try {
@@ -79,7 +93,7 @@ export default function DashboardPage() {
           'x-csrf-token': csrf,
           'idempotency-key': crypto.randomUUID()
         },
-        body: JSON.stringify({ roomId: ROOM_ID, deviceId: DEVICE_ID, question, mediaIds: [] })
+        body: JSON.stringify({ roomId: selected.roomId, deviceId: selected.id, question, mediaIds: [] })
       });
       const body = await response.json();
       if (!response.ok) throw new Error(body.detail ?? 'Run could not be queued');
@@ -93,7 +107,7 @@ export default function DashboardPage() {
   }
 
   if (!user) {
-    return <section className="auth-card">
+      return <section className="auth-card">
       <div className="eyebrow">Synthetic AV Lab · local reference environment</div>
       <h2>Sign in to DeviceOps</h2>
       <p className="muted">Use a seeded account to exercise tenant isolation, citations, and approval policy. This demo contains no real device control.</p>
@@ -107,21 +121,46 @@ export default function DashboardPage() {
     </section>;
   }
 
+  async function logout() {
+    await fetch('/api/v1/auth/logout', { method: 'POST' }).catch(() => undefined);
+    setUser(null);
+    setCsrf('');
+    setDevices([]);
+    setSelectedDeviceId('');
+    setMessage('Signed out.');
+  }
+
   return <div className="page-grid">
     <section>
-      <div className="eyebrow">{user.tenantName} · {user.role}</div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+        <div className="eyebrow">{user.tenantName} · {user.role}</div>
+        <button
+          type="button"
+          onClick={logout}
+          style={{ background: 'transparent', border: '1px solid var(--line)', padding: '6px 12px', fontSize: '12px' }}
+        >
+          Sign out
+        </button>
+      </div>
       <h2>Technician diagnosis workspace</h2>
       <p className="muted">Every run is tenant-scoped, retrieved from permitted manual evidence, and constrained by a server-owned tool and approval policy.</p>
       <form onSubmit={createRun} className="panel stack">
-        <div className="panel-heading"><div><span className="eyebrow">New run</span><h3>Ask about a device</h3></div><span className="badge">mock provider</span></div>
+        <div className="panel-heading">
+          <div>
+            <span className="eyebrow">New run</span>
+            <h3>Ask about a device</h3>
+          </div>
+          <span className="badge">{user.demoMode ? 'synthetic environment' : 'production tenant'}</span>
+        </div>
         <label>Question or observed symptom<textarea value={question} onChange={(event) => setQuestion(event.target.value)} rows={5} required /></label>
-        <div className="context-grid"><div><span className="label">Room</span><strong>Conference Room 101</strong></div><div><span className="label">Device</span><strong>Main Wall Display · ProView-85</strong></div></div>
-        <button disabled={busy} type="submit">{busy ? 'Queueing…' : 'Queue diagnosis'}</button>
+        <div className="context-grid"><div><span className="label">Room</span><strong>{devices.find((device) => device.id === selectedDeviceId)?.room.name ?? 'Select a device'}</strong></div><div><span className="label">Device</span><select aria-label="Device" value={selectedDeviceId} onChange={(event) => setSelectedDeviceId(event.target.value)} required><option value="" disabled>Select a device</option>{devices.map((device) => <option key={device.id} value={device.id}>{device.name} · {device.model}</option>)}</select></div></div>
+        <button disabled={busy || !selectedDeviceId} type="submit">{busy ? 'Queueing…' : 'Queue diagnosis'}</button>
         {runId && <a className="run-link" href={`/runs/${runId}`}>Open run timeline →</a>}
       </form>
       {message && <p className="notice">{message}</p>}
     </section>
     <aside className="panel status-card">
+      {(() => { const selected = devices.find((device) => device.id === selectedDeviceId); const status = selected?.status; return <>
       <div className="panel-heading"><div><span className="eyebrow">Read-only tool</span><h3>Live status</h3></div><span className={status?.online === false ? 'status offline' : 'status online'}>● {status?.online === false ? 'offline' : 'online'}</span></div>
       <dl>
         <div><dt>Power</dt><dd>{String(status?.powerState ?? 'loading')}</dd></div>
@@ -129,6 +168,7 @@ export default function DashboardPage() {
         <div><dt>Observed</dt><dd>{status?.observedAt ? new Date(String(status.observedAt)).toLocaleString() : 'loading'}</dd></div>
       </dl>
       <p className="small muted">Telemetry is simulated. The model cannot change this state.</p>
+      </>; })()}
     </aside>
   </div>;
 }

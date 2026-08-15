@@ -266,6 +266,24 @@ export const DeviceStatusSchema = z
   .strict();
 export type DeviceStatus = z.infer<typeof DeviceStatusSchema>;
 
+export const DeviceSummarySchema = z
+  .object({
+    id: UuidSchema,
+    roomId: UuidSchema,
+    name: z.string().min(1),
+    manufacturer: z.string().min(1),
+    model: z.string().min(1),
+    kind: z.string().min(1),
+    room: z.object({
+      id: UuidSchema,
+      name: z.string().min(1),
+      location: z.string().min(1)
+    }).strict(),
+    status: DeviceStatusSchema.nullable()
+  })
+  .strict();
+export type DeviceSummary = z.infer<typeof DeviceSummarySchema>;
+
 export function stableJson(value: unknown): string {
   if (Array.isArray(value)) {
     return `[${value.map(stableJson).join(",")}]`;
@@ -304,7 +322,8 @@ export function contractSchemasHash(): string {
       mediaUpload: z.toJSONSchema(CreateMediaUploadSchema),
       approvalDecision: z.toJSONSchema(ApprovalDecisionSchema),
       webhook: z.toJSONSchema(SignedWebhookEnvelopeSchema),
-      deviceStatus: z.toJSONSchema(DeviceStatusSchema)
+      deviceStatus: z.toJSONSchema(DeviceStatusSchema),
+      deviceSummary: z.toJSONSchema(DeviceSummarySchema)
     }
   });
 }

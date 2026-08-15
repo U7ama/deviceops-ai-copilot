@@ -42,7 +42,21 @@ npm run test:api-smoke
 npm run contracts:check
 ```
 
-The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, and one transactional outbox event. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression. Neither drill proves cloud deployment, real-provider quality, ClamAV availability, or EAS installation.
+The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, one transactional outbox event, and fail-closed media quarantine. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression. These drills do not prove cloud deployment, real-provider quality, or production ClamAV availability.
+
+## Verified local evidence
+
+The current local reference run uses `AI_PROVIDER=mock` and synthetic data. The following evidence has been run from this repository:
+
+- `npm run verify` — all workspace typechecks, 18 Vitest tests, and the Next.js/worker/MCP production build pass.
+- `npm run eval` — 40 deterministic cases; retrieval hit@5 `1.0000`, abstention recall `1.0000`, and mock diagnosis schema validity `1.0000`.
+- `npm run test:api-smoke` — idempotency, tenant isolation, separation of duties, durable SSE events, approval replay protection, signed webhook handling, outbox uniqueness, and infected-fixture rejection pass.
+- `npm run test:mcp` — read-only tools and tenant-bound health resource pass.
+- `npm run test:web:e2e` — a Playwright smoke flow is checked in under `tests/web`; install the pinned browser with `npx playwright install chromium` before running it on a workstation with browser-download access.
+- `npm run load:http` — local-only `/healthz` check recorded 537 requests in 5 seconds with 0 errors, p50 80 ms and p99 199 ms in the current WSL run. This is not a production-capacity claim.
+- The companion Expo app has been installed as an EAS Android development build and exercised on a physical synthetic-data device: login, device status, diagnosis queue, durable timeline, citation display, and approval-required state were observed. The build is still a development artifact, not a store release.
+
+The real-provider, S3, managed scanner, cloud deployment, Playwright/Maestro command execution, and public hosted demo remain unverified until their credentials/tooling are available. Do not describe those as delivered evidence.
 
 The local HTTP and MCP checks are explicit about their evidence boundary:
 

@@ -26,6 +26,7 @@
     "db:migrate": "node --import tsx scripts/migrate.ts",
     "db:seed": "node --import tsx scripts/seed.ts",
     "test:api-smoke": "node scripts/api-smoke.mjs",
+    "test:web:e2e": "playwright test",
     "db:reset": "node --import tsx scripts/reset-dev.ts",
     "contracts:export": "node --import tsx scripts/export-contracts.ts",
     "contracts:check": "node --import tsx scripts/check-contracts.ts",
@@ -38,6 +39,7 @@
     "stack:status": "docker compose ps"
   },
   "devDependencies": {
+    "@playwright/test": "^1.54.2",
     "@types/node": "^22.15.0",
     "autocannon": "^8.0.0",
     "drizzle-kit": "0.31.10",
