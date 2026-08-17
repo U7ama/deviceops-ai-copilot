@@ -2,6 +2,7 @@
   "name": "deviceops-ai-copilot",
   "version": "0.1.0",
   "private": true,
+  "license": "UNLICENSED",
   "description": "Production-ready Applied AI reference implementation for synthetic device operations data.",
   "engines": {
     "node": "22.16.0",
