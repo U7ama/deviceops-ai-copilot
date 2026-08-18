@@ -4,6 +4,7 @@ const nextConfig = {
   experimental: {
     useWasmBinary: true
   },
+  allowedDevOrigins: ["127.0.0.1", "localhost"],
   transpilePackages: [
     "@deviceops/contracts",
     "@deviceops/core",
@@ -12,7 +13,8 @@ const nextConfig = {
     "@deviceops/ai",
     "@deviceops/retrieval",
     "@deviceops/observability",
-    "@deviceops/media"
+    "@deviceops/media",
+    "@deviceops/auth"
   ],
   webpack(config) {
     config.resolve.extensionAlias = {

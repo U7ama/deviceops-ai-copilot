@@ -40,7 +40,11 @@ export function requireMutationProtection(request: Request, session: SessionCont
   if (session.kind === "mobile") return;
   const configuredOrigin = new URL(process.env.APP_URL ?? "http://localhost:3000").origin;
   const origin = request.headers.get("origin");
-  if (!origin || origin !== configuredOrigin) {
+  const isAllowedOrigin =
+    origin === configuredOrigin ||
+    (process.env.NODE_ENV !== "production" &&
+      (origin === "http://localhost:3000" || origin === "http://127.0.0.1:3000"));
+  if (!origin || !isAllowedOrigin) {
     throw new DomainError("ORIGIN_DENIED", "Request origin is not allowed", 403);
   }
   const headerToken = request.headers.get("x-csrf-token");

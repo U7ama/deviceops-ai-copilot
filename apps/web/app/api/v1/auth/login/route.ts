@@ -20,7 +20,11 @@ export async function POST(request: Request) {
     if (parsed.data.client === "web") {
       const expectedOrigin = new URL(process.env.APP_URL ?? "http://localhost:3000").origin;
       const origin = request.headers.get("origin");
-      if (origin && origin !== expectedOrigin) {
+      const isAllowedOrigin =
+        origin === expectedOrigin ||
+        (process.env.NODE_ENV !== "production" &&
+          (origin === "http://localhost:3000" || origin === "http://127.0.0.1:3000"));
+      if (origin && !isAllowedOrigin) {
         return problem(403, "ORIGIN_DENIED", "Request origin is not allowed", metadata);
       }
     }

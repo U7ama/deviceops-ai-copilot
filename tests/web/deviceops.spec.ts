@@ -14,7 +14,8 @@ test.describe('DeviceOps web synthetic journey', () => {
     await page.getByLabel('Password').fill(password!);
     await page.getByRole('button', { name: 'Sign in' }).click();
     await expect(page.getByRole('heading', { name: 'Technician diagnosis workspace' })).toBeVisible();
-    await expect(page.getByText('offline', { exact: true })).toBeVisible();
+    await page.getByLabel('Device').selectOption({ label: 'Main Wall Display · ProView-85' });
+    await expect(page.getByText('● offline')).toBeVisible();
 
     await page.getByRole('button', { name: 'Queue diagnosis' }).click();
     await expect(page.getByText('Run queued. Open the timeline to watch durable events and citations.')).toBeVisible();
