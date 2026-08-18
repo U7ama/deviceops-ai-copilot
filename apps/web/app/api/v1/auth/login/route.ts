@@ -1,6 +1,6 @@
 import { randomBytes, randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
-import { verify } from "@node-rs/argon2";
+import { verifyPassword, secureCookie } from "@deviceops/auth";
 import { LoginRequestSchema } from "@deviceops/contracts";
 import { adminSql } from "@deviceops/db";
 import { logStructured, metrics } from "@deviceops/observability";
@@ -48,7 +48,7 @@ export async function POST(request: Request) {
     `;
     const locked = user?.locked_until && new Date(user.locked_until).getTime() > Date.now();
     const valid = user && !locked
-      ? await verify(user.password_hash, parsed.data.password)
+      ? await verifyPassword(user.password_hash, parsed.data.password)
       : false;
     if (!user || !valid) {
       if (user && !locked) {
@@ -114,14 +114,4 @@ export async function POST(request: Request) {
     logStructured("auth.login.failed", { requestId: metadata.requestId, error: error instanceof Error ? error.message : "unknown" }, "error");
     return problem(500, "AUTHENTICATION_FAILED", "Authentication is temporarily unavailable", metadata);
   }
-}
-
-function secureCookie(expires: Date, httpOnly: boolean) {
-  return {
-    httpOnly,
-    secure: process.env.NODE_ENV === "production",
-    sameSite: "strict" as const,
-    path: "/",
-    expires
-  };
 }

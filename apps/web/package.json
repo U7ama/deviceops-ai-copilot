@@ -19,6 +19,7 @@
     "@deviceops/retrieval": "*",
     "@deviceops/observability": "*",
     "@deviceops/media": "*",
+    "@deviceops/auth": "*",
     "@node-rs/argon2": "^2.0.2",
     "next": "16.3.0",
     "postgres": "^3.4.9",
