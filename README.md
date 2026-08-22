@@ -6,6 +6,23 @@ Production-ready reference implementation for synthetic device-operations data. 
 
 This is not a hosted SaaS claim. It uses fictional manuals and simulated telemetry. The default provider is deterministic mock data; the OpenAI adapter is included but requires a real key before publishing provider quality, latency, cost, or scale claims. There is no real device control.
 
+## Visual Architecture & System Tour
+
+### Core Web Workspace & Diagnostic Timeline
+| Diagnosis Workspace | Real-Time SSE Run Timeline & Citations |
+| :---: | :---: |
+| ![Diagnosis Workspace](docs/screenshots/01-diagnosis-workspace.png) | ![Run Timeline](docs/screenshots/02-run-timeline-citations.png) |
+
+### Human-in-the-Loop Approvals & Incidents
+| Manager Approvals Queue | Incident Escalation Dashboard |
+| :---: | :---: |
+| ![Manager Approvals](docs/screenshots/03-manager-approvals-queue.png) | ![Incidents Dashboard](docs/screenshots/04-incidents-dashboard.png) |
+
+### Quality Evidence & Distributed Tracing
+| Automated 40-Case Evaluation Suite | Jaeger Distributed Traces (API & Worker) |
+| :---: | :---: |
+| ![Evaluations Suite](docs/screenshots/05-evaluations-benchmark-suite.png) | ![Jaeger Traces](docs/screenshots/07-jaeger-distributed-tracing-waterfall.png) |
+
 ## Repository map
 
 - `apps/web` — Next.js dashboard, cookie/mobile auth, CSRF, API v1, durable SSE replay, media quarantine endpoints, health/readiness/metrics.

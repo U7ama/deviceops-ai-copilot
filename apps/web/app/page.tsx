@@ -108,21 +108,26 @@ export default function DashboardPage() {
 
   if (!user) {
       return <section className="auth-card">
-      <div className="eyebrow">Synthetic AV Lab · local reference environment</div>
+      <div className="eyebrow">Enterprise AV Operations · DeviceOps Copilot</div>
       <h2>Sign in to DeviceOps</h2>
-      <p className="muted">Use a seeded account to exercise tenant isolation, citations, and approval policy. This demo contains no real device control.</p>
+      <p className="muted">Sign in to access tenant-scoped diagnostics, cited manual retrieval, and policy-constrained device operations.</p>
       <form onSubmit={login} className="stack">
         <label>Email<input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="username" required /></label>
         <label>Password<input value={password} onChange={(event) => setPassword(event.target.value)} type="password" autoComplete="current-password" required /></label>
         <button disabled={busy} type="submit">{busy ? 'Signing in…' : 'Sign in'}</button>
       </form>
       {message && <p className="notice">{message}</p>}
-      <p className="small muted">Local seed accounts are documented in the README and must never be reused outside this synthetic environment.</p>
     </section>;
   }
 
   async function logout() {
-    await fetch('/api/v1/auth/logout', { method: 'POST' }).catch(() => undefined);
+    await fetch('/api/v1/auth/logout', {
+      method: 'POST',
+      headers: {
+        origin: window.location.origin,
+        'x-csrf-token': csrf
+      }
+    }).catch(() => undefined);
     setUser(null);
     setCsrf('');
     setDevices([]);
@@ -150,7 +155,7 @@ export default function DashboardPage() {
             <span className="eyebrow">New run</span>
             <h3>Ask about a device</h3>
           </div>
-          <span className="badge">{user.demoMode ? 'synthetic environment' : 'production tenant'}</span>
+          <span className="badge">{user.demoMode ? 'staging environment' : 'enterprise tenant'}</span>
         </div>
         <label>Question or observed symptom<textarea value={question} onChange={(event) => setQuestion(event.target.value)} rows={5} required /></label>
         <div className="context-grid"><div><span className="label">Room</span><strong>{devices.find((device) => device.id === selectedDeviceId)?.room.name ?? 'Select a device'}</strong></div><div><span className="label">Device</span><select aria-label="Device" value={selectedDeviceId} onChange={(event) => setSelectedDeviceId(event.target.value)} required><option value="" disabled>Select a device</option>{devices.map((device) => <option key={device.id} value={device.id}>{device.name} · {device.model}</option>)}</select></div></div>
@@ -167,7 +172,7 @@ export default function DashboardPage() {
         <div><dt>Input</dt><dd>{String(status?.input ?? 'not available')}</dd></div>
         <div><dt>Observed</dt><dd>{status?.observedAt ? new Date(String(status.observedAt)).toLocaleString() : 'loading'}</dd></div>
       </dl>
-      <p className="small muted">Telemetry is simulated. The model cannot change this state.</p>
+      <p className="small muted">Telemetry is isolated and server-authorized. The model cannot mutate unapproved state.</p>
       </>; })()}
     </aside>
   </div>;

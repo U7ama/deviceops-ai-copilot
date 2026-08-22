@@ -114,6 +114,54 @@ class MetricsRegistry {
 
 export const metrics = new MetricsRegistry();
 
+export function recordTraceSpan(
+  service: string,
+  name: string,
+  durationMs: number,
+  attributes: Record<string, unknown> = {}
+): void {
+  const otelEndpoint = process.env.OTEL_EXPORTER_OTLP_ENDPOINT ?? "http://127.0.0.1:4318/v1/traces";
+  const now = Date.now();
+  const payload = {
+    resourceSpans: [
+      {
+        resource: { attributes: [{ key: "service.name", value: { stringValue: service } }] },
+        scopeSpans: [
+          {
+            scope: { name: "@deviceops/observability" },
+            spans: [
+              {
+                traceId: Math.random().toString(16).slice(2).padStart(32, "0"),
+                spanId: Math.random().toString(16).slice(2).padStart(16, "0"),
+                name,
+                kind: 1,
+                startTimeUnixNano: (BigInt(now - Math.max(1, Math.round(durationMs))) * 1_000_000n).toString(),
+                endTimeUnixNano: (BigInt(now) * 1_000_000n).toString(),
+                attributes: Object.entries(attributes).map(([k, v]) => ({
+                  key: k,
+                  value:
+                    typeof v === "number"
+                      ? Number.isInteger(v)
+                        ? { intValue: v }
+                        : { doubleValue: v }
+                      : typeof v === "boolean"
+                        ? { boolValue: v }
+                        : { stringValue: String(v) }
+                }))
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  };
+  fetch(otelEndpoint, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify(payload)
+  }).catch(() => undefined);
+}
+
 export async function timed<T>(
   metric: string,
   operation: () => Promise<T>,
@@ -122,10 +170,24 @@ export async function timed<T>(
   const start = performance.now();
   try {
     const result = await operation();
-    metrics.observe(metric, performance.now() - start, { ...labels, ok: true });
+    const duration = performance.now() - start;
+    metrics.observe(metric, duration, { ...labels, ok: true });
+    recordTraceSpan(
+      process.env.OTEL_SERVICE_NAME ?? "deviceops-api",
+      metric,
+      duration,
+      { ...labels, ok: true }
+    );
     return result;
   } catch (error) {
-    metrics.observe(metric, performance.now() - start, { ...labels, ok: false });
+    const duration = performance.now() - start;
+    metrics.observe(metric, duration, { ...labels, ok: false });
+    recordTraceSpan(
+      process.env.OTEL_SERVICE_NAME ?? "deviceops-api",
+      metric,
+      duration,
+      { ...labels, ok: false }
+    );
     throw error;
   }
 }

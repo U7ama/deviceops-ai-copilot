@@ -89,6 +89,19 @@ export default function ApprovalsPage() {
     }
   }
 
+  if (!role && message.includes('Sign in')) {
+    return (
+      <section className="auth-card">
+        <div className="eyebrow">Enterprise AV Operations · Approvals</div>
+        <h2>Sign in required</h2>
+        <p className="muted">Please sign in with a manager or operator account to view pending approvals.</p>
+        <a href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+          Go to Sign In
+        </a>
+      </section>
+    );
+  }
+
   return (
     <section>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>

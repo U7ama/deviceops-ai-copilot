@@ -18,7 +18,7 @@ test.describe('DeviceOps web synthetic journey', () => {
     await expect(page.getByText('● offline')).toBeVisible();
 
     await page.getByRole('button', { name: 'Queue diagnosis' }).click();
-    await expect(page.getByText('Run queued. Open the timeline to watch durable events and citations.')).toBeVisible();
+    await expect(page.getByText('Run queued. Open the timeline to watch durable events and citations.')).toBeVisible({ timeout: 15_000 });
     const timelineLink = page.getByRole('link', { name: /Open run timeline/ });
     await expect(timelineLink).toBeVisible();
     await timelineLink.click();

@@ -43,7 +43,7 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
     setDecisionBusy(true); setMessage('Submitting server-side approval…');
     const response = await fetch(`/api/v1/approvals/${approvalId}/decision`, {
       method: 'POST', headers: { 'content-type': 'application/json', origin: window.location.origin, 'x-csrf-token': csrf },
-      body: JSON.stringify({ decision: 'approved', reason: 'Approved from the synthetic operator workspace', proposalHash })
+      body: JSON.stringify({ decision: 'approved', reason: 'Approved via operator authorization workspace', proposalHash })
     });
     const body = await response.json();
     setMessage(response.ok ? `Incident ${body.incidentId} was created exactly once.` : (body.detail ?? 'Approval was rejected.'));
@@ -53,6 +53,20 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
 
   const approval = events.find((event) => event.type === 'approval.required');
   const diagnosis = run?.diagnosis;
+
+  if (!role && message.includes('not available')) {
+    return (
+      <section className="auth-card">
+        <div className="eyebrow">Enterprise AV Operations · Run Timeline</div>
+        <h2>Sign in required</h2>
+        <p className="muted">Please sign in to view this diagnostic run timeline.</p>
+        <a href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+          Go to Sign In
+        </a>
+      </section>
+    );
+  }
+
   return <section>
     <a href="/">← Back to workspace</a>
     <div className="eyebrow" style={{ marginTop: 28 }}>Durable run timeline</div>

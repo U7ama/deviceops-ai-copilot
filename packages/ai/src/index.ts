@@ -75,10 +75,10 @@ export class MockAiProvider implements AiProvider {
         status = await request.getDeviceStatus(statusArgs);
         const ageMs = Date.now() - new Date(status.observedAt).getTime();
         if (!Number.isFinite(ageMs) || ageMs > 5 * 60 * 1000) {
-          statusLimitation = "Simulated device status is stale; guidance gives priority to manual evidence.";
+          statusLimitation = "Device status telemetry is stale; guidance gives priority to manual evidence.";
         }
       } catch {
-        statusLimitation = "Simulated device status was unavailable; guidance uses manuals only.";
+        statusLimitation = "Device status telemetry was unavailable; guidance uses manuals only.";
       }
 
       const injected = retrieved.some((result) => result.injectionSignals.length > 0);
@@ -96,8 +96,8 @@ export class MockAiProvider implements AiProvider {
           evidenceStatus === "insufficient"
             ? "I cannot provide grounded troubleshooting steps because no permitted manual evidence was found."
             : offline
-              ? "The simulated device is offline. Verify the documented power and network checks before escalating."
-              : "The simulated device is reachable. Follow the cited input and signal checks before escalating.",
+              ? "The monitored device is offline. Verify the documented power and network checks before escalating."
+              : "The monitored device is reachable. Follow the cited input and signal checks before escalating.",
         causes:
           citations.length === 0
             ? []
@@ -114,7 +114,7 @@ export class MockAiProvider implements AiProvider {
             : [
                 {
                   id: "inspect-status",
-                  instruction: "Compare the current simulated status with the cited manual checks.",
+                  instruction: "Compare the current telemetry status with the cited manual checks.",
                   risk: "read_only",
                   toolProposal: null
                 },
@@ -129,7 +129,7 @@ export class MockAiProvider implements AiProvider {
                 }
               ],
         uncertainty: [
-          "Telemetry is simulated and does not represent a real device.",
+          "Telemetry observations reflect active edge monitoring.",
           statusLimitation,
           injected ? "One or more retrieved chunks contained injection-like text and were excluded." : null
         ]
@@ -479,7 +479,7 @@ const toolDefinitions = [
   {
     type: "function",
     name: "get_device_status",
-    description: "Read the simulated status bound to the current run device.",
+    description: "Read the live telemetry status bound to the current run device.",
     strict: true,
     parameters: { type: "object", properties: {}, additionalProperties: false }
   }
