@@ -17,7 +17,7 @@ export async function POST(request: Request) {
     if (!parsed.success) return problem(400, 'INVALID_EVAL_DATASET', 'Evaluation dataset is invalid', metadata);
     let finalDatasetId = randomUUID(); const evalRunId = randomUUID(); const commitSha = createHash('sha256').update(JSON.stringify(parsed.data)).digest('hex');
     await withTenant({ tenantId: session.user.tenantId, userId: session.user.id }, async (transaction) => {
-      const [existingDataset] = await transaction<Array<{ id: string }>>`
+      const [existingDataset] = await transaction<Array<{ id: ReturnType<typeof randomUUID> }>>`
         insert into eval_datasets (id, tenant_id, name, version, commit_sha)
         values (${finalDatasetId}, ${session.user.tenantId}, ${parsed.data.name}, ${parsed.data.version}, ${commitSha})
         on conflict (tenant_id, name, version) do update
