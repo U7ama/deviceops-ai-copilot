@@ -23,6 +23,12 @@ This is not a hosted SaaS claim. It uses fictional manuals and simulated telemet
 | :---: | :---: |
 | ![Evaluations Suite](docs/screenshots/05-evaluations-benchmark-suite.png) | ![Jaeger Traces](docs/screenshots/07-jaeger-distributed-tracing-waterfall.png) |
 
+## Connected Repositories
+
+- 🖥️ **Core Monorepo (`deviceops-ai-copilot`)**: Current repository (Next.js 16, pgvector RAG, workers, MCP, Zod contracts, Jaeger tracing).
+- 📱 **Mobile Companion App**: [github.com/U7ama/deviceops-mobile](https://github.com/U7ama/deviceops-mobile) — Expo SDK 56 technician client with offline cache and durable SSE run polling.
+- ⚡ **Automations Adapter**: [github.com/U7ama/deviceops-automations](https://github.com/U7ama/deviceops-automations) — Version-controlled n8n incident routing with HMAC-signed webhooks and dead-letter handling.
+
 ## Repository map
 
 - `apps/web` — Next.js dashboard, cookie/mobile auth, CSRF, API v1, durable SSE replay, media quarantine endpoints, health/readiness/metrics.
@@ -33,8 +39,8 @@ This is not a hosted SaaS claim. It uses fictional manuals and simulated telemet
 - `packages/db` — PostgreSQL access, RLS transaction context, append-only audit hash chain, checked-in migration.
 - `packages/ai` — deterministic mock and optional OpenAI-compatible provider with schema validation and usage ledger.
 - `packages/media` — provider abstraction, local ext4 quarantine store, fixture scanner, ClamAV adapter, and S3 contract.
-- `deviceops-mobile` — companion Expo technician client using mobile sessions and server-authoritative polling.
-- `deviceops-automations` — importable n8n signed incident notification/ack workflow.
+- [`deviceops-mobile`](https://github.com/U7ama/deviceops-mobile) — companion Expo technician client using mobile sessions and server-authoritative polling.
+- [`deviceops-automations`](https://github.com/U7ama/deviceops-automations) — importable n8n signed incident notification/ack workflow.
 
 ## Local verification
 
