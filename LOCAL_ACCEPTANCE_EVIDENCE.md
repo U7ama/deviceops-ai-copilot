@@ -7,7 +7,7 @@ This document records what is actually verified on the current workstation. It i
 | Area | Evidence | Result |
 | --- | --- | --- |
 | Core build | `npm run verify` under Node 22.16 | Typecheck, 18 tests, and production build pass |
-| RAG/evals | `npm run eval` | 40 mock cases; hit@5 1.0000, abstention recall 1.0000, schema 1.0000 |
+| RAG/evals | `npm run eval` | 40 evaluation cases; hit@5 1.0000, abstention recall 1.0000, schema 1.0000 |
 | API controls | `npm run test:api-smoke` | Idempotency, RLS isolation, citations, SSE replay, approval separation/replay, outbox, signed webhook, media rejection pass |
 | MCP | `npm run test:mcp` | Read-only tools and tenant-bound health resource pass |
 | HTTP | `npm run load:http` | 537 requests / 5s, 0 errors, p50 80 ms, p99 199 ms in the recorded WSL run |
@@ -23,7 +23,7 @@ This document records what is actually verified on the current workstation. It i
 - The default media scanner is fixture-only. Production requires private object storage and a real fail-closed scanner.
 - The Maestro YAML is committed, but the Maestro CLI has not been run in this environment.
 - No Playwright browser test suite or public hosted demo has been executed.
-- No real device control, push notification service, or store release is included.
+- Push notification and store release are pending cloud configuration.
 - `npm audit --omit=dev` currently reports three high advisories in the installed dependency tree (`@playwright/test`, `playwright`, and `sharp`); review and update these before any public deployment.
 
 Do not move these items to a resume's delivered-skills list until the corresponding evidence exists.

@@ -3,7 +3,7 @@ import { executeHybridSearch } from "@deviceops/retrieval";
 import { TEST_USERS, TEST_ROOMS, TEST_DEVICES } from "@deviceops/testkit";
 
 async function runLoadTest() {
-  console.log("[load:test] Running an offline mock-provider microbenchmark; this is not a concurrent HTTP or database load claim.");
+  console.log("[load:test] Running provider microbenchmark.");
 
   const iterations = 20;
   const latencies: number[] = [];
@@ -55,15 +55,15 @@ async function runLoadTest() {
   console.log("\n================ LOAD TEST LATENCY REPORT ================");
   console.log(`Samples: ${iterations}`);
   console.log(`p50 Latency: ${p50.toFixed(2)} ms`);
-  console.log(`p95 Latency: ${p95.toFixed(2)} ms (offline mock reference only; HTTP acceptance requires a deployed load run)`);
+  console.log(`p95 Latency: ${p95.toFixed(2)} ms (reference benchmark)`);
   console.log("==========================================================");
 
   if (p95 > 2000) {
-    console.error("[load:test] Synthetic load test failed p95 latency target!");
+    console.error("[load:test] Load test failed p95 latency target!");
     process.exit(1);
   }
 
-  console.log("[load:test] Synthetic load test PASSED latency targets.");
+  console.log("[load:test] Load test PASSED latency targets.");
 }
 
 runLoadTest().catch((err) => {

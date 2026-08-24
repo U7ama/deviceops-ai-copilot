@@ -145,7 +145,7 @@ export class FixtureScanner implements MalwareScanner {
       engine: "deviceops-fixture-scanner",
       engineVersion: "1",
       signatureVersion: "allowlist-v1",
-      detail: clean ? "Allowlisted synthetic fixture" : "Arbitrary uploads require a real scanner"
+      detail: clean ? "Allowlisted fixture" : "Arbitrary uploads require a configured scanner"
     };
   }
 }

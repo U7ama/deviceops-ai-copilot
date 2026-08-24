@@ -7,7 +7,7 @@ This glossary defines key terms used throughout the DeviceOps architecture, code
 - **Chunk**: A delimited, embedding-indexed segment of an ingested manual or diagnostic guide used for retrieval-augmented generation.
 - **Citation**: A verified reference within a diagnosis linking specific evidence (by ID and offset) to the exact retrieved chunk and version.
 - **Dead letter**: An outbox event or durable job that permanently failed after exhausting all safe retry attempts and requires human intervention.
-- **Device**: A simulated physical asset (e.g., display model) monitored for telemetry and status, bound to a specific room.
+- **Device**: A physical asset (e.g., display model) monitored for telemetry and status, bound to a specific room.
 - **HMAC (Hash-based Message Authentication Code)**: A cryptographic signature used to verify the integrity and authenticity of incident webhook envelopes sent to n8n.
 - **Idempotency**: The guarantee that submitting the same request (e.g., run creation or webhook acknowledgement) multiple times yields the same state without duplicate side-effects.
 - **Incident**: A durable record of an actionable hardware or software issue, generated from an approved consequential run proposal.

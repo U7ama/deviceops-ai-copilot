@@ -7,7 +7,7 @@ const citation: Citation = {
   sourceId: "11111111-1111-4111-8111-111111111111",
   sourceVersionId: "22222222-2222-4222-8222-222222222222",
   chunkId: "33333333-3333-4333-8333-333333333333",
-  title: "Synthetic Display Manual",
+  title: "ProView Display Manual",
   page: 1,
   startOffset: 0,
   endOffset: 100,
@@ -19,7 +19,7 @@ const actor: SessionUser = {
   email: "tech@example.test",
   displayName: "Tech",
   tenantId: "55555555-5555-4555-8555-555555555555",
-  tenantName: "Synthetic AV Lab",
+  tenantName: "AV Operations Lab",
   role: "technician",
   demoMode: false
 };
@@ -33,7 +33,7 @@ describe("bounded AI orchestration", () => {
       powerState: "off",
       temperatureC: null,
       input: null,
-      firmwareVersion: "1.0.0-synthetic",
+      firmwareVersion: "1.0.0",
       observedAt: new Date().toISOString(),
       simulated: true
     };

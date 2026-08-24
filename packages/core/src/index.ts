@@ -582,7 +582,7 @@ export async function decideApproval(input: {
           (id, tenant_id, run_id, approval_id, state, command_key, summary, assigned_team)
         values
           (${incidentId}, ${input.actor.tenantId}, ${approval.run_id}, ${approval.id},
-           'approved', ${commandKey}, ${String(approval.proposal.summary ?? "DeviceOps incident")}, 'Synthetic Support Team')
+           'approved', ${commandKey}, ${String(approval.proposal.summary ?? "DeviceOps incident")}, 'DeviceOps Support Team')
         on conflict (command_key) do nothing
       `;
       const [incident] = await transaction<Array<{ id: string }>>`

@@ -51,7 +51,7 @@ export const TEST_ROOMS = {
   betaLab: {
     id: "20000000-0000-4000-8000-000000000003",
     tenantId: TEST_TENANT_BETA_ID,
-    name: "Synthetic Device Lab",
+    name: "Device Operations Lab",
     location: "Beta Campus"
   }
 };
@@ -80,7 +80,7 @@ export const TEST_DEVICES = {
     tenantId: TEST_TENANT_BETA_ID,
     roomId: TEST_ROOMS.betaLab.id,
     name: "Beta Test Display",
-    manufacturer: "Fictional Devices",
+    manufacturer: "ProView Industries",
     model: "SafeView-55",
     kind: "display"
   }

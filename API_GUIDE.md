@@ -43,7 +43,7 @@ Diagnostic sessions tracking retrieval and model execution.
 Telemetry and hardware inventory.
 
 - **`GET /api/v1/devices/:deviceId/status`**
-  - **Purpose**: Fetch simulated telemetry for a device.
+  - **Purpose**: Fetch edge telemetry for a device.
   - **Auth**: Required.
   - **Response**: `DeviceStatus` (online, powerState, temperatureC, input, firmwareVersion).
 

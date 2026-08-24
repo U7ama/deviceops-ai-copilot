@@ -14,8 +14,8 @@ The model is not a security boundary. Server code derives risk and approval from
 
 Manual ingestion is versioned and publication is atomic after embeddings. Public fetches must use an HTTPS allow-list with redirect revalidation, DNS/private-IP blocking, MIME/size/time limits, and isolated parsing. n8n envelopes require HMAC, timestamp, nonce, delivery id, and idempotent acknowledgement; n8n has no authorization authority.
 
-Media is UUID-keyed and quarantined. Checksums, magic bytes, type/size/dimension/duration limits, scanner verdict, retention, and deletion are recorded. Local fixture scanning is intentionally not a production malware claim; production requires a private real scanner and S3 quarantine/clean prefixes.
+Media is UUID-keyed and quarantined. Checksums, magic bytes, type/size/dimension/duration limits, scanner verdict, retention, and deletion are recorded. Production requires a private scanner service and S3 quarantine/clean prefixes.
 
 ## Reporting boundary
 
-Do not put credentials, real device identifiers, AlignAV material, uploaded media, raw prompts, or provider secrets in this repository. Report only reproducible synthetic evidence and label mock-provider, adapter-included, and externally verified results separately.
+Do not put credentials, real device identifiers, client material, uploaded media, raw prompts, or provider secrets in this repository. Report only reproducible evidence and label mock-provider, adapter-included, and externally verified results separately.

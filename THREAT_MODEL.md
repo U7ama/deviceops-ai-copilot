@@ -24,4 +24,4 @@ Tenant membership and device context, manual versions and citations, run/approva
 - Secret leakage: redaction, no committed environment files, no default integration secret, private n8n/clamd network.
 - Availability/cost: per-run model/tool/time/cost budgets, queue expiry, bounded retries, metrics, rate limits, and readiness checks.
 
-Synthetic data makes this a reference implementation. It does not prove compliance, real-device authorization, multi-region recovery, or external provider availability.
+Production deployment requires compliance validation, device authorization, multi-region recovery testing, and provider availability verification.

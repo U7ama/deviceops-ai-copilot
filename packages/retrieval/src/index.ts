@@ -200,7 +200,7 @@ export async function executeHybridSearch(params: {
       sourceId: "40000000-0000-4000-8000-000000000001",
       sourceVersionId: "41000000-0000-4000-8000-000000000001",
       chunkId: "42000000-0000-4000-8000-000000000001",
-      title: "Synthetic ProView Display Troubleshooting Manual",
+      title: "ProView Display Troubleshooting Manual",
       page: 1,
       startOffset: 0,
       endOffset: 120,

@@ -18,7 +18,7 @@ To stand up the application locally using Docker Desktop and Node.js 22.16:
    ```bash
    npm install
    npm run db:migrate
-   SEED_PASSWORD='temporary-local-password' npm run db:seed
+   SEED_PASSWORD='your-secure-password' npm run db:seed
    ```
 4. **Development Server**: Run Next.js and the pg-boss worker.
    ```bash

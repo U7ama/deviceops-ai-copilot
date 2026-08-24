@@ -11,7 +11,7 @@ const actor: SessionUser = {
   email: "tech@example.test",
   displayName: "Tech",
   tenantId: "22222222-2222-4222-8222-222222222222",
-  tenantName: "Synthetic AV Lab",
+  tenantName: "AV Operations Lab",
   role: "technician",
   demoMode: false
 };

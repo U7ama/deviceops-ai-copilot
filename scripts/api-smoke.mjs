@@ -153,7 +153,7 @@ async function main() {
       method: "POST",
       body: JSON.stringify({
         decision: "approved",
-        reason: "synthetic integration smoke approval",
+        reason: "integration smoke approval",
         proposalHash: approvalEvent.data.proposalHash
       })
     }),
@@ -166,7 +166,7 @@ async function main() {
   const webhookSecret = process.env.SMOKE_WEBHOOK_SECRET;
   assert.ok(webhookSecret, "SMOKE_WEBHOOK_SECRET is required");
   const deliveryId = randomUUID();
-  const incidentEnvelope = signWebhook({ incidentId: approved.incidentId, summary: "Synthetic incident notification" }, deliveryId, webhookSecret);
+  const incidentEnvelope = signWebhook({ incidentId: approved.incidentId, summary: "Incident notification" }, deliveryId, webhookSecret);
   const webhookResponse = await expectStatus(await fetch(`${baseUrl}/api/v1/webhooks/n8n/incident`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(incidentEnvelope) }), 202, "signed n8n incident");
   assert.equal((await webhookResponse.json()).duplicate, false);
   const duplicateWebhook = await expectStatus(await fetch(`${baseUrl}/api/v1/webhooks/n8n/incident`, { method: "POST", headers: { "content-type": "application/json" }, body: JSON.stringify(incidentEnvelope) }), 202, "duplicate n8n incident");

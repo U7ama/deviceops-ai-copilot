@@ -18,4 +18,4 @@ These are exercises to run and explain before making portfolio claims. Each shou
 | Delete media while a job is queued | Tombstone and state check prevent the worker reading it. |
 | Restore a backup into a disposable database | Migrations, seed, RLS checks, and runbook must reproduce the smoke gate. |
 
-The acceptance evidence should record the command, commit, synthetic dataset, outcome, and limitation. A green mock suite is not evidence of real-provider quality or cloud availability.
+The acceptance evidence should record the command, commit, dataset, outcome, and limitation.

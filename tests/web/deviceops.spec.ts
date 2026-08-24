@@ -2,7 +2,7 @@ import { test, expect } from '@playwright/test';
 
 const password = process.env.SMOKE_PASSWORD;
 
-test.describe('DeviceOps web synthetic journey', () => {
+test.describe('DeviceOps web journey', () => {
   test.beforeEach(() => {
     test.skip(!password, 'Set SMOKE_PASSWORD to the local seeded password.');
   });

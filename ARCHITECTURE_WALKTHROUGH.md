@@ -19,5 +19,5 @@ DeviceOps is a modular monolith plus one durable worker. The database is the sou
 - RLS is defense in depth; application authorization still runs before every protected operation.
 - Outbox and idempotency make retries safe without pretending delivery is exactly once.
 - SSE is a projection of durable events, so reconnects and mobile polling do not repeat work.
-- The mock provider makes tests deterministic. The OpenAI adapter is opt-in and its model, schema, tokens, latency, and estimated cost are recorded.
+- The built-in provider makes tests deterministic. The OpenAI adapter is opt-in and its model, schema, tokens, latency, and estimated cost are recorded.
 - Media enters quarantine, is checksum-verified and scanned, and can be attached only after a clean verdict. Local fixture scanning is not malware protection.

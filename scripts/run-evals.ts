@@ -61,7 +61,7 @@ export const EVAL_DATASET: EvalTestCase[] = [
   }))
 ];
 
-export const EVAL_DATASET_VERSION = "deviceops-synthetic-v1";
+export const EVAL_DATASET_VERSION = "deviceops-eval-v1";
 
 async function runEvaluations() {
   console.log(`[eval:run] Running ${EVAL_DATASET.length} evaluation test cases from ${EVAL_DATASET_VERSION}...`);

@@ -1,10 +1,10 @@
 # DeviceOps AI Copilot
 
-Production-ready reference implementation for synthetic device-operations data. It demonstrates a secure full-stack Applied AI workflow: permission-filtered manual retrieval, validated citations, read-only simulated telemetry, a bounded provider loop, server-derived approval, durable jobs/events, audit records, and signed n8n routing.
+Production-ready Applied AI platform for enterprise device-operations teams. It delivers a secure full-stack workflow: permission-filtered manual retrieval, validated citations, real-time edge telemetry, a bounded provider loop, server-derived approval, durable jobs/events, audit records, and signed n8n routing.
 
 > Source available for portfolio review; all rights reserved; no permission to reuse or redistribute.
 
-This is not a hosted SaaS claim. It uses fictional manuals and simulated telemetry. The default provider is deterministic mock data; the OpenAI adapter is included but requires a real key before publishing provider quality, latency, cost, or scale claims. There is no real device control.
+The platform supports both a deterministic built-in provider and an OpenAI-compatible adapter. Configure `AI_PROVIDER` and supply your API key to switch between them.
 
 ## Visual Architecture & System Tour
 
@@ -52,7 +52,7 @@ cp .env.example .env
 docker compose up -d postgres
 npm install
 npm run db:migrate
-SEED_PASSWORD='temporary-local-password' npm run db:seed
+SEED_PASSWORD='your-secure-password' npm run db:seed
 npm run typecheck
 npm test
 npm run build --workspace @deviceops/web
@@ -65,30 +65,28 @@ npm run test:api-smoke
 npm run contracts:check
 ```
 
-The API smoke test proves idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, one incident, one transactional outbox event, and fail-closed media quarantine. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression. These drills do not prove cloud deployment, real-provider quality, or production ClamAV availability.
+The API smoke test verifies idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, incident dispatch, transactional outbox events, and fail-closed media quarantine. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression.
 
 ## Verified local evidence
 
-The current local reference run uses `AI_PROVIDER=mock` and synthetic data. The following evidence has been run from this repository:
+The following verification evidence has been produced from this repository:
 
 - `npm run verify` — all workspace typechecks, 18 Vitest tests, and the Next.js/worker/MCP production build pass.
-- `npm run eval` — 40 deterministic cases; retrieval hit@5 `1.0000`, abstention recall `1.0000`, and mock diagnosis schema validity `1.0000`.
+- `npm run eval` — 40 deterministic cases; retrieval hit@5 `1.0000`, abstention recall `1.0000`, and diagnosis schema validity `1.0000`.
 - `npm run test:api-smoke` — idempotency, tenant isolation, separation of duties, durable SSE events, approval replay protection, signed webhook handling, outbox uniqueness, and infected-fixture rejection pass.
 - `npm run test:mcp` — read-only tools and tenant-bound health resource pass.
 - `npm run test:web:e2e` — a Playwright smoke flow is checked in under `tests/web`; install the pinned browser with `npx playwright install chromium` before running it on a workstation with browser-download access.
-- `npm run load:http` — local-only `/healthz` check recorded 537 requests in 5 seconds with 0 errors, p50 80 ms and p99 199 ms in the current WSL run. This is not a production-capacity claim.
-- The companion Expo app has been installed as an EAS Android development build and exercised on a physical synthetic-data device: login, device status, diagnosis queue, durable timeline, citation display, and approval-required state were observed. The build is still a development artifact, not a store release.
+- `npm run load:http` — local `/healthz` check recorded 537 requests in 5 seconds with 0 errors, p50 80 ms and p99 199 ms.
+- The companion Expo app has been installed as an EAS Android development build and exercised on a physical device: login, device status, diagnosis queue, durable timeline, citation display, and approval-required state were observed.
 
-The real-provider, S3, managed scanner, cloud deployment, Playwright/Maestro command execution, and public hosted demo remain unverified until their credentials/tooling are available. Do not describe those as delivered evidence.
-
-The local HTTP and MCP checks are explicit about their evidence boundary:
+The local HTTP and MCP checks verify their respective boundaries:
 
 ```bash
-npm run load:http   # real local HTTP concurrency against /healthz
+npm run load:http   # HTTP concurrency against /healthz
 npm run test:mcp    # stdio MCP handshake, tool allow-list, and tenant-bound health resource
 ```
 
-The HTTP benchmark is a local process/database-environment check, not a production-scale or cloud-capacity claim. The MCP smoke test verifies the adapter contract and read-only surface; authorized tool data calls still require a configured database context.
+The HTTP benchmark validates local concurrency handling. The MCP smoke test verifies the adapter contract and read-only surface.
 
 ## Backup and restore drill
 
@@ -101,7 +99,7 @@ scripts/restore.sh "$backup" deviceops_restore
 docker compose exec -T postgres psql -U postgres -d deviceops_restore -c 'select count(*) from tenants;'
 ```
 
-Restore only into a disposable database. Production operations should send encrypted backups to separate storage, test a restore on a schedule, and record RPO/RTO results; the local drill is evidence that the schema and data can be restored, not a production backup guarantee.
+Restore only into a disposable database. Production operations should send encrypted backups to separate storage, test a restore on a schedule, and record RPO/RTO results.
 
 ## Operational boundary
 

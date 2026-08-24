@@ -28,7 +28,7 @@ export function readMcpContext(environment: NodeJS.ProcessEnv = process.env): Mc
       email: environment.DEVICEOPS_MCP_EMAIL ?? 'mcp-readonly@deviceops.local',
       displayName: environment.DEVICEOPS_MCP_DISPLAY_NAME ?? 'DeviceOps MCP read-only operator',
       tenantId,
-      tenantName: environment.DEVICEOPS_MCP_TENANT_NAME ?? 'Bound synthetic tenant',
+      tenantName: environment.DEVICEOPS_MCP_TENANT_NAME ?? 'Default tenant',
       role: 'viewer',
       demoMode: true
     }

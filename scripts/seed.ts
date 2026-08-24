@@ -141,7 +141,7 @@ async function main(): Promise<void> {
         values
           (${chunkId}, ${TEST_TENANT_ALPHA_ID}, ${sourceId}, ${versionId}, 1, 0, ${manualText.length},
            ${manualText}, ${contentHash}, ${vectorLiteral(deterministicEmbedding(manualText))}::vector,
-           'deviceops-deterministic-mock-v1', ${detectPromptInjection(manualText)})
+           'deviceops-deterministic-v1', ${detectPromptInjection(manualText)})
         on conflict (id) do update
           set content = excluded.content,
               content_hash = excluded.content_hash,
@@ -307,7 +307,7 @@ async function main(): Promise<void> {
       `;
     });
 
-    console.log("[db:seed] synthetic tenants, devices, telemetry, and manual seeded");
+    console.log("[db:seed] tenants, devices, telemetry, and manual seeded");
     console.log("[db:seed] generated local credentials (not written to disk):");
     for (const credential of credentials) {
       console.log(`  ${credential.email}  ${credential.password}`);
