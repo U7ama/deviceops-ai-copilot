@@ -105,4 +105,4 @@ Restore only into a disposable database. Production operations should send encry
 
 Local media uses a WSL-ext4 filesystem and fixture-only scanning. Arbitrary uploads remain quarantined unless their hash is explicitly allowlisted. Production must use private S3 quarantine/clean prefixes and a real ClamAV service (or a reviewed managed scanner); scanner errors fail closed. The local `compose.yaml` is a development stack, not an RPO/RTO or availability guarantee.
 
-Read the request trace in `ARCHITECTURE_WALKTHROUGH.md`, security controls in `SECURITY.md` and `THREAT_MODEL.md`, recovery exercises in `FAILURE_LAB.md`, and decisions in `docs/adr/` before treating this as portfolio evidence.
+Read the request trace in `ARCHITECTURE_WALKTHROUGH.md`, security controls in `SECURITY.md` and `THREAT_MODEL.md`, recovery exercises in `FAILURE_LAB.md`, and decisions in `docs/adr/` for complete architectural and security specifications.

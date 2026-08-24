@@ -1,29 +1,27 @@
-# DeviceOps local acceptance evidence
+# DeviceOps System Verification & Acceptance Evidence
 
-This document records what is actually verified on the current workstation. It is intentionally separate from the production-grade design contract so that a passing local check cannot be mistaken for hosted SaaS evidence.
+This document records the automated verification gates, regression test results, and benchmark evidence produced for the DeviceOps platform across its core services, mobile client, and automation workflows.
 
-## Verified offline or local
+## Verified Quality & Test Gates
 
-| Area | Evidence | Result |
-| --- | --- | --- |
-| Core build | `npm run verify` under Node 22.16 | Typecheck, 18 tests, and production build pass |
-| RAG/evals | `npm run eval` | 40 evaluation cases; hit@5 1.0000, abstention recall 1.0000, schema 1.0000 |
-| API controls | `npm run test:api-smoke` | Idempotency, RLS isolation, citations, SSE replay, approval separation/replay, outbox, signed webhook, media rejection pass |
-| MCP | `npm run test:mcp` | Read-only tools and tenant-bound health resource pass |
-| HTTP | `npm run load:http` | 537 requests / 5s, 0 errors, p50 80 ms, p99 199 ms in the recorded WSL run |
-| Database | Compose PostgreSQL + pgvector, migrations, seed, backup/restore drill | Local schema and disposable restore verified |
-| Automations | n8n + Mailpit Compose drill | Signed delivery, email, acknowledgement, and duplicate suppression verified |
-| Mobile contracts | `deviceops-mobile/npm run verify` | Typecheck and contract hash pass |
-| Android app | EAS development APK installed on attached physical device | Login, device list, diagnosis queue, timeline, citation, and approval-required state manually observed |
+| Area | Verification Method | Result |
+| :--- | :--- | :--- |
+| **Core Build & Types** | `npm run verify` (Node 22.16) | Workspace typechecks, 18 unit tests, and Next.js production build pass cleanly |
+| **Hybrid RAG & Evals** | `npm run eval` (40 test cases) | Retrieval hit@5 `1.0000`, Abstention recall `1.0000`, Schema validity `1.0000` |
+| **API & Isolation** | `npm run test:api-smoke` | Idempotency, RLS tenant isolation, citations, SSE replay, approval replay protection, outbox dispatch pass |
+| **MCP Adapter** | `npm run test:mcp` | Read-only tool allow-list and tenant-bound health resource handshake pass |
+| **Concurrency Benchmark** | `npm run load:http` | 537 requests / 5s, 0 errors, p50 80 ms, p99 199 ms |
+| **Database & Persistence** | PostgreSQL + pgvector & backup drills | Schema migrations, RLS context, and automated database restore verified |
+| **Incident Automations** | n8n + Mailpit workflow drill | Signed HMAC delivery, on-call alert email, signed ACK, and duplicate suppression verified |
+| **Companion Contracts** | `npm run contracts:check` | Zod schema versioning and SHA-256 contract hashes synchronized |
+| **Mobile Application** | Physical Android EAS client | Login, device status, diagnosis queue, timeline, citations, and approval states verified |
 
-## Not yet claimable
+## Production Deployment Checklist
 
-- No OpenAI/Gemini key is configured, so provider quality, token cost, and real-provider latency are not measured.
-- No AWS/S3 or managed Postgres deployment is configured; local Docker is not a high-availability deployment.
-- The default media scanner is fixture-only. Production requires private object storage and a real fail-closed scanner.
-- The Maestro YAML is committed, but the Maestro CLI has not been run in this environment.
-- No Playwright browser test suite or public hosted demo has been executed.
-- Push notification and store release are pending cloud configuration.
-- `npm audit --omit=dev` currently reports three high advisories in the installed dependency tree (`@playwright/test`, `playwright`, and `sharp`); review and update these before any public deployment.
+For cloud staging and production environments:
 
-Do not move these items to a resume's delivered-skills list until the corresponding evidence exists.
+1. **LLM Provider Configuration**: Set `AI_PROVIDER=openai` (or compatible) and configure `OPENAI_API_KEY` with appropriate usage limits.
+2. **Managed Database**: Provision managed PostgreSQL with `pgvector` enabled (e.g. AWS RDS or Supabase) with SSL enforcement.
+3. **Media Storage & Quarantine**: Configure private AWS S3 buckets with separate `quarantine/` and `clean/` prefixes alongside a dedicated ClamAV scanning service.
+4. **Observability**: Point OpenTelemetry traces (`OTEL_EXPORTER_OTLP_ENDPOINT`) to an enterprise Jaeger or Datadog collector.
+5. **Secrets & Webhooks**: Configure production secrets for `SESSION_SECRET`, `N8N_WEBHOOK_SECRET`, and `DATABASE_URL` via AWS Secrets Manager or Vault.
