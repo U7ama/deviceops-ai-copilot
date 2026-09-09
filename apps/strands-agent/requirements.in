@@ -1,0 +1,6 @@
+strands-agents[gemini]==1.54.0
+fastapi==0.141.1
+uvicorn==0.52.4
+boto3==1.43.89
+pydantic==2.13.5
+mcp==1.29.1

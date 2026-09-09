@@ -1,0 +1,141 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1320" viewBox="0 0 1800 1320" role="img" aria-labelledby="title desc">
+<title id="title">DeviceOps — Autonomous Incident Triage Agent architecture</title><desc id="desc">Device observations enter a tenant-scoped Next.js API. A PostgreSQL-backed worker detects incidents and invokes AWS Strands with Gemini. Seven read-only MCP tools retrieve evidence through the API. The backend controls approval, simulator execution and verified recovery. Bedrock and Titan are optional account-blocked paths.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#56718f"/></marker><marker id="optional" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9a7a3d"/></marker></defs>
+<g font-family="Arial, Helvetica, sans-serif">
+<rect x="0" y="0" width="1800" height="1320" rx="0" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="0" y="0" width="1800" height="166" rx="0" fill="#112642" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="60" y="44" font-size="16" fill="#8fc9ff" font-weight="700">DEVICEOPS  /  PROFESSIONAL AGENTS</text>
+<text x="60" y="93" font-size="43" fill="#ffffff" font-weight="700">Autonomous Incident Triage Agent</text>
+<text x="60" y="133" font-size="22" fill="#d5e3f4" font-weight="400">Observe → investigate → authorize → act → verify. Built with the AWS Strands Agents SDK.</text>
+<rect x="40" y="191" width="420" height="851" rx="20" fill="#eaf0f8" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="60" y="223" font-size="17" fill="#284768" font-weight="700">01  DEVICE &amp; DELIVERY LAYER</text>
+<text x="60" y="248" font-size="16" fill="#41516b" font-weight="400">Controlled LAN / local notification services</text>
+<rect x="500" y="191" width="660" height="851" rx="20" fill="#eaf0f8" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="520" y="223" font-size="17" fill="#284768" font-weight="700">02  DEVICEOPS APPLICATION</text>
+<text x="520" y="248" font-size="16" fill="#41516b" font-weight="400">Next.js + TypeScript worker + PostgreSQL</text>
+<rect x="1200" y="191" width="560" height="851" rx="20" fill="#eaf0f8" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1220" y="223" font-size="17" fill="#284768" font-weight="700">03  AGENT &amp; MODEL LAYER</text>
+<text x="1220" y="248" font-size="16" fill="#41516b" font-weight="400">Private Python service + external model API</text>
+<path d="M250 405 V448" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M420 515 H475 V318 H540" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M820 413 V468" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M820 623 V678" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1100 510 H1240" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1480 468 V405" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1480 623 V668" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1240 740 H1178 V360 H1100" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1100 575 H1132 V943 H1100" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M785 848 V898" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M540 778 H455 V570 H420" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M605 848 V873 H250 V898" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M420 960 H478 V390 H540" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1718 550 H1743 V928 H1720" fill="none" stroke="#9a7a3d" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="7 6" marker-end="url(#optional)"/>
+<rect x="70" y="277" width="350" height="128" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="70" y="277" width="5" height="128" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="307" font-size="14" fill="#2263bb" font-weight="700">OBSERVATION SOURCES</text>
+<text x="94" y="339" font-size="25" fill="#132745" font-weight="700">Devices &amp; simulators</text>
+<text x="94" y="369" font-size="19" fill="#41516b" font-weight="400">LAN equipment: read-only probes</text>
+<text x="94" y="394" font-size="19" fill="#41516b" font-weight="400">Standalone HTTP simulator</text>
+<rect x="70" y="448" width="350" height="179" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="70" y="448" width="5" height="179" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="478" font-size="14" fill="#2263bb" font-weight="700">NODE.JS EDGE COLLECTOR</text>
+<text x="94" y="510" font-size="25" fill="#132745" font-weight="700">Normalize &amp; deliver</text>
+<text x="94" y="540" font-size="19" fill="#41516b" font-weight="400">Ping · SNMP system / ports · PJLink</text>
+<text x="94" y="565" font-size="19" fill="#41516b" font-weight="400">Encrypted vault + durable spool</text>
+<text x="94" y="590" font-size="19" fill="#41516b" font-weight="400">Outbound API + command journal</text>
+<rect x="70" y="674" width="350" height="145" rx="16" fill="#f5f8fc" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="705" font-size="14" fill="#547091" font-weight="700">INTEGRATION BOUNDARY</text>
+<text x="94" y="737" font-size="22" fill="#132745" font-weight="700">57-entry connector catalog</text>
+<text x="94" y="767" font-size="17" fill="#41516b" font-weight="400">4 adapters implemented; 53 planned.</text>
+<text x="94" y="793" font-size="17" fill="#41516b" font-weight="400">Physical/cloud writes disabled.</text>
+<rect x="70" y="898" width="350" height="124" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="70" y="898" width="5" height="124" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="928" font-size="14" fill="#2263bb" font-weight="700">LOCAL NOTIFICATIONS</text>
+<text x="94" y="960" font-size="25" fill="#132745" font-weight="700">n8n → Mailpit</text>
+<text x="94" y="990" font-size="19" fill="#41516b" font-weight="400">Email delivery + signed callback</text>
+<rect x="540" y="277" width="560" height="136" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="277" width="5" height="136" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="307" font-size="14" fill="#2263bb" font-weight="700">OPERATOR ENTRY POINT</text>
+<text x="564" y="339" font-size="25" fill="#132745" font-weight="700">Next.js operations UI + v2 API</text>
+<text x="564" y="369" font-size="19" fill="#41516b" font-weight="400">Sessions · tenant scope · manager approvals</text>
+<text x="564" y="394" font-size="19" fill="#41516b" font-weight="400">Collector ingestion · MCP tool endpoint</text>
+<rect x="540" y="468" width="560" height="155" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="468" width="5" height="155" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="498" font-size="14" fill="#2263bb" font-weight="700">AUTONOMOUS ORCHESTRATION</text>
+<text x="564" y="530" font-size="25" fill="#132745" font-weight="700">TypeScript operations worker</text>
+<text x="564" y="560" font-size="19" fill="#41516b" font-weight="400">Poll / detect / group by explicit topology</text>
+<text x="564" y="585" font-size="19" fill="#41516b" font-weight="400">PostgreSQL-backed pg-boss investigation jobs</text>
+<text x="564" y="610" font-size="19" fill="#41516b" font-weight="400">Built-in simulator + durable invocation budgets</text>
+<rect x="540" y="678" width="560" height="170" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="678" width="5" height="170" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="708" font-size="14" fill="#2263bb" font-weight="700">BACKEND OWNS AUTHORIZATION</text>
+<text x="564" y="740" font-size="25" fill="#132745" font-weight="700">Policy → execution → verification</text>
+<text x="564" y="770" font-size="19" fill="#41516b" font-weight="400">Service restart: automatic when policy allows</text>
+<text x="564" y="795" font-size="19" fill="#41516b" font-weight="400">Switch restart: manager approval + exact hash</text>
+<text x="564" y="820" font-size="19" fill="#41516b" font-weight="400">One command; 3 fresh healthy samples or escalate</text>
+<rect x="540" y="898" width="560" height="124" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="898" width="5" height="124" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="928" font-size="14" fill="#2263bb" font-weight="700">PERSISTENCE</text>
+<text x="564" y="960" font-size="25" fill="#132745" font-weight="700">PostgreSQL 17</text>
+<text x="564" y="990" font-size="19" fill="#41516b" font-weight="400">Tenant RLS · evidence · runbooks · jobs · audit</text>
+<rect x="1240" y="277" width="480" height="128" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1240" y="277" width="5" height="128" rx="2" fill="#216e65" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="307" font-size="14" fill="#216e65" font-weight="700">VERIFIED LIVE MODEL PATH</text>
+<text x="1264" y="339" font-size="25" fill="#132745" font-weight="700">Google Gemini API</text>
+<text x="1264" y="369" font-size="19" fill="#41516b" font-weight="400">gemini-3.7-flash · external to AWS</text>
+<text x="1264" y="394" font-size="19" fill="#41516b" font-weight="400">Quota-limited; no silent provider fallback</text>
+<rect x="1240" y="468" width="480" height="155" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1240" y="468" width="5" height="155" rx="2" fill="#216e65" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="498" font-size="14" fill="#216e65" font-weight="700">PYTHON / FASTAPI</text>
+<text x="1264" y="530" font-size="25" fill="#132745" font-weight="700">AWS Strands Agents SDK</text>
+<text x="1264" y="560" font-size="19" fill="#41516b" font-weight="400">Bounded reasoning + structured diagnosis</text>
+<text x="1264" y="585" font-size="19" fill="#41516b" font-weight="400">Isolated invocation process + usage limits</text>
+<text x="1264" y="610" font-size="19" fill="#41516b" font-weight="400">Proposes actions; cannot execute them</text>
+<rect x="1240" y="668" width="480" height="169" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1240" y="668" width="5" height="169" rx="2" fill="#216e65" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="698" font-size="14" fill="#216e65" font-weight="700">STDIO MCP → SCOPED API READS</text>
+<text x="1264" y="730" font-size="25" fill="#132745" font-weight="700">7 evidence tools</text>
+<text x="1264" y="760" font-size="19" fill="#41516b" font-weight="400">Incident · health · logs · topology</text>
+<text x="1264" y="785" font-size="19" fill="#41516b" font-weight="400">Recent changes · runbooks · capabilities</text>
+<text x="1264" y="810" font-size="19" fill="#41516b" font-weight="400">Short-lived invocation grant; no device secrets</text>
+<rect x="1240" y="898" width="480" height="124" rx="16" fill="#fffaf0" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray="7 5"/>
+<rect x="1240" y="898" width="5" height="124" rx="2" fill="#9a7a3d" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="928" font-size="14" fill="#9a7a3d" font-weight="700">OPTIONAL / ACCOUNT-BLOCKED</text>
+<text x="1264" y="960" font-size="25" fill="#132745" font-weight="700">Amazon Bedrock + Titan</text>
+<text x="1264" y="990" font-size="19" fill="#41516b" font-weight="400">Nova reasoning; Titan semantic runbooks</text>
+<rect x="468" y="283" width="93.60000000000001" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="477" y="300" font-size="15" fill="#4e6280" font-weight="600">telemetry</text>
+<rect x="826" y="426" width="144.0" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="835" y="443" font-size="15" fill="#4e6280" font-weight="600">persisted state</text>
+<rect x="1101" y="473" width="110.4" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1110" y="490" font-size="15" fill="#4e6280" font-weight="600">investigate</text>
+<rect x="1484" y="422" width="93.60000000000001" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1493" y="439" font-size="15" fill="#4e6280" font-weight="600">inference</text>
+<rect x="1484" y="634" width="102.0" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1493" y="651" font-size="15" fill="#4e6280" font-weight="600">tool calls</text>
+<rect x="1177" y="841" width="278.40000000000003" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1186" y="858" font-size="15" fill="#4e6280" font-weight="600">MCP reads use tenant-scoped API</text>
+<rect x="547" y="644" width="169.20000000000002" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="556" y="661" font-size="15" fill="#4e6280" font-weight="600">validated proposal</text>
+<rect x="75" y="637" width="228.0" height="24" rx="5" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="84" y="654" font-size="15" fill="#4e6280" font-weight="600">↑ simulator-only commands</text>
+<text x="60" y="1074" font-size="14" fill="#2263bb" font-weight="700">RETRIEVAL</text>
+<text x="180" y="1074" font-size="18" fill="#41516b" font-weight="400">Gemini uses lexical runbook search. Optional Titan vectors are evaluated in the service; no hosted vector database is claimed.</text>
+<rect x="60" y="1100" width="1680" height="120" rx="18" fill="#112642" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="86" y="1133" font-size="14" fill="#8fc9ff" font-weight="700">END-TO-END INCIDENT LIFECYCLE</text>
+<text x="86" y="1177" font-size="22" fill="#ffffff" font-weight="700">Observe</text>
+<text x="281" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="321" y="1177" font-size="22" fill="#ffffff" font-weight="700">Detect &amp; group</text>
+<text x="516" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="556" y="1177" font-size="22" fill="#ffffff" font-weight="700">Investigate</text>
+<text x="751" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="791" y="1177" font-size="22" fill="#ffffff" font-weight="700">Authorize</text>
+<text x="986" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="1026" y="1177" font-size="22" fill="#ffffff" font-weight="700">Execute</text>
+<text x="1221" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="1261" y="1177" font-size="22" fill="#ffffff" font-weight="700">Verify</text>
+<text x="1456" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="1496" y="1177" font-size="22" fill="#ffffff" font-weight="700">Report / notify</text>
+<text x="60" y="1254" font-size="14" fill="#547091" font-weight="700">VERIFICATION SNAPSHOT  ·  08 SEP 2026</text>
+<text x="60" y="1284" font-size="18" fill="#41516b" font-weight="400">4 live Gemini scenarios passed on synthetic devices. Failed-recovery logic has automated coverage; its live-model run remains quota-blocked.</text>
+</g></svg>

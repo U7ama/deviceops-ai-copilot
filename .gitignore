@@ -12,3 +12,7 @@ coverage/
 test-results/
 playwright-report/
 evidence/generated/
+
+.venv/
+__pycache__/
+.pytest_cache/

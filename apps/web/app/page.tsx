@@ -166,13 +166,13 @@ export default function DashboardPage() {
     </section>
     <aside className="panel status-card">
       {(() => { const selected = devices.find((device) => device.id === selectedDeviceId); const status = selected?.status; return <>
-      <div className="panel-heading"><div><span className="eyebrow">Read-only tool</span><h3>Live status</h3></div><span className={status?.online === false ? 'status offline' : 'status online'}>● {status?.online === false ? 'offline' : 'online'}</span></div>
+      <div className="panel-heading"><div><span className="eyebrow">Read-only tool</span><h3>Device snapshot</h3></div><span className={status?.online === true ? 'status online' : status?.online === false ? 'status offline' : 'status muted'}>● {status?.online === true ? 'online' : status?.online === false ? 'offline' : 'unknown'}</span></div>
       <dl>
-        <div><dt>Power</dt><dd>{String(status?.powerState ?? 'loading')}</dd></div>
+        <div><dt>Power</dt><dd>{String(status?.powerState ?? 'not observed')}</dd></div>
         <div><dt>Input</dt><dd>{String(status?.input ?? 'not available')}</dd></div>
-        <div><dt>Observed</dt><dd>{status?.observedAt ? new Date(String(status.observedAt)).toLocaleString() : 'loading'}</dd></div>
+        <div><dt>Observed</dt><dd>{status?.observedAt ? new Date(String(status.observedAt)).toLocaleString() : 'not observed'}</dd></div>
       </dl>
-      <p className="small muted">Telemetry is isolated and server-authorized. The model cannot mutate unapproved state.</p>
+      <p className="small muted">Legacy synthetic snapshot, isolated by tenant. Open Operations for monitored observations, source provenance, and recovery verification.</p>
       </>; })()}
     </aside>
   </div>;

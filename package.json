@@ -2,7 +2,7 @@
   "name": "deviceops-ai-copilot",
   "version": "0.1.0",
   "private": true,
-  "license": "UNLICENSED",
+  "license": "MIT",
   "description": "Production-ready Applied AI platform for enterprise device-operations teams.",
   "engines": {
     "node": "22.16.0",
@@ -37,7 +37,13 @@
     "test:mcp": "node scripts/mcp-smoke.mjs",
     "stack:up": "docker compose up -d postgres n8n mailpit jaeger",
     "stack:down": "docker compose down",
-    "stack:status": "docker compose ps"
+    "stack:status": "docker compose ps",
+    "hackathon:env": "node scripts/hackathon-env.mjs",
+    "hackathon:preflight": "node scripts/hackathon-preflight.mjs",
+    "test:ops": "node --import tsx scripts/ops-integration.mts",
+    "test:ops-edge": "node --import tsx scripts/ops-edge-integration.mts",
+    "test:ops-grants": "node --import tsx scripts/ops-grants-integration.mts",
+    "test:ops-notifications": "node --import tsx scripts/ops-notifications-integration.mts"
   },
   "devDependencies": {
     "@playwright/test": "^1.54.2",

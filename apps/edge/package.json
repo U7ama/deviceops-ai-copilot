@@ -1,0 +1,1 @@
+{"name":"@deviceops/edge","version":"1.0.0","private":true,"type":"module","license":"MIT","scripts":{"start":"node --import tsx src/main.ts","simulator":"node --import tsx src/simulator-main.ts","typecheck":"tsc --noEmit -p tsconfig.json","test":"vitest run src"},"dependencies":{"@deviceops/connectors":"*"}}

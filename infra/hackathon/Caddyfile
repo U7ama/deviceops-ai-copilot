@@ -1,0 +1,9 @@
+:80 {
+    @authorized header X-DeviceOps-Origin {$DEVICEOPS_ORIGIN_SECRET}
+    handle @authorized {
+        reverse_proxy 127.0.0.1:3030
+    }
+    handle {
+        respond "Forbidden" 403
+    }
+}

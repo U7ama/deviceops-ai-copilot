@@ -1,0 +1,18 @@
+# Explicit Gemini mode; no AWS credential mount or provider fallback.
+services:
+  web:
+    environment:
+      OPS_AGENT_MODE: gemini
+  worker:
+    environment:
+      OPS_AGENT_MODE: gemini
+  strands:
+    profiles: !override [gemini]
+    secrets: !reset []
+    environment:
+      STRANDS_MODEL_PROVIDER: gemini
+      GEMINI_MODEL_ID: ${GEMINI_MODEL_ID:-gemini-3.7-flash}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:?Set GEMINI_API_KEY in private .env.hackathon}
+      GEMINI_USAGE_CONFIRMED: ${GEMINI_USAGE_CONFIRMED:-false}
+      AWS_SHARED_CREDENTIALS_FILE: !reset null
+      AWS_PROFILE: !reset null

@@ -4,7 +4,9 @@ import { StdioServerTransport } from '@modelcontextprotocol/sdk/server/stdio.js'
 import { CallToolRequestSchema, ListResourcesRequestSchema, ListToolsRequestSchema, ReadResourceRequestSchema } from '@modelcontextprotocol/sdk/types.js';
 import { getDeviceStatus, searchManualForActor } from '@deviceops/core';
 import type { SessionUser } from '@deviceops/contracts';
-import { logStructured } from '@deviceops/observability';
+import { createOperationsReader } from './reader.js';
+import { createOperationsMcp } from './operations.js';
+const logStructured = (event:string,data:Record<string,unknown>) => process.stderr.write(JSON.stringify({event,...data})+'\n');
 import { z } from 'zod';
 
 const Uuid = z.string().uuid();
@@ -66,7 +68,7 @@ export function createMcpAdapterServer(context: McpContext = readMcpContext()) {
 }
 
 if (process.argv[1]?.endsWith('index.js') || process.argv[1]?.endsWith('index.ts')) {
-  const server = createMcpAdapterServer();
+  const server = process.env.DEVICEOPS_MCP_GRANT ? createOperationsMcp() : process.env.DEVICEOPS_MCP_ACCESS_TOKEN ? createOperationsReader() : createMcpAdapterServer();
   await server.connect(new StdioServerTransport());
   logStructured('mcp.ready', { mode: 'read_only', tenantBound: true });
 }
