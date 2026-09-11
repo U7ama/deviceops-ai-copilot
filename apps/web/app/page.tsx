@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
+import Link from 'next/link';
 
 type User = {
   email: string;
@@ -22,6 +23,7 @@ type Device = {
 
 export default function DashboardPage() {
   const [user, setUser] = useState<User | null>(null);
+  const [authLoading, setAuthLoading] = useState(true);
   const [csrf, setCsrf] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -39,7 +41,7 @@ export default function DashboardPage() {
       setUser(body.user);
       const csrfResponse = await fetch('/api/v1/auth/csrf');
       if (csrfResponse.ok) setCsrf((await csrfResponse.json()).csrfToken);
-    }).catch(() => undefined);
+    }).catch(() => undefined).finally(() => setAuthLoading(false));
   }, []);
 
   useEffect(() => {
@@ -106,9 +108,13 @@ export default function DashboardPage() {
     }
   }
 
+  if (authLoading) {
+    return <section className="panel ops-empty" aria-busy="true" style={{ maxWidth: 420, margin: '48px auto', textAlign: 'center' }}>Connecting to workspace…</section>;
+  }
+
   if (!user) {
       return <section className="auth-card">
-      <div className="eyebrow">Enterprise AV Operations · DeviceOps Copilot</div>
+      <div className="eyebrow">Enterprise Infrastructure Operations · DeviceOps</div>
       <h2>Sign in to DeviceOps</h2>
       <p className="muted">Sign in to access tenant-scoped diagnostics, cited manual retrieval, and policy-constrained device operations.</p>
       <form onSubmit={login} className="stack">
@@ -160,19 +166,19 @@ export default function DashboardPage() {
         <label>Question or observed symptom<textarea value={question} onChange={(event) => setQuestion(event.target.value)} rows={5} required /></label>
         <div className="context-grid"><div><span className="label">Room</span><strong>{devices.find((device) => device.id === selectedDeviceId)?.room.name ?? 'Select a device'}</strong></div><div><span className="label">Device</span><select aria-label="Device" value={selectedDeviceId} onChange={(event) => setSelectedDeviceId(event.target.value)} required><option value="" disabled>Select a device</option>{devices.map((device) => <option key={device.id} value={device.id}>{device.name} · {device.model}</option>)}</select></div></div>
         <button disabled={busy || !selectedDeviceId} type="submit">{busy ? 'Queueing…' : 'Queue diagnosis'}</button>
-        {runId && <a className="run-link" href={`/runs/${runId}`}>Open run timeline →</a>}
+        {runId && <Link className="run-link" href={`/runs/${runId}`}>Open run timeline →</Link>}
       </form>
       {message && <p className="notice">{message}</p>}
     </section>
     <aside className="panel status-card">
       {(() => { const selected = devices.find((device) => device.id === selectedDeviceId); const status = selected?.status; return <>
-      <div className="panel-heading"><div><span className="eyebrow">Read-only tool</span><h3>Live status</h3></div><span className={status?.online === false ? 'status offline' : 'status online'}>● {status?.online === false ? 'offline' : 'online'}</span></div>
+      <div className="panel-heading"><div><span className="eyebrow">Read-only tool</span><h3>Device snapshot</h3></div><span className={status?.online === true ? 'status online' : status?.online === false ? 'status offline' : 'status muted'}>● {status?.online === true ? 'online' : status?.online === false ? 'offline' : 'unknown'}</span></div>
       <dl>
-        <div><dt>Power</dt><dd>{String(status?.powerState ?? 'loading')}</dd></div>
+        <div><dt>Power</dt><dd>{String(status?.powerState ?? 'not observed')}</dd></div>
         <div><dt>Input</dt><dd>{String(status?.input ?? 'not available')}</dd></div>
-        <div><dt>Observed</dt><dd>{status?.observedAt ? new Date(String(status.observedAt)).toLocaleString() : 'loading'}</dd></div>
+        <div><dt>Observed</dt><dd>{status?.observedAt ? new Date(String(status.observedAt)).toLocaleString() : 'not observed'}</dd></div>
       </dl>
-      <p className="small muted">Telemetry is isolated and server-authorized. The model cannot mutate unapproved state.</p>
+      <p className="small muted">Legacy synthetic snapshot, isolated by tenant. Open Operations for monitored observations, source provenance, and recovery verification.</p>
       </>; })()}
     </aside>
   </div>;

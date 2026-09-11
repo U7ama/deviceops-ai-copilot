@@ -1,3 +1,4 @@
+import { activeTenants, tickTenant, investigate, recoverInvocations, dispatchNotifications, processArtifacts } from '@deviceops/operations';
 import { processRun, resetRunForRetry } from "@deviceops/core";
 import { adminSql, closeDatabase, queue } from "@deviceops/db";
 import { logStructured, metrics } from "@deviceops/observability";
@@ -105,6 +106,41 @@ logStructured("worker.ready", { queues: ["process-run"] });
 for (const signal of ["SIGINT", "SIGTERM"] as const) {
   process.once(signal, () => {
     clearInterval(recoveryTimer);
+    clearInterval(opsTimer);
+    clearInterval(enterpriseTimer);
     void closeDatabase().finally(() => process.exit(0));
   });
 }
+
+// Operational incidents have their own durable queue; v1 diagnosis remains compatible.
+await boss.createQueue('ops-investigate', { retryLimit: 2, retryDelay: 5, expireInSeconds: 240 });
+await boss.work<{tenantId:string;incidentId:string}>('ops-investigate', {batchSize:1}, async jobs => {
+  for (const job of jobs) await investigate(job.data.tenantId, job.data.incidentId);
+});
+let opsTickBusy=false;
+async function operationsTick() {
+ if (opsTickBusy) return;
+ opsTickBusy=true;
+ try {
+  await recoverInvocations();
+  for (const tenant of await activeTenants()) {
+   for (const incidentId of await tickTenant(tenant.tenant_id)) {
+    await boss.send('ops-investigate',{tenantId:tenant.tenant_id,incidentId},{singletonKey:incidentId,retryLimit:2});
+   }
+  }
+  await dispatchNotifications();
+ } catch(error) { logStructured('ops.tick.failed',{error:error instanceof Error?error.message:'unknown'},'error'); }
+ finally {opsTickBusy=false;}
+}
+await operationsTick();
+const opsTimer=setInterval(()=>void operationsTick(),1000);
+opsTimer.unref();
+
+let enterpriseBusy = false;
+const enterpriseTimer = setInterval(async () => {
+ if (enterpriseBusy) return; enterpriseBusy = true;
+ try { for (const tenant of await activeTenants()) await processArtifacts(tenant.tenant_id); }
+ catch { logStructured('enterprise.processing_failed', { message: 'Evidence processing unavailable' }, 'error'); }
+ finally { enterpriseBusy = false; }
+}, 2000);
+enterpriseTimer.unref();

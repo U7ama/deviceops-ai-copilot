@@ -12,3 +12,14 @@ coverage/
 test-results/
 playwright-report/
 evidence/generated/
+
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+*.tsbuildinfo
+*.pyc
+*.pyo
+*Zone.Identifier
+Thumbs.db

@@ -1,0 +1,11 @@
+import assert from 'node:assert/strict';
+import {readFile,writeFile,mkdir} from 'node:fs/promises';
+import {runSandbox} from '../packages/operations/src/sandbox.js';
+process.env.OPS_SANDBOX_PROVIDER='local-container';
+const script=await readFile('fixtures/enterprise/analysis/acoustic-spectrum.py','utf8');
+const data=await readFile('fixtures/enterprise/fan-vibration.csv');
+const result=await runSandbox({operation:'analyze',files:[{name:'waveform.csv',data:data.toString('base64')}],script});
+assert.equal(result.exitCode,0);const metrics=JSON.parse(result.stdout!);assert.ok(Math.abs(metrics.dominantObservedHz-3200)<5);assert.equal(metrics.sampleRateHz,16000);assert.equal(result.artifacts?.length,1);
+await mkdir('.data/acoustic-check',{recursive:true});await writeFile('.data/acoustic-check/spectrum.png',Buffer.from(result.artifacts![0]!.data,'base64'));
+const nonuniform=await runSandbox({operation:'analyze',files:[{name:'waveform.csv',data:Buffer.from(data.toString().replace('0.00006250','0.00006000')).toString('base64')}],script});assert.notEqual(nonuniform.exitCode,0);
+console.log('PASS injected 3.2 kHz tone measured within FFT resolution; chart exported');console.log('PASS non-uniform timestamps rejected');console.log(JSON.stringify(metrics));

@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type EvalRun = {
   id: string;
@@ -15,6 +16,7 @@ type EvalRun = {
 
 export default function EvaluationsPage() {
   const [items, setItems] = useState<EvalRun[]>([]);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('Loading evaluation runs…');
   const [csrf, setCsrf] = useState('');
   const [queuing, setQueuing] = useState(false);
@@ -35,6 +37,8 @@ export default function EvaluationsPage() {
       setMessage('');
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not load evaluation runs.');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -81,15 +85,19 @@ export default function EvaluationsPage() {
     }
   }
 
+  if (loading) {
+    return <section className="panel ops-empty" aria-busy="true">Loading evaluation runs…</section>;
+  }
+
   if (message.includes('Sign in')) {
     return (
       <section className="auth-card">
-        <div className="eyebrow">Enterprise AV Operations · Evaluations</div>
+        <div className="eyebrow">Enterprise Infrastructure Operations · Evaluations</div>
         <h2>Sign in required</h2>
         <p className="muted">Please sign in to view benchmark evaluation datasets and runs.</p>
-        <a href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+        <Link href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
           Go to Sign In
-        </a>
+        </Link>
       </section>
     );
   }

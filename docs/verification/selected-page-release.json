@@ -1,0 +1,20 @@
+{
+  "checkedAt": "2026-09-10T03:53:01.338357+00:00",
+  "mode": "fixture",
+  "typescriptTests": 96,
+  "pythonTests": 51,
+  "deployedEnterpriseChecks": 14,
+  "sandboxChecks": 7,
+  "browser": "desktop/mobile including page 30 passed",
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "geminiAuthentication": "HTTP 401 model-list request; no inference attempted",
+  "webImage": "sha256:5847d466635fd57aee0457268743a4744c3f273a345f64510633964093a2fc1f",
+  "analysisImage": "sha256:08cbb674247b847abe4c29812036fdb83c9d29b60dc36a7d8300017f421270d9",
+  "strandsImage": "sha256:332fa89b48e69f525f0765fbdb0127d6b259fe58ce730fd59f16938e95c6a16b",
+  "sourceHashes": {
+    "packages/operations/src/artifacts.ts": "507f4e9ee5a0b35baf8696713ca282f3ce1d74a2018bab3a7181a2307322c69f",
+    "apps/analysis-sandbox/runner.py": "c606dcea4e2b148c17e01e6cd18775ee61f0070f5d720a6358bc94501d39bf21",
+    "apps/strands-agent/specialists.py": "f7651b2528f866067ae4544c49ebf3c6ab7da64158f05de15f3a649399600d46"
+  }
+}

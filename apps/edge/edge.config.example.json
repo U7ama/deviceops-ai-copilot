@@ -1,0 +1,11 @@
+{
+  "collectorId": "replace-with-backend-collector-id",
+  "allowedTargets": ["127.0.0.1/32"],
+  "pollIntervalMs": 5000,
+  "timeoutMs": 3000,
+  "concurrency": 4,
+  "targets": [
+    {"deviceId":"edge-switch","connectorId":"simulator-http","address":"127.0.0.1","port":4410,"sourceMode":"simulated","credentialRef":"simulator"},
+    {"deviceId":"edge-projector","connectorId":"simulator-http","address":"127.0.0.1","port":4410,"sourceMode":"simulated","credentialRef":"simulator"}
+  ]
+}

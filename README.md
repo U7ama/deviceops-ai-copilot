@@ -1,108 +1,80 @@
-# DeviceOps AI Copilot
+# DeviceOps — Autonomous Multi-Agent Operations & Incident Resolution for Enterprise Infrastructure
 
-Production-ready Applied AI platform for enterprise device-operations teams. It delivers a secure full-stack workflow: permission-filtered manual retrieval, validated citations, real-time edge telemetry, a bounded provider loop, server-derived approval, durable jobs/events, audit records, and signed n8n routing.
+DeviceOps is an evidence-backed autonomous operations and incident resolution platform for enterprise infrastructure. Built with AWS Strands Agents, it proactively detects telemetry drift, investigates incidents with domain specialists, requests human approval for disruptive actions, and verifies fresh telemetry before resolving incidents.
 
-> Source available for portfolio review; all rights reserved; no permission to reuse or redistribute.
+This repository contains a working synthetic incident workflow and a private Strands/Bedrock service. **Fixture mode is the default and uses deterministic logic, with no live AI claim.** Live reasoning requires verified AWS credits, model access, and configured credentials. Vendor compatibility is reported per connector; the full 57-entry catalog includes planned integrations.
 
-The platform supports both a deterministic built-in provider and an OpenAI-compatible adapter. Configure `AI_PROVIDER` and supply your API key to switch between them.
+## Run the local demonstration
 
-## Visual Architecture & System Tour
+Prerequisites: Node **22.16.0**, Docker with Compose, and Linux/WSL. Python 3.12 is needed only for host-side Strands tests or a host-run agent.
 
-### Core Web Workspace & Diagnostic Timeline
-| Diagnosis Workspace | Real-Time SSE Run Timeline & Citations |
-| :---: | :---: |
-| ![Diagnosis Workspace](docs/screenshots/01-diagnosis-workspace.png) | ![Run Timeline](docs/screenshots/02-run-timeline-citations.png) |
+```sh
+npm ci
+node scripts/hackathon-env.mjs
+node scripts/hackathon-preflight.mjs
+docker compose --env-file .env.hackathon -f compose.hackathon.yaml up -d postgres
+docker compose --env-file .env.hackathon -f compose.hackathon.yaml run --build --rm migrate
+docker compose --env-file .env.hackathon -f compose.hackathon.yaml run --rm seed
+docker build -t deviceops-analysis:local apps/analysis-sandbox
+docker compose --env-file .env.hackathon -f compose.hackathon.yaml -f compose.enterprise.yaml -f compose.media-scan.yaml up -d --build web worker
+```
 
-### Human-in-the-Loop Approvals & Incidents
-| Manager Approvals Queue | Incident Escalation Dashboard |
-| :---: | :---: |
-| ![Manager Approvals](docs/screenshots/03-manager-approvals-queue.png) | ![Incidents Dashboard](docs/screenshots/04-incidents-dashboard.png) |
+Open [localhost:3030](http://localhost:3030), sign in with `manager@alpha.test` and the generated `SEED_PASSWORD` from private `.env.hackathon`, then open `/operations`. The seed command also prints the demo credentials locally. Seed only a disposable demo database; reseeding resets fixture accounts and legacy test data.
 
-### Quality Evidence & Distributed Tracing
-| Automated 40-Case Evaluation Suite | Jaeger Distributed Traces (API & Worker) |
-| :---: | :---: |
-| ![Evaluations Suite](docs/screenshots/05-evaluations-benchmark-suite.png) | ![Jaeger Traces](docs/screenshots/07-jaeger-distributed-tracing-waterfall.png) |
+Use **Demo scenarios → Upstream switch failure**. The worker detects the fault and investigates. Review the exact switch-restart proposal, approve it, and observe recovery verification. Also try permitted service recovery, authentication failure, stale/conflicting sources, and acknowledged-but-failed recovery.
 
-## Connected Repositories
+The enterprise overlay adds the private analysis broker. The media-scan overlay adds ClamAV for arbitrary photo uploads; allow its health check to pass before capture testing. Images remain quarantined until scanning and parsing succeed. See [mobile and acoustic setup](docs/ACOUSTIC_AND_MOBILE.md).
 
-- 🖥️ **Core Monorepo (`deviceops-ai-copilot`)**: Current repository (Next.js 16, pgvector RAG, workers, MCP, Zod contracts, Jaeger tracing).
-- 📱 **Mobile Companion App**: [github.com/U7ama/deviceops-mobile](https://github.com/U7ama/deviceops-mobile) — Expo SDK 56 technician client with offline cache and durable SSE run polling.
-- ⚡ **Automations Adapter**: [github.com/U7ama/deviceops-automations](https://github.com/U7ama/deviceops-automations) — Version-controlled n8n incident routing with HMAC-signed webhooks and dead-letter handling.
+The standalone Compose file uses a separate project and private database volume. It binds the UI only to localhost and is a development demonstration. Stop it with the same Compose command followed by `down`; omit `--volumes` to preserve evidence.
 
-## Repository map
+See [the hackathon runbook](docs/HACKATHON.md) for host-run commands, optional Strands and notification setup, scenario expectations, submission work, and remaining verification gates.
 
-- `apps/web` — Next.js dashboard, cookie/mobile auth, CSRF, API v1, durable SSE replay, media quarantine endpoints, health/readiness/metrics.
-- `apps/worker` — pg-boss worker for durable diagnosis jobs and outbox recovery.
-- `apps/mcp` — explicitly tenant-bound, read-only MCP adapter; no model or MCP argument can choose a tenant.
-- `packages/core` — run state machine, hybrid retrieval, diagnosis persistence, approval and incident transaction boundaries.
-- `packages/contracts` — Zod request/output/event schemas and contract manifest.
-- `packages/db` — PostgreSQL access, RLS transaction context, append-only audit hash chain, checked-in migration.
-- `packages/ai` — deterministic mock and optional OpenAI-compatible provider with schema validation and usage ledger.
-- `packages/media` — provider abstraction, local ext4 quarantine store, fixture scanner, ClamAV adapter, and S3 contract.
-- [`deviceops-mobile`](https://github.com/U7ama/deviceops-mobile) — companion Expo technician client using mobile sessions and server-authoritative polling.
-- [`deviceops-automations`](https://github.com/U7ama/deviceops-automations) — importable n8n signed incident notification/ack workflow.
+## Architecture
 
-## Local verification
+![DeviceOps architecture](docs/diagrams/deviceops-architecture.png)
 
-Use Node 22.16 (`.nvmrc`) and keep data under WSL ext4. Docker Desktop must be running.
+[Diagram explanation and source](docs/ARCHITECTURE.md) · [SVG](docs/diagrams/deviceops-architecture.svg) · [PDF](docs/diagrams/deviceops-architecture.pdf)
 
-```bash
-source "$HOME/.nvm/nvm.sh" && nvm use 22.16.0
-cp .env.example .env
-docker compose up -d postgres
-npm install
-npm run db:migrate
-SEED_PASSWORD='your-secure-password' npm run db:seed
+## Implementation map
+
+| Component | Responsibility |
+| --- | --- |
+| `apps/web` | Existing authentication and API v1; new `/operations` UI and scoped API v2 |
+| `packages/operations` | Durable incidents, observations, approvals, evidence validation, commands, recovery, grants and model-budget ledger |
+| `apps/worker` | Continuous polling/detection, durable investigation jobs and notification dispatch |
+| `apps/strands-agent` | Bounded Python Strands/Bedrock reasoning and Titan embeddings; read-only MCP tools |
+| `apps/mcp` | Invocation-scoped tool proxy; separate legacy read-only adapter |
+| `packages/connectors` / `apps/edge` | Normalized adapters, local credential vault, bounded discovery, collector and protocol simulator |
+| `packages/db` | PostgreSQL migrations, tenant transaction context, RLS and audit records |
+
+The existing diagnosis workflow remains available. Historical screenshots and architecture documents describe that earlier workflow; they are not proof of the new autonomous path. The mobile companion remains separate and is not yet the required operational-approval client.
+
+## Verification and boundaries
+
+```sh
 npm run typecheck
 npm test
 npm run build --workspace @deviceops/web
+python3 -m venv apps/strands-agent/.venv
+apps/strands-agent/.venv/bin/pip install -r apps/strands-agent/requirements-dev.txt
+apps/strands-agent/.venv/bin/python -m pytest apps/strands-agent/tests -q
+apps/strands-agent/.venv/bin/python apps/strands-agent/export_schemas.py --check
 ```
 
-Run the web app and worker with `DATABASE_URL` and `DATABASE_ADMIN_URL` pointing to `127.0.0.1`, `AI_PROVIDER=mock`, and `N8N_WEBHOOK_SECRET` set to a local-only value. Then run:
+The implementation session exercised the operation workflow against native PostgreSQL 16 and tested the installed Strands SDK using deterministic model streams and a real local MCP transport. Check [the runbook](docs/HACKATHON.md) for recorded verification and unresolved checks. No live Bedrock evaluation, AWS deployment, hardware certification, or public submission is implied by passing offline tests.
 
-```bash
-npm run test:api-smoke
-npm run contracts:check
-```
+Read [integration statuses](docs/INTEGRATIONS.md), [the Strands service contract](apps/strands-agent/README.md), and [reviewable AWS infrastructure](infra/hackathon/README.md). Credentials remain outside model tools. Local deployment still sends selected evidence to Bedrock when live reasoning is enabled. Real device writes remain disabled for this submission.
 
-The API smoke test verifies idempotent run creation, RLS tenant isolation, citation-bearing diagnosis, durable event replay, separation of duties, approval replay protection, incident dispatch, transactional outbox events, and fail-closed media quarantine. A separate local Compose drill verifies the signed n8n workflow, Mailpit delivery, acknowledgement, and duplicate-delivery suppression.
+## License and provenance
 
-## Verified local evidence
+MIT; see [LICENSE](LICENSE). Third-party dependencies retain their own licenses. The root Git commit is `eadfcae9814ec5e10dc9a6361b48c419c3aa7ddb`, dated August 11, 2026, 17:43:27 PKT. Disclose incorporated pre-existing work in the submission; a commit date alone is not an eligibility ruling.
 
-The following verification evidence has been produced from this repository:
+Companion repositories: [DeviceOps Mobile](https://github.com/U7ama/deviceops-mobile) and [DeviceOps Automations](https://github.com/U7ama/deviceops-automations). They have their own setup and verification boundaries.
 
-- `npm run verify` — all workspace typechecks, 18 Vitest tests, and the Next.js/worker/MCP production build pass.
-- `npm run eval` — 40 deterministic cases; retrieval hit@5 `1.0000`, abstention recall `1.0000`, and diagnosis schema validity `1.0000`.
-- `npm run test:api-smoke` — idempotency, tenant isolation, separation of duties, durable SSE events, approval replay protection, signed webhook handling, outbox uniqueness, and infected-fixture rejection pass.
-- `npm run test:mcp` — read-only tools and tenant-bound health resource pass.
-- `npm run test:web:e2e` — a Playwright smoke flow is checked in under `tests/web`; install the pinned browser with `npx playwright install chromium` before running it on a workstation with browser-download access.
-- `npm run load:http` — local `/healthz` check recorded 537 requests in 5 seconds with 0 errors, p50 80 ms and p99 199 ms.
-- The companion Expo app has been installed as an EAS Android development build and exercised on a physical device: login, device status, diagnosis queue, durable timeline, citation display, and approval-required state were observed.
+Use [Gemini through Strands](docs/GEMINI.md) when selecting Google inference explicitly. Bedrock remains supported; no automatic provider fallback is enabled.
 
-The local HTTP and MCP checks verify their respective boundaries:
+## Five-pillar release
 
-```bash
-npm run load:http   # HTTP concurrency against /healthz
-npm run test:mcp    # stdio MCP handshake, tool allow-list, and tenant-bound health resource
-```
+See [enterprise release and verification](docs/ENTERPRISE_RELEASE.md) for specialist investigations, proactive anomalies, photo/PDF evidence, restricted analysis, memory, deployment settings and the recording script. Open the Enterprise tab in `/operations`. AWS adapters remain separately gated by actual service access.
 
-The HTTP benchmark validates local concurrency handling. The MCP smoke test verifies the adapter contract and read-only surface.
-
-## Backup and restore drill
-
-The repository includes host-client-free scripts that run PostgreSQL tools inside the pinned Compose image:
-
-```bash
-chmod +x scripts/backup.sh scripts/restore.sh
-backup=$(scripts/backup.sh | awk '{print $3}')
-scripts/restore.sh "$backup" deviceops_restore
-docker compose exec -T postgres psql -U postgres -d deviceops_restore -c 'select count(*) from tenants;'
-```
-
-Restore only into a disposable database. Production operations should send encrypted backups to separate storage, test a restore on a schedule, and record RPO/RTO results.
-
-## Operational boundary
-
-Local media uses a WSL-ext4 filesystem and fixture-only scanning. Arbitrary uploads remain quarantined unless their hash is explicitly allowlisted. Production must use private S3 quarantine/clean prefixes and a real ClamAV service (or a reviewed managed scanner); scanner errors fail closed. The local `compose.yaml` is a development stack, not an RPO/RTO or availability guarantee.
-
-Read the request trace in `ARCHITECTURE_WALKTHROUGH.md`, security controls in `SECURITY.md` and `THREAT_MODEL.md`, recovery exercises in `FAILURE_LAB.md`, and decisions in `docs/adr/` for complete architectural and security specifications.
+Recording and submission drafts: [word-for-word script](docs/RECORDING_SCRIPT.md) · [Devpost narrative](docs/DEVPOST_SUBMISSION.md). Both distinguish the verified fixture deployment from pending live-provider verification.

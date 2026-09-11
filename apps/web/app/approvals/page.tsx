@@ -1,6 +1,7 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
+import Link from 'next/link';
 
 type ApprovalItem = {
   id: string;
@@ -16,6 +17,7 @@ type ApprovalItem = {
 
 export default function ApprovalsPage() {
   const [items, setItems] = useState<ApprovalItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('Loading approvals…');
   const [csrf, setCsrf] = useState('');
   const [role, setRole] = useState('');
@@ -42,6 +44,8 @@ export default function ApprovalsPage() {
       setMessage('');
     } catch (error) {
       setMessage(error instanceof Error ? error.message : 'Could not load approvals.');
+    } finally {
+      setLoading(false);
     }
   }, []);
 
@@ -89,15 +93,19 @@ export default function ApprovalsPage() {
     }
   }
 
+  if (loading) {
+    return <section className="panel ops-empty" aria-busy="true">Loading approvals…</section>;
+  }
+
   if (!role && message.includes('Sign in')) {
     return (
       <section className="auth-card">
-        <div className="eyebrow">Enterprise AV Operations · Approvals</div>
+        <div className="eyebrow">Enterprise Infrastructure Operations · Approvals</div>
         <h2>Sign in required</h2>
         <p className="muted">Please sign in with a manager or operator account to view pending approvals.</p>
-        <a href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+        <Link href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
           Go to Sign In
-        </a>
+        </Link>
       </section>
     );
   }
@@ -131,7 +139,7 @@ export default function ApprovalsPage() {
                 <span className={`badge ${item.state}`}>{item.state.toUpperCase()}</span>
               </div>
               <p className="small muted">
-                Run ID: <a href={`/runs/${item.runId}`}>{item.runId}</a> · Expires:{' '}
+                Run ID: <Link href={`/runs/${item.runId}`}>{item.runId}</Link> · Expires:{' '}
                 {new Date(item.expiresAt).toLocaleString()}
               </p>
               <p>

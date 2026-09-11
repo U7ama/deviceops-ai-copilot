@@ -1,0 +1,23 @@
+import {test,expect} from '@playwright/test';
+test('authenticated enterprise dashboard shows verified local evidence',async({page},testInfo)=>{
+ test.setTimeout(90000);test.skip(!process.env.OPS_TEST_PASSWORD,'Requires disposable test account');
+ await page.goto('/');await page.getByLabel('Email').fill('manager@alpha.test');await page.getByLabel('Password',{exact:true}).fill(process.env.OPS_TEST_PASSWORD!);
+ await page.getByRole('button',{name:'Sign in',exact:true}).click();await expect(page.getByRole('heading',{name:'Technician diagnosis workspace'})).toBeVisible();
+ await page.getByRole('link',{name:'Operations',exact:true}).click();await page.getByRole('button',{name:'enterprise',exact:true}).click();
+ await expect(page.getByRole('heading',{name:'Proactive anomalies',exact:true})).toBeVisible();
+ await expect(page.getByRole('heading',{name:'Organizational memory',exact:true})).toBeVisible();
+ await expect(page.getByRole('img',{name:'Campus device dependency map'})).toBeVisible();
+ await page.getByRole('button',{name:'Replay synthetic optical loss',exact:true}).click();
+ await expect(page.getByRole('heading',{name:/opticalRxPower/i}).first()).toBeVisible();
+ await expect(page.getByRole('button',{name:'Stop operations',exact:true})).toBeVisible();
+ await expect(page.getByRole('img',{name:'Observed metric trend'}).first()).toBeVisible();
+ await expect(page.getByText('Analysis complete',{exact:true}).first()).toBeVisible();
+ const evidence=await page.evaluate(async()=>{const r=await fetch('/api/v2/enterprise');const data=await r.json();return data.artifacts.find((a:any)=>a.name==='optical-manual-30-pages.pdf'&&a.status==='ready'&&a.renderedPages.includes(30));});
+ expect(evidence).toBeTruthy();
+ await page.getByRole('combobox',{name:'Incident',exact:true}).selectOption(evidence.incidentId);
+ await expect(page.getByRole('img',{name:'Evidence optical-manual-30-pages.pdf, page 30',exact:true})).toBeVisible();
+ await page.screenshot({path:testInfo.outputPath('enterprise-desktop.png'),fullPage:true});
+ await page.setViewportSize({width:390,height:844});
+ expect(await page.evaluate(()=>document.documentElement.scrollWidth<=window.innerWidth)).toBe(true);
+ await page.screenshot({path:testInfo.outputPath('enterprise-mobile.png'),fullPage:true});
+});

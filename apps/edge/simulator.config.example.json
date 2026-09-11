@@ -1,0 +1,4 @@
+[
+  {"deviceId":"edge-switch","kind":"switch"},
+  {"deviceId":"edge-projector","kind":"device","upstreamDeviceId":"edge-switch"}
+]
