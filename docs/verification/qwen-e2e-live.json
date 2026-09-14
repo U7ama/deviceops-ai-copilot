@@ -1,0 +1,36 @@
+{
+  "provider": "strands-qwen",
+  "modelId": "qwen3.8-flash",
+  "scope": "Live end-to-end Qwen3.8-Flash multi-specialist investigation on live Docker stack via MCP transport and PostgreSQL state",
+  "invocationId": "1d1c69eb-c15b-4a6d-b889-8b44743b43a0",
+  "incidentId": "541daa1b-5b27-4851-ae50-8a4e301e17db",
+  "rootDeviceId": "6dbe3967-567e-4aaa-8955-b5a01d566878",
+  "usage": {
+    "modelCalls": 5,
+    "inputTokens": 55167,
+    "outputTokens": 3549
+  },
+  "toolCalls": 7,
+  "nominalCostUsd": 0.009943,
+  "enterprise": {
+    "version": "enterprise.v1",
+    "status": "complete",
+    "findingsCount": 2,
+    "criticRequiresEscalation": false
+  },
+  "proposedAction": {
+    "name": "restart_service",
+    "targetDeviceId": "6dbe3967-567e-4aaa-8955-b5a01d566878",
+    "arguments": {}
+  },
+  "verificationDurationMs": 77567,
+  "liveTransport": "MCP stdio via mcp_guard.py to /api/v2/internal/tools",
+  "stateRecord": "PostgreSQL 17 ops_invocations completed, ops_records and ops_events committed",
+  "limitations": [
+    "Run in local development compose stack (compose.qwen-dev.yaml) against simulated edge gateway",
+    "Vendor physical hardware unverified (simulated device runtime)",
+    "Recorded evidence establishes investigation and proposed action, not approval, command execution or independently verified recovery.",
+    "Reproduction script restored at scripts/test-qwen-e2e.mts (requires live Qwen provider call to execute).",
+    "nominalCostUsd is an estimate at configured rates, not a verified invoice or complete account quota measurement."
+  ]
+}

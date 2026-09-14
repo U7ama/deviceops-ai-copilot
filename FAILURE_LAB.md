@@ -1,6 +1,6 @@
 # Failure lab
 
-These are exercises to run and explain before making portfolio claims. Each should leave an observable event, metric, audit entry, or safe error.
+These are exercises to run and explain before making hackathon demonstration or verification claims. Each should leave an observable event, metric, audit entry, or safe error.
 
 | Exercise | Expected control |
 | --- | --- |

@@ -1,0 +1,36 @@
+{
+  "checkedAt": "2026-09-09T17:44:49.134765+00:00",
+  "mode": "fixture",
+  "typescriptTests": 96,
+  "pythonTests": 50,
+  "originalApiChecks": 14,
+  "deployedEnterpriseChecks": 13,
+  "browser": "desktop and mobile passed",
+  "typecheck": "passed",
+  "productionBuild": "passed",
+  "cleanDependencyBuild": "stalled during npm ci; local images refreshed from matching verified dependencies",
+  "webImage": "sha256:dad690249baf001d87e4fd0b725af6571c024f492fc43c5f71cde1dadc7b54f2",
+  "strandsImage": "sha256:a48bef70f2628ff569abb2f27375e29772f701af5fbfff518ff6f848b923b700",
+  "liveProbe": {
+    "provider": "gemini",
+    "status": 401,
+    "classification": "provider_access_denied",
+    "commands": 0,
+    "automaticRetry": false,
+    "conservativeReservationUsd": 0.27
+  },
+  "awsResourcesCreated": false,
+  "features": [
+    "downward optical dBm detector and replay",
+    "stored dependency map and deterministic impact policy",
+    "page-ranked PDF evidence",
+    "synthetic floorplan evidence"
+  ],
+  "sourceHashes": {
+    "packages/operations/src/enterprise.ts": "44ee21b940ea103eef484b94a38293f06c9ea0db1eac983e5bcba71e5e21760b",
+    "packages/operations/src/domain.ts": "ca5f868072a6768aaea63fdba6181f0f96468d5c28bd87db9cc5331b49b9dbbe",
+    "packages/operations/src/index.ts": "15e412fcc8e3d632fbd9e51d6d3546423eec6d64c3a7bb2e8a786978730c6b46",
+    "apps/web/app/operations/enterprise-panel.tsx": "b8e69e5aa4abf8f4b0cdff7dca83695f39d06988fb1b1dbd108a65b952d53940"
+  },
+  "mcpGrantChecks": "4 passed"
+}

@@ -59,7 +59,7 @@ async function expectStatus(response, status, label) {
 }
 
 async function main() {
-  const technician = await login("tech@alpha.test");
+  const technician = await login("tariq@deviceops.cloud");
   const createHeaders = { "idempotency-key": idempotencyKey };
   const createdResponse = await expectStatus(
     await request(technician, "/api/v1/runs", {
@@ -140,14 +140,14 @@ async function main() {
     "separation of duties"
   );
 
-  const betaTechnician = await login("tech@beta.test");
+  const betaTechnician = await login("bilal@deviceops.cloud");
   await expectStatus(
     await request(betaTechnician, `/api/v1/runs/${created.runId}`),
     404,
     "cross-tenant run lookup"
   );
 
-  const manager = await login("manager@alpha.test");
+  const manager = await login("usamaaslam8726@gmail.com");
   const approvedResponse = await expectStatus(
     await request(manager, `/api/v1/approvals/${approvalEvent.data.approvalId}/decision`, {
       method: "POST",

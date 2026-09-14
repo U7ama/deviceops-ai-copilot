@@ -1,0 +1,44 @@
+# Stage 1: Build Node dependencies natively on host architecture (fast, no QEMU timeout)
+FROM --platform=$BUILDPLATFORM node:22.16.0-bookworm-slim AS node-deps
+WORKDIR /app
+COPY package.json package-lock.json ./
+COPY packages ./packages
+COPY apps/mcp ./apps/mcp
+COPY scripts ./scripts
+COPY tsconfig.base.json ./
+RUN npm ci --include=dev --ignore-scripts --cpu=arm64 --os=linux
+
+# Stage 2: Target ARM64 Node binaries
+FROM --platform=linux/arm64 node:22.16.0-bookworm-slim AS node-arm64
+
+# Stage 3: Target ARM64 Python runtime
+FROM --platform=linux/arm64 python:3.12-slim-bookworm
+
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    NODE_ENV=production \
+    STRANDS_TRANSPORT=http \
+    PORT=8080
+
+WORKDIR /app
+
+# Copy Node.js ARM64 binary and global modules
+COPY --from=node-arm64 /usr/local/bin/node /usr/local/bin/node
+COPY --from=node-arm64 /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm
+
+# Copy workspace and pre-installed ARM64 node_modules from native builder
+COPY --from=node-deps /app /app
+COPY apps/strands-agent ./apps/strands-agent
+
+# Install Python requirements (downloads pre-built ARM64 manylinux wheels directly) and create unprivileged user
+RUN pip install --timeout 60 --retries 2 --no-cache-dir -r apps/strands-agent/requirements.txt \
+    && useradd --create-home --uid 10001 agent
+
+USER agent
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=3s CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/ping', timeout=2)"
+
+CMD ["python", "-m", "uvicorn", "agentcore_app:app", "--app-dir", "apps/strands-agent", "--host", "0.0.0.0", "--port", "8080", "--workers", "1", "--no-access-log"]

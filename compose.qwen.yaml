@@ -1,0 +1,24 @@
+# Explicit Qwen mode; no AWS credential mount or provider fallback.
+services:
+  web:
+    environment:
+      OPS_AGENT_MODE: qwen
+      AGENT_MAX_INPUT_TOKENS: ${AGENT_MAX_INPUT_TOKENS:-500000}
+      OPS_INVESTIGATION_WORKFLOW: ${OPS_INVESTIGATION_WORKFLOW:-specialists}
+  worker:
+    environment:
+      OPS_AGENT_MODE: qwen
+      AGENT_MAX_INPUT_TOKENS: ${AGENT_MAX_INPUT_TOKENS:-500000}
+      OPS_INVESTIGATION_WORKFLOW: ${OPS_INVESTIGATION_WORKFLOW:-specialists}
+  strands:
+    profiles: !override [qwen]
+    secrets: !reset []
+    environment:
+      STRANDS_MODEL_PROVIDER: qwen
+      AGENT_MAX_INPUT_TOKENS: ${AGENT_MAX_INPUT_TOKENS:-500000}
+      QWEN_BASE_URL: ${QWEN_BASE_URL:-https://dashscope-intl.aliyuncs.com/compatible-mode/v1}
+      QWEN_MODEL_ID: ${QWEN_MODEL_ID:-qwen3.7-max}
+      ABQWEN_API_KEY: ${ABQWEN_API_KEY:?Set ABQWEN_API_KEY in private .env.hackathon}
+      QWEN_USAGE_CONFIRMED: ${QWEN_USAGE_CONFIRMED:-false}
+      AWS_SHARED_CREDENTIALS_FILE: !reset null
+      AWS_PROFILE: !reset null

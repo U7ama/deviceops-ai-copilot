@@ -1,0 +1,10 @@
+FROM docker:27-cli AS dockercli
+FROM node:22.16.0-bookworm-slim
+WORKDIR /app
+COPY --from=dockercli /usr/local/bin/docker /usr/local/bin/docker
+COPY apps/sandbox-broker/src/index.ts /app/broker.ts
+COPY packages/operations/src/sandbox.ts /app/sandbox.ts
+RUN sed -i 's@../../../packages/operations/src/sandbox.js@./sandbox.ts@' /app/broker.ts
+ENV NODE_ENV=production OPS_SANDBOX_PROVIDER=local-container
+EXPOSE 8091
+CMD ["node","--experimental-strip-types","/app/broker.ts"]

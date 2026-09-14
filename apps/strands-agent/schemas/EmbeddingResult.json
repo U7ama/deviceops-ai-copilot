@@ -1,0 +1,31 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "inputTokens": {
+      "minimum": 0,
+      "title": "Inputtokens",
+      "type": "integer"
+    },
+    "modelId": {
+      "title": "Modelid",
+      "type": "string"
+    },
+    "vectors": {
+      "items": {
+        "items": {
+          "type": "number"
+        },
+        "type": "array"
+      },
+      "title": "Vectors",
+      "type": "array"
+    }
+  },
+  "required": [
+    "vectors",
+    "modelId",
+    "inputTokens"
+  ],
+  "title": "EmbeddingResult",
+  "type": "object"
+}

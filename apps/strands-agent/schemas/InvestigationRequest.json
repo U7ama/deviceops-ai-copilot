@@ -1,0 +1,41 @@
+{
+  "additionalProperties": false,
+  "properties": {
+    "grantToken": {
+      "maxLength": 8192,
+      "minLength": 16,
+      "title": "Granttoken",
+      "type": "string"
+    },
+    "incidentId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "title": "Incidentid",
+      "type": "string"
+    },
+    "invocationId": {
+      "maxLength": 128,
+      "minLength": 1,
+      "pattern": "^[A-Za-z0-9_.:-]+$",
+      "title": "Invocationid",
+      "type": "string"
+    },
+    "workflow": {
+      "default": "single",
+      "enum": [
+        "single",
+        "specialists"
+      ],
+      "title": "Workflow",
+      "type": "string"
+    }
+  },
+  "required": [
+    "invocationId",
+    "incidentId",
+    "grantToken"
+  ],
+  "title": "InvestigationRequest",
+  "type": "object"
+}

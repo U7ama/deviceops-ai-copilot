@@ -1,0 +1,22 @@
+# Local development only: cached images plus read-only source/client mounts.
+services:
+  web:
+    volumes:
+      - ./apps/web/app:/app/apps/web/app:ro
+      - ./apps/web/public:/app/apps/web/public:ro
+      - ./packages/operations/src:/app/packages/operations/src:ro
+  worker:
+    volumes:
+      - ./apps/worker/src:/app/apps/worker/src:ro
+      - ./packages/operations/src:/app/packages/operations/src:ro
+      - ./packages/connectors/src:/app/packages/connectors/src:ro
+  strands:
+    environment:
+      PYTHONPATH: /opt/qwen-deps
+    volumes:
+      - ./apps/strands-agent:/app/apps/strands-agent:ro
+      - ./apps/mcp/src:/app/apps/mcp/src:ro
+      - ./packages/operations/src:/app/packages/operations/src:ro
+      - ./apps/strands-agent/.venv/lib/python3.12/site-packages/openai:/opt/qwen-deps/openai:ro
+      - ./apps/strands-agent/.venv/lib/python3.12/site-packages/jiter:/opt/qwen-deps/jiter:ro
+      - ./apps/strands-agent/.venv/lib/python3.12/site-packages/tqdm:/opt/qwen-deps/tqdm:ro

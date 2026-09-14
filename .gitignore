@@ -12,3 +12,21 @@ coverage/
 test-results/
 playwright-report/
 evidence/generated/
+
+.venv/
+**/.venv/
+__pycache__/
+**/__pycache__/
+.pytest_cache/
+*.tsbuildinfo
+*.pyc
+*.pyo
+*Zone.Identifier
+Thumbs.db
+
+# Internal deployment & author notes (do not confuse hackathon judges)
+docs/AGENTCORE_DEPLOYMENT_GUIDE.md
+docs/SUBMISSION_CHECKLIST.md
+docs/ENTERPRISE_RELEASE.md
+docs/VIDEO_NARRATION.md
+docs/RECORDING_SCRIPT.md

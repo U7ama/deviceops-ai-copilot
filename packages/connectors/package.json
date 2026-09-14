@@ -1,0 +1,1 @@
+{"name":"@deviceops/connectors","version":"1.0.0","private":true,"type":"module","license":"MIT","exports":{".":"./src/index.ts"},"scripts":{"typecheck":"tsc --noEmit -p tsconfig.json","test":"vitest run src"},"dependencies":{"net-snmp":"^3.20.0"}}

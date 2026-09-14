@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="64" height="64">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0f172a"/>
+      <stop offset="100%" stop-color="#020617"/>
+    </linearGradient>
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8"/>
+      <stop offset="100%" stop-color="#2563eb"/>
+    </linearGradient>
+    <linearGradient id="mintGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399"/>
+      <stop offset="100%" stop-color="#10b981"/>
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="0.8" result="blur"/>
+      <feComposite in="SourceGraphic" in2="blur" operator="over"/>
+    </filter>
+  </defs>
+  
+  <!-- Base squircle -->
+  <rect width="32" height="32" rx="7" fill="url(#bg)"/>
+  <rect x="0.5" y="0.5" width="31" height="31" rx="6.5" fill="none" stroke="rgba(255,255,255,0.14)"/>
+  
+  <!-- Stylized DeviceOps D pillar & loop -->
+  <rect x="6.5" y="7" width="3.8" height="18" rx="1.9" fill="url(#primaryGrad)"/>
+  <path d="M 9.5 8.8 H 16.5 C 21.8 8.8, 25.2 11.8, 25.2 16 C 25.2 20.2, 21.8 23.2, 16.5 23.2 H 9.5" 
+        fill="none" stroke="url(#primaryGrad)" stroke-width="3.4" stroke-linecap="round"/>
+        
+  <!-- Center live diagnostic beacon -->
+  <circle cx="16.2" cy="16" r="2.8" fill="url(#mintGrad)" filter="url(#glow)"/>
+</svg>

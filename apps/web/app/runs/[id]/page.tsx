@@ -1,11 +1,14 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
+import { useToast } from '../../components/Toast';
 
 type Run = { id: string; state: string; question: string; roomName: string; deviceName: string; diagnosis: any; };
 type EventItem = { sequence: string; type: string; data: Record<string, any>; occurredAt: string };
 
 export default function RunTimelinePage({ params }: { params: Promise<{ id: string }> }) {
+  const { showToast } = useToast();
   const [runId, setRunId] = useState('');
   const [run, setRun] = useState<Run | null>(null);
   const [events, setEvents] = useState<EventItem[]>([]);
@@ -40,15 +43,38 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
   }, [runId]);
 
   async function decide(approvalId: string, proposalHash: string) {
-    setDecisionBusy(true); setMessage('Submitting server-side approval…');
-    const response = await fetch(`/api/v1/approvals/${approvalId}/decision`, {
-      method: 'POST', headers: { 'content-type': 'application/json', origin: window.location.origin, 'x-csrf-token': csrf },
-      body: JSON.stringify({ decision: 'approved', reason: 'Approved via operator authorization workspace', proposalHash })
-    });
-    const body = await response.json();
-    setMessage(response.ok ? `Incident ${body.incidentId} was created exactly once.` : (body.detail ?? 'Approval was rejected.'));
-    if (response.ok) setRun((current) => current ? { ...current, state: 'completed' } : current);
-    setDecisionBusy(false);
+    setDecisionBusy(true);
+    setMessage('Submitting server-side approval…');
+    try {
+      const response = await fetch(`/api/v1/approvals/${approvalId}/decision`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          origin: window.location.origin,
+          'x-csrf-token': csrf
+        },
+        body: JSON.stringify({
+          decision: 'approved',
+          reason: 'Approved via operator authorization workspace',
+          proposalHash
+        })
+      });
+      const body = await response.json();
+      const msg = response.ok
+        ? `Incident ${body.incidentId} was created exactly once.`
+        : (body.detail ?? 'Approval was rejected.');
+      setMessage(msg);
+      showToast(response.ok ? 'success' : 'error', msg);
+      if (response.ok) {
+        setRun((current) => current ? { ...current, state: 'completed' } : current);
+      }
+    } catch (error) {
+      const errMsg = error instanceof Error ? error.message : 'Network failure submitting approval.';
+      setMessage(errMsg);
+      showToast('error', errMsg);
+    } finally {
+      setDecisionBusy(false);
+    }
   }
 
   const approval = events.find((event) => event.type === 'approval.required');
@@ -57,18 +83,18 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
   if (!role && message.includes('not available')) {
     return (
       <section className="auth-card">
-        <div className="eyebrow">Enterprise AV Operations · Run Timeline</div>
+        <div className="eyebrow">Enterprise Infrastructure Operations · Run Timeline</div>
         <h2>Sign in required</h2>
         <p className="muted">Please sign in to view this diagnostic run timeline.</p>
-        <a href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+        <Link href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
           Go to Sign In
-        </a>
+        </Link>
       </section>
     );
   }
 
   return <section>
-    <a href="/">← Back to workspace</a>
+    <Link href="/diagnosis">← Back to workspace</Link>
     <div className="eyebrow" style={{ marginTop: 28 }}>Durable run timeline</div>
     <h2>{run?.deviceName ?? 'Diagnosis run'}</h2>
     {message && <p className="notice">{message}</p>}

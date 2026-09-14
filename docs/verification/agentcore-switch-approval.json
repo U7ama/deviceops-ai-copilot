@@ -1,0 +1,388 @@
+{
+  "runtimeArn": "arn:aws:bedrock-agentcore:us-east-1:705384652382:runtime/deviceops_strands_bounded-22yEC79ykp",
+  "approvalMethod": "authenticated manager API; UI workflow verified",
+  "preApprovalNoCommands": true,
+  "approval": {
+    "id": "117c7d3b-6a16-4626-98ec-549d86111ee7",
+    "proposalHash": "083ba7912cdac09b78be595580619f3836393d8487b5a1c8beef56c3243168f2",
+    "actionName": "restart_switch"
+  },
+  "elapsedSeconds": 114.3,
+  "incidents": [
+    {
+      "id": "62008046-4585-4518-9cad-8653bca08386",
+      "cause": "Local switch failure (unreachable, 0 ports up) on root Core Distribution Switch causing complete downstream network outage. Specific root cause (power vs hardware vs firmware) cannot be distinguished from available telemetry but does not affect prescribed remediation per runbook.",
+      "report": {
+        "cause": "Local switch failure (unreachable, 0 ports up) on root Core Distribution Switch causing complete downstream network outage. Specific root cause (power vs hardware vs firmware) cannot be distinguished from available telemetry but does not affect prescribed remediation per runbook.",
+        "title": "Core Distribution Switch (8a04af0f-762b-46ac-89c9-b03b9533fdb7) is offline and unreachable with 0 ports up, confirmed by eight consecutive fresh error observations spanning 07:33:17Z to 07:34:22Z. As the root switch with no upstream dependencies, this local failure causes total loss of connectivity for all four downstream devices linked via confirmed topology relationships. Published runbooks explicitly prescribe restart_switch remediation for this symptom pattern when topology is verified.",
+        "status": "resolved",
+        "actions": [
+          {
+            "id": "ad6870cf-e4e0-47d9-bf17-9133e68b6969",
+            "name": "restart_switch",
+            "result": {
+              "sourceMode": "simulated",
+              "acknowledged": true
+            },
+            "status": "succeeded",
+            "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+            "createdAt": "2026-09-14T07:34:49.179Z",
+            "expiresAt": "2026-09-14T07:39:49.179Z",
+            "executedAt": "2026-09-14T07:34:49.125Z",
+            "incidentId": "62008046-4585-4518-9cad-8653bca08386",
+            "proposalId": "117c7d3b-6a16-4626-98ec-549d86111ee7"
+          }
+        ],
+        "outcome": "Three consecutive fresh healthy observations confirm recovery.",
+        "evidence": [
+          {
+            "id": "28131a0c-8d07-4d9b-8ed5-2db6be7c8c8b",
+            "auth": "ok",
+            "health": "error",
+            "source": "simulator.local",
+            "metrics": {
+              "portsUp": 0,
+              "application": "ready",
+              "temperatureC": 38
+            },
+            "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+            "observedAt": "2026-09-14T07:33:17.038Z",
+            "receivedAt": "2026-09-14T07:33:17.038Z",
+            "sourceMode": "simulated",
+            "reachability": "unreachable"
+          },
+          {
+            "id": "e5f2ced9-4fdd-46ad-9c81-6342f9a32c5e",
+            "auth": "ok",
+            "health": "error",
+            "source": "simulator.local",
+            "metrics": {
+              "portsUp": 0,
+              "application": "ready",
+              "temperatureC": 38
+            },
+            "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+            "observedAt": "2026-09-14T07:33:22.044Z",
+            "receivedAt": "2026-09-14T07:33:22.044Z",
+            "sourceMode": "simulated",
+            "reachability": "unreachable"
+          },
+          {
+            "id": "9c947bbd-0e82-46c9-baf5-49fb0669dc91",
+            "auth": "ok",
+            "health": "error",
+            "source": "simulator.local",
+            "metrics": {
+              "portsUp": 0,
+              "application": "ready",
+              "temperatureC": 38
+            },
+            "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+            "observedAt": "2026-09-14T07:33:27.048Z",
+            "receivedAt": "2026-09-14T07:33:27.048Z",
+            "sourceMode": "simulated",
+            "reachability": "unreachable"
+          },
+          {
+            "id": "18f94859-e5b8-4c89-bf84-f8da097cca18",
+            "auth": "ok",
+            "health": "error",
+            "source": "simulator.local",
+            "metrics": {
+              "portsUp": 0,
+              "application": "ready",
+              "temperatureC": 38
+            },
+            "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+            "observedAt": "2026-09-14T07:33:32.051Z",
+            "receivedAt": "2026-09-14T07:33:32.051Z",
+            "sourceMode": "simulated",
+            "reachability": "unreachable"
+          },
+          {
+            "id": "f29ef8a1-e946-4949-b94e-27c890f71f3d",
+            "auth": "ok",
+            "health": "error",
+            "source": "simulator.local",
+            "metrics": {
+              "portsUp": 0,
+              "application": "ready",
+              "temperatureC": 38
+            },
+            "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+            "observedAt": "2026-09-14T07:34:22.738Z",
+            "receivedAt": "2026-09-14T07:34:22.738Z",
+            "sourceMode": "simulated",
+            "reachability": "unreachable"
+          }
+        ],
+        "provider": "strands-qwen",
+        "runbooks": [
+          {
+            "id": "1b690f4a-2198-4c4a-80d4-727be7c74751",
+            "text": "The Core Distribution Switch (8a04af0f-762b-46ac-89c9-b03b9533fdb7) is the root network switch with no upstream dependencies. When fresh observations confirm the switch is offline with 0 ports up and connected downstream devices are unreachable via topology, propose restart_switch for manager approval. Restarting a shared switch requires manager approval. Verify three fresh healthy observations after restart.",
+            "title": "Reviewed switch recovery",
+            "version": "1",
+            "published": true
+          }
+        ],
+        "createdAt": "2026-09-14T07:35:03.143Z",
+        "durationMs": 96095,
+        "sourceMode": "simulated",
+        "publication": "draft",
+        "approvalWaitMs": 4702,
+        "activeDurationMs": 91393
+      },
+      "status": "resolved",
+      "summary": "Core Distribution Switch (8a04af0f-762b-46ac-89c9-b03b9533fdb7) is offline and unreachable with 0 ports up, confirmed by eight consecutive fresh error observations spanning 07:33:17Z to 07:34:22Z. As the root switch with no upstream dependencies, this local failure causes total loss of connectivity for all four downstream devices linked via confirmed topology relationships. Published runbooks explicitly prescribe restart_switch remediation for this symptom pattern when topology is verified.",
+      "severity": "high",
+      "createdAt": "2026-09-14T07:33:27.048Z",
+      "deviceIds": [
+        "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+        "1d507fec-670d-4d60-8536-7b256c4c3227",
+        "2ce9396a-bea2-496b-8db3-8d3aa0121cfb",
+        "3540ad09-757c-4514-853a-d5c9dac46015",
+        "eccacf4e-9fa0-4c65-81af-309fb5d9ce43"
+      ],
+      "diagnosis": {
+        "cause": "Local switch failure (unreachable, 0 ports up) on root Core Distribution Switch causing complete downstream network outage. Specific root cause (power vs hardware vs firmware) cannot be distinguished from available telemetry but does not affect prescribed remediation per runbook.",
+        "usage": {
+          "modelCalls": 4,
+          "inputTokens": 24961,
+          "outputTokens": 2535
+        },
+        "action": {
+          "name": "restart_switch",
+          "arguments": {},
+          "targetDeviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7"
+        },
+        "modelId": "qwen3.7-max",
+        "summary": "Core Distribution Switch (8a04af0f-762b-46ac-89c9-b03b9533fdb7) is offline and unreachable with 0 ports up, confirmed by eight consecutive fresh error observations spanning 07:33:17Z to 07:34:22Z. As the root switch with no upstream dependencies, this local failure causes total loss of connectivity for all four downstream devices linked via confirmed topology relationships. Published runbooks explicitly prescribe restart_switch remediation for this symptom pattern when topology is verified.",
+        "provider": "strands-qwen",
+        "toolCalls": 7,
+        "enterprise": {
+          "status": "complete",
+          "version": "enterprise.v1",
+          "findings": [
+            {
+              "gaps": [
+                "No power telemetry or environmental sensor observations available to distinguish between power loss and hardware fault",
+                "No upstream connectivity observations exist as this is the root switch, preventing confirmation of external network path status"
+              ],
+              "status": "complete",
+              "conflicts": [],
+              "hypothesis": "The Core Distribution Switch is experiencing a network outage evidenced by four consecutive fresh error observations showing unreachable status and 0 ports up, combined with all four explicit downstream devices being unreachable via confirmed topology relationships. As the root switch with no upstream dependencies, this indicates a local switch failure causing total downstream network loss.",
+              "specialist": "network",
+              "evidenceIds": [
+                "28131a0c-8d07-4d9b-8ed5-2db6be7c8c8b",
+                "e5f2ced9-4fdd-46ad-9c81-6342f9a32c5e",
+                "9c947bbd-0e82-46c9-baf5-49fb0669dc91",
+                "18f94859-e5b8-4c89-bf84-f8da097cca18",
+                "f68fd942-76ae-48b6-8ce1-dcf4d7183f3c",
+                "53049d36-4f26-43b6-8e0b-b2edd097a356",
+                "e8aa7bd5-d30d-4276-81bc-65bec477ecbf",
+                "eccacf4e-4f26-43b6-8e0b-b2edd097a356"
+              ],
+              "uncertainty": "While the switch outage is confirmed by direct evidence, the specific root cause (power failure vs internal hardware fault vs firmware crash) cannot be determined from available network observations alone. Historical episodic memory suggests recurring physical layer or thermal issues on this unit, but current temperature readings are nominal at 38C."
+            },
+            {
+              "gaps": [
+                "No power telemetry available to distinguish power loss from hardware fault, though runbook remediation applies regardless",
+                "No upstream connectivity observations exist as this is the root switch, but runbook accounts for this design"
+              ],
+              "status": "complete",
+              "conflicts": [],
+              "hypothesis": "The network specialist hypothesis that the Core Distribution Switch is experiencing a local failure causing total downstream loss is fully substantiated by fresh, coherent evidence. Four consecutive error observations (28131a0c-8d07-4d9b-8ed5-2db6be7c8c8b, e5f2ced9-4fdd-46ad-9c81-6342f9a32c5e, 9c947bbd-0e82-46c9-baf5-49fb0669dc91, 18f94859-e5b8-4c89-bf84-f8da097cca18) confirm unreachable status and 0 ports up starting at 07:33:17Z, immediately following four healthy samples. Topology relationships (f68fd942-76ae-48b6-8ce1-dcf4d7183f3c, 53049d36-4f26-43b6-8e0b-b2edd097a356, e8aa7bd5-d30d-4276-81bc-65bec477ecbf, eccacf4e-4f26-43b6-8e0b-b2edd097a356) confirm all downstream dependencies rely solely on this root switch. Published runbooks 1b690f4a-2198-4c4a-80d4-727be7c74751 and 2ae2b516-9fbf-471f-8e55-e7771bd57e9e explicitly support restart_switch remediation for this exact symptom pattern when topology is confirmed. The acknowledged gap regarding power vs hardware root cause does not prevent remediation as the runbook prescribes restart regardless of underlying fault type. No contradictions exist between observations, topology, or runbook guidance.",
+              "specialist": "critic",
+              "evidenceIds": [
+                "28131a0c-8d07-4d9b-8ed5-2db6be7c8c8b",
+                "e5f2ced9-4fdd-46ad-9c81-6342f9a32c5e",
+                "9c947bbd-0e82-46c9-baf5-49fb0669dc91",
+                "18f94859-e5b8-4c89-bf84-f8da097cca18",
+                "f68fd942-76ae-48b6-8ce1-dcf4d7183f3c",
+                "53049d36-4f26-43b6-8e0b-b2edd097a356",
+                "e8aa7bd5-d30d-4276-81bc-65bec477ecbf",
+                "eccacf4e-4f26-43b6-8e0b-b2edd097a356",
+                "1b690f4a-2198-4c4a-80d4-727be7c74751",
+                "2ae2b516-9fbf-471f-8e55-e7771bd57e9e"
+              ],
+              "uncertainty": "Root cause specificity (power vs hardware vs firmware) remains unknown but does not impact remediation validity per published runbooks. Evidence freshness is confirmed with observations within 15 seconds of current device state. All claims are directly supported by cited observation IDs, topology relationship IDs, and runbook IDs without contradiction."
+            }
+          ],
+          "memoryIds": [
+            "1b690f4a-2198-4c4a-80d4-727be7c74751",
+            "574599d3-7927-4113-a93e-fa21fea866a3",
+            "7fe13d4c-9230-45dc-9d9e-1de065967821",
+            "1fa7a856-008e-4770-922c-e90a35c84b7d",
+            "f5efca60-94fc-440d-b4f2-65d9818f29dd",
+            "65654cf5-a6ca-41ac-8dbd-a079ee1a28ec",
+            "2ae2b516-9fbf-471f-8e55-e7771bd57e9e"
+          ],
+          "artifactIds": [],
+          "criticRequiresEscalation": false
+        },
+        "evidenceIds": [
+          "f29ef8a1-e946-4949-b94e-27c890f71f3d",
+          "28131a0c-8d07-4d9b-8ed5-2db6be7c8c8b",
+          "e5f2ced9-4fdd-46ad-9c81-6342f9a32c5e",
+          "9c947bbd-0e82-46c9-baf5-49fb0669dc91",
+          "18f94859-e5b8-4c89-bf84-f8da097cca18",
+          "f68fd942-76ae-48b6-8ce1-dcf4d7183f3c",
+          "53049d36-4f26-43b6-8e0b-b2edd097a356",
+          "e8aa7bd5-d30d-4276-81bc-65bec477ecbf",
+          "eccacf4e-4f26-43b6-8e0b-b2edd097a356",
+          "1b690f4a-2198-4c4a-80d4-727be7c74751"
+        ],
+        "uncertainty": "Root cause specificity (power failure vs internal hardware fault vs firmware crash) cannot be determined from available network observations alone; temperature is nominal at 38C and no power telemetry exists. However, published runbook 1b690f4a-2198-4c4a-80d4-727be7c74751 prescribes restart_switch regardless of underlying fault type when fresh evidence confirms offline state and topology-verified downstream impact. Evidence freshness is confirmed with newest observation f29ef8a1-e946-4949-b94e-27c890f71f3d at 07:34:22Z matching current device state.",
+        "alternatives": [
+          "Physical inspection of switch power and cabling in Floor 4 IDF Rack A to rule out power loss or disconnected cables",
+          "Verify upstream facility power and UPS status for Floor 4 IDF to exclude site-level power issues",
+          "Replace switch hardware if restart fails to restore connectivity after manager-approved attempt"
+        ]
+      },
+      "updatedAt": "2026-09-14T07:35:03.143Z",
+      "generation": 65,
+      "invocationId": "6fd4d391-96a1-471a-8fca-f450ad651667",
+      "rootDeviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+      "healthySamples": 3,
+      "verificationStartedAt": "2026-09-14T07:34:49.125Z",
+      "evidence": [
+        {
+          "kind": "observation",
+          "id": "28131a0c-8d07-4d9b-8ed5-2db6be7c8c8b",
+          "auth": "ok",
+          "health": "error",
+          "source": "simulator.local",
+          "metrics": {
+            "portsUp": 0,
+            "application": "ready",
+            "temperatureC": 38
+          },
+          "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "observedAt": "2026-09-14T07:33:17.038Z",
+          "receivedAt": "2026-09-14T07:33:17.038Z",
+          "sourceMode": "simulated",
+          "reachability": "unreachable"
+        },
+        {
+          "kind": "observation",
+          "id": "e5f2ced9-4fdd-46ad-9c81-6342f9a32c5e",
+          "auth": "ok",
+          "health": "error",
+          "source": "simulator.local",
+          "metrics": {
+            "portsUp": 0,
+            "application": "ready",
+            "temperatureC": 38
+          },
+          "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "observedAt": "2026-09-14T07:33:22.044Z",
+          "receivedAt": "2026-09-14T07:33:22.044Z",
+          "sourceMode": "simulated",
+          "reachability": "unreachable"
+        },
+        {
+          "kind": "observation",
+          "id": "9c947bbd-0e82-46c9-baf5-49fb0669dc91",
+          "auth": "ok",
+          "health": "error",
+          "source": "simulator.local",
+          "metrics": {
+            "portsUp": 0,
+            "application": "ready",
+            "temperatureC": 38
+          },
+          "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "observedAt": "2026-09-14T07:33:27.048Z",
+          "receivedAt": "2026-09-14T07:33:27.048Z",
+          "sourceMode": "simulated",
+          "reachability": "unreachable"
+        },
+        {
+          "kind": "observation",
+          "id": "18f94859-e5b8-4c89-bf84-f8da097cca18",
+          "auth": "ok",
+          "health": "error",
+          "source": "simulator.local",
+          "metrics": {
+            "portsUp": 0,
+            "application": "ready",
+            "temperatureC": 38
+          },
+          "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "observedAt": "2026-09-14T07:33:32.051Z",
+          "receivedAt": "2026-09-14T07:33:32.051Z",
+          "sourceMode": "simulated",
+          "reachability": "unreachable"
+        },
+        {
+          "kind": "observation",
+          "id": "f29ef8a1-e946-4949-b94e-27c890f71f3d",
+          "auth": "ok",
+          "health": "error",
+          "source": "simulator.local",
+          "metrics": {
+            "portsUp": 0,
+            "application": "ready",
+            "temperatureC": 38
+          },
+          "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "observedAt": "2026-09-14T07:34:22.738Z",
+          "receivedAt": "2026-09-14T07:34:22.738Z",
+          "sourceMode": "simulated",
+          "reachability": "unreachable"
+        },
+        {
+          "kind": "runbook",
+          "id": "1b690f4a-2198-4c4a-80d4-727be7c74751",
+          "text": "The Core Distribution Switch (8a04af0f-762b-46ac-89c9-b03b9533fdb7) is the root network switch with no upstream dependencies. When fresh observations confirm the switch is offline with 0 ports up and connected downstream devices are unreachable via topology, propose restart_switch for manager approval. Restarting a shared switch requires manager approval. Verify three fresh healthy observations after restart.",
+          "title": "Reviewed switch recovery",
+          "version": "1",
+          "published": true
+        },
+        {
+          "kind": "topology",
+          "id": "f68fd942-76ae-48b6-8ce1-dcf4d7183f3c",
+          "upstreamId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "downstreamId": "1d507fec-670d-4d60-8536-7b256c4c3227"
+        },
+        {
+          "kind": "topology",
+          "id": "53049d36-4f26-43b6-8e0b-b2edd097a356",
+          "upstreamId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "downstreamId": "2ce9396a-bea2-496b-8db3-8d3aa0121cfb"
+        },
+        {
+          "kind": "topology",
+          "id": "e8aa7bd5-d30d-4276-81bc-65bec477ecbf",
+          "upstreamId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "downstreamId": "3540ad09-757c-4514-853a-d5c9dac46015"
+        },
+        {
+          "kind": "topology",
+          "id": "eccacf4e-4f26-43b6-8e0b-b2edd097a356",
+          "upstreamId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+          "downstreamId": "eccacf4e-9fa0-4c65-81af-309fb5d9ce43"
+        }
+      ]
+    }
+  ],
+  "commands": [
+    {
+      "id": "ad6870cf-e4e0-47d9-bf17-9133e68b6969",
+      "name": "restart_switch",
+      "result": {
+        "sourceMode": "simulated",
+        "acknowledged": true
+      },
+      "status": "succeeded",
+      "deviceId": "8a04af0f-762b-46ac-89c9-b03b9533fdb7",
+      "createdAt": "2026-09-14T07:34:49.179Z",
+      "expiresAt": "2026-09-14T07:39:49.179Z",
+      "executedAt": "2026-09-14T07:34:49.125Z",
+      "incidentId": "62008046-4585-4518-9cad-8653bca08386",
+      "proposalId": "117c7d3b-6a16-4626-98ec-549d86111ee7"
+    }
+  ],
+  "passed": true
+}

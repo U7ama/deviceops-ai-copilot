@@ -1,0 +1,12 @@
+# Add after the existing Qwen overlays. Only the local bridge changes transport.
+services:
+  strands:
+    environment:
+      STRANDS_TRANSPORT: agentcore
+      AGENTCORE_RUNTIME_ARN: ${AGENTCORE_RUNTIME_ARN:?Set verified runtime ARN}
+      AWS_CREDITS_CONFIRMED: "true"
+      AWS_REGION: us-east-1
+      AWS_SHARED_CREDENTIALS_FILE: /run/agentcore-credentials
+      QWEN_MODEL_ID: ${QWEN_MODEL_ID:-qwen3.7-max}
+    volumes:
+      - /mnt/c/Users/Usama Aslam/.aws/credentials:/run/agentcore-credentials:ro

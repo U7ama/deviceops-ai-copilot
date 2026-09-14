@@ -1,0 +1,30 @@
+{
+  "license": "MIT",
+  "provenance": "Original synthetic fixtures; not vendor hardware or measurements",
+  "files": [
+    {
+      "name": "manual.pdf",
+      "sha256": "04e2c949ac21827d6ec11b576afc70c999fb5b4f4423b2f16aef39ca4331c2e4"
+    },
+    {
+      "name": "staged-rack.png",
+      "sha256": "342de926c67327186aee8f2093c852a9e83920b2cfd6f3bcf1529eb818d97bf5"
+    },
+    {
+      "name": "telemetry.csv",
+      "sha256": "d924f913e89f60d2fe32bfce5f685abaa0d5cf2b6ca2202217508de9e20c0009"
+    },
+    {
+      "name": "floorplan-building-c.png",
+      "sha256": "c7a82ddd19a6ca6f7f5f5f3aaa999307b63791bc9f6b1ebc75714c2827c7dd8e"
+    },
+    {
+      "name": "optical-manual-30-pages.pdf",
+      "sha256": "9dd728e61b92ac2b11282f2ce96176a5d28a5ae5a987214b25d53e54b8d1378e"
+    },
+    {
+      "name": "fan-vibration.csv",
+      "sha256": "79595675c421e93f2a5a612d5a77f40a46b97824e36b493c66b3971954482a46"
+    }
+  ]
+}

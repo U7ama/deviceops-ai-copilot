@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="760" viewBox="0 0 1200 760">
+<rect width="1200" height="760" fill="#f1f5f9"/>
+<g font-family="sans-serif" fill="#0f172a"><text x="50" y="60" font-size="30" font-weight="bold">Building C · Network closet elevation</text><text x="50" y="95" font-size="18">SYNTHETIC TRAINING FIXTURE · NOT A SURVEYED INSTALLATION · MIT</text>
+<rect x="60" y="135" width="1080" height="510" rx="10" fill="white" stroke="#64748b" stroke-width="3"/>
+<rect x="190" y="165" width="420" height="70" rx="8" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/><text x="230" y="207" font-size="24">HVAC-4 · overhead supply vent</text>
+<path d="M 280 245 v55 m-12 -15 12 15 12 -15 M 500 245 v55 m-12 -15 12 15 12 -15" fill="none" stroke="#2563eb" stroke-width="4"/>
+<rect x="180" y="320" width="440" height="260" fill="#1e293b" rx="8"/><text x="210" y="360" fill="white" font-size="26">Rack 3</text>
+<rect x="210" y="390" width="380" height="65" rx="4" fill="#475569"/><text x="230" y="430" fill="white" font-size="22">Campus switch · synthetic label</text>
+<rect x="210" y="480" width="380" height="60" rx="4" fill="#475569"/><text x="230" y="518" fill="white" font-size="20">Patch panel · Trunk-2</text>
+<text x="690" y="340" font-size="23" font-weight="bold">Visible relationship</text><text x="690" y="380" font-size="19">Rack 3 is drawn below HVAC-4.</text><text x="690" y="420" font-size="19">No HVAC fault telemetry is supplied.</text><text x="690" y="460" font-size="19">Location requires technician confirmation.</text><text x="690" y="500" font-size="19">Proximity does not establish root cause.</text>
+<text x="60" y="700" font-size="19">Use as diagram evidence with the incident telemetry. Never treat fixture labels as verified device identity.</text></g></svg>

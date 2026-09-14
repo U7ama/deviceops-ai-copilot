@@ -1,0 +1,25 @@
+# Overlay only after funding, host, TLS origin and production build verification.
+x-production: &production
+  image: deviceops-hackathon:production
+  build:
+    context: .
+    dockerfile: infra/hackathon/Dockerfile.production
+  environment:
+    NODE_ENV: production
+    APP_URL: ${APP_URL:?Set the HTTPS CloudFront demo URL}
+    MEDIA_ALLOW_LOCAL_PRODUCTION: "true"
+services:
+  web:
+    <<: *production
+    command: [npm, run, start, --workspace, "@deviceops/web", --, --hostname, 0.0.0.0]
+  worker:
+    <<: *production
+  migrate:
+    <<: *production
+  seed:
+    <<: *production
+  strands:
+    secrets: !reset []
+    environment:
+      AWS_SHARED_CREDENTIALS_FILE: !reset null
+      AWS_PROFILE: !reset null

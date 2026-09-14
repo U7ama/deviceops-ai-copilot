@@ -1,0 +1,71 @@
+{
+  "checkedAt": "2026-09-12T11:34:06+00:00",
+  "mode": "fixture",
+  "connectorTests": {
+    "suite": "packages/connectors/src/connectors.test.ts",
+    "total": 19,
+    "passed": 19,
+    "scope": "mock TCP/HTTP fixtures only; physical vendor hardware unverified",
+    "recordType": "Historical full-suite run reported by the other AI; predates the added Zoom regression"
+  },
+  "browserTests": {
+    "suite": "tests/web/operations.spec.ts",
+    "total": 13,
+    "passed": 12,
+    "skipped": 1,
+    "status": "passed (real authenticated journey skipped without seed password)"
+  },
+  "webTypecheck": "passed (0 errors)",
+  "activeConnectors": {
+    "count": 12,
+    "status": "mock/protocol-tested in local fixtures; physical hardware compatibility unverified"
+  },
+  "toastFeedback": "implemented on tested buttons across primary routes (queue, approvals, incidents, runs, operations); full coverage of every edge-case action unverified",
+  "themePreferences": "Light, Dark, System (verified with blocked storage fallback)",
+  "dockerEnvironment": "deviceops-hackathon:dependencies-sep12 base with offline SWC wasm bindings",
+  "liveEndpoint": "http://localhost:3030 (HTTP 200 OK)",
+  "unverifiedGates": [
+    "Live specialist inference with working provider credentials with available quota",
+    "Manual end-to-end rehearsal of both complete demo scenarios",
+    "Physical mobile phone photo upload and incident association"
+  ],
+  "connectorFocusedFollowUp": {
+    "suite": "packages/connectors/src/connectors.test.ts",
+    "filter": "Zoom Rooms Cloud REST API",
+    "passed": 2,
+    "skipped": 18,
+    "scope": "Local mock HTTP tests: missing telemetry remains unknown and populated telemetry is preserved",
+    "verification": "Executed by Codex after the Zoom correction; not a full 20-test suite run"
+  },
+  "currentPreflight": {
+    "checkedAt": "2026-09-12T12:04:13.546922+00:00",
+    "webHealthHttpStatus": 200,
+    "workerMode": "fixture",
+    "workerWorkflow": "specialists",
+    "strandsContainerRunning": false,
+    "geminiModelListHttpStatus": 401,
+    "inferenceTested": false,
+    "notes": "One model-list request using the saved deployment key; no generation calls, retries, Docker builds or cache cleanup. Complete demo and physical-phone rehearsals remain unverified."
+  },
+  "qwenMigration": {
+    "checkedAt": "2026-09-12T17:01:03.682777+00:00",
+    "mode": "qwen",
+    "model": "qwen3.8-flash",
+    "endpoint": "https://dashscope-intl.aliyuncs.com/compatible-mode/v1",
+    "pythonTestsPassed": 50,
+    "providerTestsPassed": 4,
+    "typechecks": [
+      "operations",
+      "web"
+    ],
+    "serviceHealth": "strands-qwen",
+    "containerModelInitialization": "passed",
+    "toolCallProbe": {
+      "inputTokens": 290,
+      "outputTokens": 18,
+      "tool": "report_status"
+    },
+    "deployment": "Existing cached images with read-only local source/client mounts; no rebuild",
+    "fullOperationalRehearsal": "unverified"
+  }
+}

@@ -10,11 +10,13 @@ test.describe('DeviceOps web journey', () => {
   test('signs in, reads status, queues a run, and opens its timeline', async ({ page }) => {
     await page.goto('/');
     await expect(page.getByRole('heading', { name: 'Sign in to DeviceOps' })).toBeVisible();
-    await page.getByLabel('Email').fill('tech@alpha.test');
+    await page.getByLabel('Email').fill('tariq@deviceops.cloud');
     await page.getByLabel('Password').fill(password!);
     await page.getByRole('button', { name: 'Sign in' }).click();
+    await page.waitForURL('**/operations**', { timeout: 25_000 });
+    await page.goto('/diagnosis');
     await expect(page.getByRole('heading', { name: 'Technician diagnosis workspace' })).toBeVisible();
-    await page.getByLabel('Device').selectOption({ label: 'Main Wall Display · ProView-85' });
+    await page.getByLabel('Device').selectOption({ label: 'Executive Boardroom Display · BRAVIA FW-85BZ40H' });
     await expect(page.getByText('● offline')).toBeVisible();
 
     await page.getByRole('button', { name: 'Queue diagnosis' }).click();

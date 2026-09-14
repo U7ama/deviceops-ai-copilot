@@ -39,8 +39,8 @@ async function main(): Promise<void> {
       await transaction`
         insert into tenants (id, slug, name, demo_mode)
         values
-          (${TEST_TENANT_ALPHA_ID}, 'enterprise-av-ops', 'Enterprise AV Operations', false),
-          (${TEST_TENANT_BETA_ID}, 'enterprise-beta-lab', 'Enterprise Beta Lab', false)
+          (${TEST_TENANT_ALPHA_ID}, 'apex-enterprise-ops', 'Apex Infrastructure Operations', false),
+          (${TEST_TENANT_BETA_ID}, 'regional-dc-ops', 'Regional DC Operations', false)
         on conflict (id) do update
           set name = excluded.name, demo_mode = excluded.demo_mode
       `;
@@ -278,9 +278,9 @@ async function main(): Promise<void> {
           ${sampleRunId},
           ${TEST_USERS.techAlpha.id},
           ${transaction.json({
-            summary: "Propose technician dispatch for Main Wall Display power restoration",
+            summary: "Propose technician dispatch for Executive Boardroom Display power restoration",
             steps: [
-              { instruction: "Verify line voltage and breaker status for Boardroom 101." },
+              { instruction: "Verify line voltage and breaker status for Executive Boardroom 101." },
               { instruction: "Dispatch authorized technician with replacement power supply module." }
             ]
           })},
@@ -301,7 +301,7 @@ async function main(): Promise<void> {
           ${sampleApprovalId},
           'delivered',
           ${proposalHash},
-          'Main Wall Display · Power supply inspection & technician dispatch',
+          'Executive Boardroom Display · Power supply inspection & technician dispatch',
           'Operations Engineering Team'
         )
       `;

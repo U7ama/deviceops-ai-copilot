@@ -1,0 +1,38 @@
+# Apply after compose.hackathon.yaml. Broker is private; never publish its port.
+services:
+  web:
+    environment:
+      OPS_INVESTIGATION_WORKFLOW: specialists
+      OPS_EVIDENCE_ROOT: /app/.data/enterprise-evidence
+      OPS_SANDBOX_PROVIDER: broker
+      SANDBOX_BROKER_URL: http://sandbox-broker:8091
+      SANDBOX_BROKER_TOKEN: ${STRANDS_SERVICE_TOKEN:?required}
+  worker:
+    environment:
+      OPS_INVESTIGATION_WORKFLOW: specialists
+      OPS_EVIDENCE_ROOT: /app/.data/enterprise-evidence
+      OPS_SANDBOX_PROVIDER: broker
+      SANDBOX_BROKER_URL: http://sandbox-broker:8091
+      SANDBOX_BROKER_TOKEN: ${STRANDS_SERVICE_TOKEN:?required}
+      OPS_APPROVED_FIXTURE_HASHES: ${OPS_APPROVED_FIXTURE_HASHES:-}
+      MEDIA_CLAMAV_HOST: ${MEDIA_CLAMAV_HOST:-}
+    depends_on:
+      sandbox-broker:
+        condition: service_started
+  sandbox-broker:
+    build:
+      context: .
+      dockerfile: infra/hackathon/Dockerfile.sandbox-broker
+    image: deviceops-sandbox-broker:local
+    environment:
+      SANDBOX_BROKER_TOKEN: ${STRANDS_SERVICE_TOKEN:?required}
+      OPS_SANDBOX_IMAGE: deviceops-analysis:local
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    restart: unless-stopped
+  analysis-image:
+    build:
+      context: apps/analysis-sandbox
+    image: deviceops-analysis:local
+    profiles: [build-only]
+    entrypoint: ["true"]

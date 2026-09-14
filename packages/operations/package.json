@@ -1,0 +1,24 @@
+{
+  "name": "@deviceops/operations",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "exports": {
+    ".": "./src/index.ts",
+    "./domain": "./src/domain.ts",
+    "./recovery": "./src/recovery.ts"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit -p tsconfig.json"
+  },
+  "dependencies": {
+    "@deviceops/contracts": "*",
+    "@deviceops/db": "*",
+    "@deviceops/policy": "*",
+    "postgres": "^3.4.9",
+    "zod": "^4.4.3",
+    "@deviceops/media": "*",
+    "@aws-sdk/client-s3": "^3.900.0"
+  }
+}

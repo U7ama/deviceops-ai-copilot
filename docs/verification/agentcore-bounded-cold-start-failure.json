@@ -1,0 +1,43 @@
+{
+  "runtimeArn": "arn:aws:bedrock-agentcore:us-east-1:705384652382:runtime/deviceops_strands_bounded-Cw0xuFBGo7",
+  "elapsedSeconds": 40.3,
+  "incidents": [
+    {
+      "id": "2e4977b9-1ea1-4ed6-ab5a-4b1ec06d0286",
+      "cause": "Strands service returned 500: provider_unavailable",
+      "report": {
+        "cause": "Strands service returned 500: provider_unavailable",
+        "title": "Investigating Telemetry service",
+        "status": "escalated",
+        "actions": [],
+        "outcome": "Investigation unavailable; human review required.",
+        "evidence": [],
+        "provider": "none",
+        "runbooks": [],
+        "createdAt": "2026-09-14T03:20:54.060Z",
+        "durationMs": 34144,
+        "sourceMode": "simulated",
+        "publication": "draft",
+        "approvalWaitMs": 0,
+        "activeDurationMs": 34144
+      },
+      "status": "escalated",
+      "summary": "Investigating Telemetry service",
+      "severity": "medium",
+      "createdAt": "2026-09-14T03:20:19.916Z",
+      "deviceIds": [
+        "6dbe3967-567e-4aaa-8955-b5a01d566878"
+      ],
+      "diagnosis": null,
+      "updatedAt": "2026-09-14T03:20:54.060Z",
+      "generation": 58,
+      "invocationId": "f81ca90e-02e2-46c8-a3d7-ae9cf132dcbf",
+      "rootDeviceId": "6dbe3967-567e-4aaa-8955-b5a01d566878",
+      "healthySamples": 0,
+      "verificationStartedAt": null,
+      "evidence": []
+    }
+  ],
+  "commands": [],
+  "passed": false
+}

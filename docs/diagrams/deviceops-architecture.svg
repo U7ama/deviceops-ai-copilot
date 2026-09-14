@@ -1,0 +1,165 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1800" height="1640" viewBox="0 0 1800 1640" role="img" aria-labelledby="title desc">
+<title id="title">DeviceOps — Autonomous Operations &amp; Incident Resolution architecture</title><desc id="desc">Device observations enter a tenant-scoped Next.js API. Mobile photos upload directly to that API. A PostgreSQL-backed worker detects incidents. Strands multi-agent specialist reasoning runs with Alibaba Cloud Qwen models; backend controls approval, simulator execution and verified recovery.</desc>
+<defs><marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10Z" fill="#56718f"/></marker><marker id="optional" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10Z" fill="#9a7a3d"/></marker></defs>
+<g font-family="Arial, Helvetica, sans-serif">
+<rect x="0" y="0" width="1800" height="1640" rx="0" fill="#f4f7fc" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="0" y="0" width="1800" height="166" rx="0" fill="#112642" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="60" y="44" font-size="16" fill="#8fc9ff" font-weight="700">DEVICEOPS  /  PROFESSIONAL AGENTS</text>
+<text x="60" y="93" font-size="43" fill="#ffffff" font-weight="700">Autonomous Operations &amp; Incident Resolution</text>
+<text x="60" y="133" font-size="22" fill="#d5e3f4" font-weight="400">Observe → investigate → authorize → act → verify. Multi-agent reasoning on AWS Bedrock AgentCore &amp; Alibaba Qwen.</text>
+<rect x="40" y="191" width="420" height="851" rx="20" fill="#eaf0f8" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="60" y="223" font-size="17" fill="#284768" font-weight="700">01  DEVICE &amp; DELIVERY LAYER</text>
+<text x="60" y="248" font-size="16" fill="#41516b" font-weight="400">Controlled LAN / local notification services</text>
+<rect x="500" y="191" width="660" height="851" rx="20" fill="#eaf0f8" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="520" y="223" font-size="17" fill="#284768" font-weight="700">02  DEVICEOPS APPLICATION</text>
+<text x="520" y="248" font-size="16" fill="#41516b" font-weight="400">Next.js + TypeScript worker + PostgreSQL</text>
+<rect x="1200" y="191" width="560" height="851" rx="20" fill="#eaf0f8" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1220" y="223" font-size="17" fill="#284768" font-weight="700">03  AWS AGENTCORE &amp; REASONING</text>
+<text x="1220" y="248" font-size="16" fill="#41516b" font-weight="400">Bedrock AgentCore + Alibaba Cloud Qwen</text>
+<path d="M250 432 V448" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M420 515 H475 V318 H540" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M820 413 V468" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M820 623 V678" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1100 540 H1240" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1480 490 V455" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1480 715 V752" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1240 830 H1160 V340 H1100" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M1100 575 H1132 V943 H1100" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M785 848 V898" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M540 778 H455 V570 H420" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M605 848 V873 H250 V898" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<path d="M420 960 H478 V390 H540" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<rect x="70" y="277" width="350" height="155" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="70" y="277" width="5" height="155" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="307" font-size="14" fill="#2263bb" font-weight="700">OBSERVATION SOURCES</text>
+<text x="94" y="339" font-size="25" fill="#132745" font-weight="700">Devices &amp; simulators</text>
+<text x="94" y="369" font-size="19" fill="#41516b" font-weight="400">LAN equipment: read-only probes</text>
+<text x="94" y="394" font-size="19" fill="#41516b" font-weight="400">Standalone HTTP simulator</text>
+<text x="94" y="419" font-size="19" fill="#41516b" font-weight="400">Physical/cloud writes disabled</text>
+<rect x="70" y="448" width="350" height="179" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="70" y="448" width="5" height="179" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="478" font-size="14" fill="#2263bb" font-weight="700">NODE.JS EDGE COLLECTOR</text>
+<text x="94" y="510" font-size="25" fill="#132745" font-weight="700">Normalize &amp; deliver</text>
+<text x="94" y="540" font-size="19" fill="#41516b" font-weight="400">Ping · SNMP system / ports · PJLink</text>
+<text x="94" y="565" font-size="19" fill="#41516b" font-weight="400">Encrypted vault + durable spool</text>
+<text x="94" y="590" font-size="19" fill="#41516b" font-weight="400">Outbound API + command journal</text>
+<rect x="70" y="644" width="350" height="84" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="669" font-size="14" fill="#2263bb" font-weight="700">MOBILE PHOTO CAPTURE</text>
+<text x="94" y="695" font-size="18" fill="#132745" font-weight="700">Authenticated upload to v2 API</text>
+<text x="94" y="716" font-size="16" fill="#41516b" font-weight="400">SHA-256 + incident association</text>
+<path d="M420 684 H488 V390 H540" fill="none" stroke="#56718f" stroke-width="2.5" stroke-linejoin="round" stroke-dasharray="" marker-end="url(#arrow)"/>
+<rect x="70" y="744" width="350" height="128" rx="16" fill="#f5f8fc" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="771" font-size="14" fill="#547091" font-weight="700">INTEGRATION BOUNDARY</text>
+<text x="94" y="800" font-size="22" fill="#132745" font-weight="700">57-entry connector catalog</text>
+<text x="94" y="826" font-size="16" fill="#41516b" font-weight="400">12 mock-tested adapters; 45 planned.</text>
+<text x="94" y="851" font-size="16" fill="#41516b" font-weight="400">Physical hardware unverified.</text>
+<rect x="70" y="898" width="350" height="124" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="70" y="898" width="5" height="124" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="94" y="928" font-size="14" fill="#2263bb" font-weight="700">LOCAL NOTIFICATIONS</text>
+<text x="94" y="960" font-size="25" fill="#132745" font-weight="700">n8n → Mailpit</text>
+<text x="94" y="990" font-size="19" fill="#41516b" font-weight="400">Email delivery + signed callback</text>
+<rect x="540" y="277" width="560" height="136" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="277" width="5" height="136" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="307" font-size="14" fill="#2263bb" font-weight="700">OPERATOR ENTRY POINT</text>
+<text x="564" y="339" font-size="25" fill="#132745" font-weight="700">Next.js operations UI + v2 API</text>
+<text x="564" y="369" font-size="19" fill="#41516b" font-weight="400">Sessions · tenant scope · manager approvals</text>
+<text x="564" y="394" font-size="19" fill="#41516b" font-weight="400">Collector ingestion · MCP tool endpoint</text>
+<rect x="540" y="468" width="560" height="155" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="468" width="5" height="155" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="498" font-size="14" fill="#2263bb" font-weight="700">AUTONOMOUS ORCHESTRATION</text>
+<text x="564" y="530" font-size="25" fill="#132745" font-weight="700">TypeScript operations worker</text>
+<text x="564" y="560" font-size="19" fill="#41516b" font-weight="400">EWMA drift: temp, memory, optical loss</text>
+<text x="564" y="585" font-size="19" fill="#41516b" font-weight="400">PostgreSQL-backed pg-boss investigation jobs</text>
+<text x="564" y="610" font-size="19" fill="#41516b" font-weight="400">Campus topology &amp; calculated impact</text>
+<rect x="540" y="678" width="560" height="170" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="678" width="5" height="170" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="708" font-size="14" fill="#2263bb" font-weight="700">BACKEND OWNS AUTHORIZATION</text>
+<text x="564" y="740" font-size="25" fill="#132745" font-weight="700">Policy → execution → verification</text>
+<text x="564" y="770" font-size="19" fill="#41516b" font-weight="400">Service restart: automatic when policy allows</text>
+<text x="564" y="795" font-size="19" fill="#41516b" font-weight="400">Switch restart: manager approval + exact hash</text>
+<text x="564" y="820" font-size="19" fill="#41516b" font-weight="400">One command; 3 fresh healthy samples or escalate</text>
+<rect x="540" y="898" width="560" height="124" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="540" y="898" width="5" height="124" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="564" y="928" font-size="14" fill="#2263bb" font-weight="700">PERSISTENCE</text>
+<text x="564" y="960" font-size="25" fill="#132745" font-weight="700">PostgreSQL 17</text>
+<text x="564" y="990" font-size="19" fill="#41516b" font-weight="400">Tenant RLS · baselines · memory · jobs · audit</text>
+<rect x="1240" y="277" width="480" height="175" rx="16" fill="#f0f9f6" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1240" y="277" width="5" height="175" rx="2" fill="#216e65" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="307" font-size="14" fill="#216e65" font-weight="700">ACTIVE REASONING PROVIDER</text>
+<text x="1264" y="339" font-size="25" fill="#132745" font-weight="700">Alibaba Cloud Model Studio</text>
+<text x="1264" y="369" font-size="19" fill="#41516b" font-weight="400">qwen3.7-max in recorded recovery</text>
+<text x="1264" y="394" font-size="19" fill="#41516b" font-weight="400">OpenAI-compatible model inference</text>
+<text x="1264" y="419" font-size="19" fill="#41516b" font-weight="400">Explicit model selection · cited findings</text>
+<rect x="1240" y="490" width="480" height="225" rx="16" fill="#f0f5fc" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1240" y="490" width="5" height="225" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="520" font-size="14" fill="#2263bb" font-weight="700">SERVERLESS AGENT RUNTIME</text>
+<text x="1264" y="552" font-size="25" fill="#132745" font-weight="700">Amazon Bedrock AgentCore</text>
+<text x="1264" y="582" font-size="19" fill="#41516b" font-weight="400">Strands SDK · bounded specialist workflow</text>
+<text x="1264" y="607" font-size="19" fill="#41516b" font-weight="400">Network / System / Power → Critic</text>
+<text x="1264" y="632" font-size="19" fill="#41516b" font-weight="400">Python 3.12 ARM64 microVM in AWS us-east-1</text>
+<text x="1264" y="657" font-size="19" fill="#41516b" font-weight="400">Direct S3 code bundle · HTTP invocations</text>
+<text x="1264" y="682" font-size="19" fill="#41516b" font-weight="400">Proposes actions; backend owns authorization</text>
+<rect x="1240" y="755" width="480" height="215" rx="16" fill="#f0f9f6" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1240" y="755" width="5" height="215" rx="2" fill="#216e65" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1264" y="785" font-size="14" fill="#216e65" font-weight="700">RESTRICTED HYBRID TOOL BRIDGE</text>
+<text x="1264" y="817" font-size="25" fill="#132745" font-weight="700">Cloudflare Tunnel → Tool Proxy</text>
+<text x="1264" y="847" font-size="19" fill="#41516b" font-weight="400">Grant checks enforced by local backend</text>
+<text x="1264" y="872" font-size="19" fill="#41516b" font-weight="400">Ephemeral HTTPS/QUIC tunnel to loopback :3035</text>
+<text x="1264" y="897" font-size="19" fill="#41516b" font-weight="400">Allowed tool + invocation-status callbacks</text>
+<text x="1264" y="922" font-size="19" fill="#41516b" font-weight="400">DB stays local; evidence goes to cloud</text>
+<rect x="469" y="284" width="89.8" height="22" rx="4" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="477" y="300" font-size="14" fill="#284768" font-weight="600">telemetry</text>
+<rect x="827" y="427" width="139.0" height="22" rx="4" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="835" y="443" font-size="14" fill="#284768" font-weight="600">persisted state</text>
+<rect x="1117" y="504" width="106.19999999999999" height="22" rx="4" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1125" y="520" font-size="14" fill="#284768" font-weight="600">investigate</text>
+<rect x="1492" y="459" width="89.8" height="22" rx="4" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1500" y="475" font-size="14" fill="#284768" font-weight="600">inference</text>
+<rect x="1492" y="722" width="98.0" height="22" rx="4" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1500" y="738" font-size="14" fill="#284768" font-weight="600">tool calls</text>
+<rect x="548" y="645" width="163.6" height="22" rx="4" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<text x="556" y="661" font-size="14" fill="#284768" font-weight="600">validated proposal</text>
+<text x="60" y="1074" font-size="14" fill="#2263bb" font-weight="700">RETRIEVAL</text>
+<text x="180" y="1074" font-size="18" fill="#41516b" font-weight="400">Local lexical runbook search; optional Titan embeddings. The recorded cloud recovery does not establish live vector retrieval.</text>
+<rect x="60" y="1100" width="1680" height="120" rx="18" fill="#112642" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="86" y="1133" font-size="14" fill="#8fc9ff" font-weight="700">END-TO-END INCIDENT LIFECYCLE</text>
+<text x="86" y="1177" font-size="22" fill="#ffffff" font-weight="700">Observe</text>
+<text x="281" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="321" y="1177" font-size="22" fill="#ffffff" font-weight="700">Detect &amp; group</text>
+<text x="516" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="556" y="1177" font-size="22" fill="#ffffff" font-weight="700">Investigate</text>
+<text x="751" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="791" y="1177" font-size="22" fill="#ffffff" font-weight="700">Authorize</text>
+<text x="986" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="1026" y="1177" font-size="22" fill="#ffffff" font-weight="700">Execute</text>
+<text x="1221" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="1261" y="1177" font-size="22" fill="#ffffff" font-weight="700">Verify</text>
+<text x="1456" y="1177" font-size="23" fill="#8fc9ff" font-weight="400">→</text>
+<text x="1496" y="1177" font-size="22" fill="#ffffff" font-weight="700">Report / notify</text>
+<text x="60" y="1574" font-size="14" fill="#216e65" font-weight="700">RECORDED VERIFICATION  ·  14 SEP 2026</text>
+<text x="60" y="1604" font-size="18" fill="#41516b" font-weight="400">AgentCore + Qwen: autonomous service recovery verified in 100.5s; authenticated manager approval &amp; switch recovery verified in 114.3s.</text>
+<rect x="60" y="1260" width="530" height="260" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="60" y="1260" width="5" height="260" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="84" y="1290" font-size="14" fill="#2263bb" font-weight="700">MULTIMODAL EVIDENCE</text>
+<text x="84" y="1322" font-size="25" fill="#132745" font-weight="700">Quarantine → scan → isolated parser</text>
+<text x="84" y="1352" font-size="19" fill="#41516b" font-weight="400">Mobile photo &amp; manual PDF (&gt;pg 5 citations)</text>
+<text x="84" y="1377" font-size="19" fill="#41516b" font-weight="400">ClamAV malware scan + SHA-256 integrity</text>
+<text x="84" y="1402" font-size="19" fill="#41516b" font-weight="400">Device associations require confirmation</text>
+<text x="84" y="1427" font-size="19" fill="#41516b" font-weight="400">Only clean, approved artifacts enter context</text>
+<rect x="630" y="1260" width="530" height="260" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="630" y="1260" width="5" height="260" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="654" y="1290" font-size="14" fill="#2263bb" font-weight="700">SANDBOXED ANALYSIS</text>
+<text x="654" y="1322" font-size="25" fill="#132745" font-weight="700">Private broker → disposable container</text>
+<text x="654" y="1352" font-size="19" fill="#41516b" font-weight="400">No network · credentials · application mounts</text>
+<text x="654" y="1377" font-size="19" fill="#41516b" font-weight="400">1 CPU · 256 MiB · 64 PIDs · 30 seconds</text>
+<text x="654" y="1402" font-size="19" fill="#41516b" font-weight="400">Telemetry CSV + synthetic waveform FFT</text>
+<text x="654" y="1427" font-size="19" fill="#41516b" font-weight="400">Measured spectra; no bearing-fault diagnosis</text>
+<rect x="1200" y="1260" width="540" height="260" rx="16" fill="#ffffff" stroke="#d4deeb" stroke-width="1.5" stroke-dasharray=""/>
+<rect x="1200" y="1260" width="5" height="260" rx="2" fill="#2263bb" stroke="none" stroke-width="1.5" stroke-dasharray=""/>
+<text x="1224" y="1290" font-size="14" fill="#2263bb" font-weight="700">ORGANIZATIONAL MEMORY</text>
+<text x="1224" y="1322" font-size="25" fill="#132745" font-weight="700">Incident / knowledge / fleet memory</text>
+<text x="1224" y="1352" font-size="19" fill="#41516b" font-weight="400">Factual outcomes + reviewed runbooks</text>
+<text x="1224" y="1377" font-size="19" fill="#41516b" font-weight="400">Source IDs, versions and tenant isolation</text>
+<text x="1224" y="1402" font-size="19" fill="#41516b" font-weight="400">EWMA baselines + explicit evidence gaps</text>
+<text x="1224" y="1427" font-size="19" fill="#41516b" font-weight="400">Lexical retrieval; optional Titan embeddings</text>
+</g></svg>

@@ -1,0 +1,19 @@
+# Optional local overlay for real camera uploads. Do not publish the scanner port.
+services:
+  web:
+    environment:
+      MEDIA_CLAMAV_HOST: clamav
+  worker:
+    environment:
+      MEDIA_CLAMAV_HOST: clamav
+    depends_on:
+      clamav:
+        condition: service_healthy
+  clamav:
+    image: ${CLAMAV_IMAGE:-clamav/clamav@sha256:1fdfd24c6f0a0fb60788481487459a6d4eda8a9b448641594e04db8410d34422}
+    mem_limit: 4g
+    restart: unless-stopped
+    volumes:
+      - clamav-signatures:/var/lib/clamav
+volumes:
+  clamav-signatures:

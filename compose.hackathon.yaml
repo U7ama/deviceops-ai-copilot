@@ -1,0 +1,129 @@
+name: deviceops-hackathon
+x-app-environment: &app-environment
+  NODE_ENV: development
+  APP_URL: http://localhost:${HACKATHON_PORT:-3030}
+  DATABASE_URL: postgresql://deviceops_app:${DEVICEOPS_APP_DB_PASSWORD:?Generate .env.hackathon}@postgres:5432/deviceops
+  DATABASE_ADMIN_URL: postgresql://postgres:${POSTGRES_ADMIN_PASSWORD:?Generate .env.hackathon}@postgres:5432/deviceops
+  SESSION_SECRET: ${SESSION_SECRET:?Generate .env.hackathon}
+  AI_PROVIDER: mock
+  MEDIA_PROVIDER: local
+  MEDIA_SCANNER: fixture
+  MEDIA_ROOT: /app/.data/media
+  MEDIA_ALLOW_UNSCANNED_DEV_UPLOADS: "false"
+  OPS_DEMO_ENABLED: "true"
+  OPS_AGENT_MODE: ${OPS_AGENT_MODE:-fixture}
+  OPS_POLL_MS: "5000"
+  OPS_MODEL_BUDGET_USD: ${OPS_MODEL_BUDGET_USD:-6}
+  STRANDS_SERVICE_URL: http://strands:8081
+  STRANDS_SERVICE_TOKEN: ${STRANDS_SERVICE_TOKEN:?Generate .env.hackathon}
+  AWS_CREDITS_CONFIRMED: ${AWS_CREDITS_CONFIRMED:-false}
+  QWEN_MODEL_ID: ${QWEN_MODEL_ID:-qwen3.7-max}
+  QWEN_USAGE_CONFIRMED: ${QWEN_USAGE_CONFIRMED:-false}
+  OPS_N8N_WEBHOOK_URL: ${OPS_N8N_WEBHOOK_URL:-}
+  N8N_WEBHOOK_SECRET: ${N8N_WEBHOOK_SECRET:?Generate .env.hackathon}
+  OTEL_SDK_DISABLED: "true"
+  NEXT_TEST_WASM_DIR: /app/node_modules/@next/swc-wasm-nodejs
+x-app: &app
+  image: deviceops-hackathon:local
+  build:
+    context: .
+    dockerfile: infra/hackathon/Dockerfile.local
+  environment: *app-environment
+  depends_on:
+    postgres:
+      condition: service_healthy
+  init: true
+  logging:
+    driver: json-file
+    options: {max-size: 5m, max-file: "2"}
+services:
+  postgres:
+    image: pgvector/pgvector:0.8.1-pg17
+    environment:
+      POSTGRES_DB: deviceops
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${POSTGRES_ADMIN_PASSWORD:?Generate .env.hackathon}
+      DEVICEOPS_APP_DB_PASSWORD: ${DEVICEOPS_APP_DB_PASSWORD:?Generate .env.hackathon}
+    volumes:
+      - postgres:/var/lib/postgresql/data
+      - ./infra/postgres/001-create-app-role.sh:/docker-entrypoint-initdb.d/001-create-app-role.sh:ro
+    healthcheck:
+      test: [CMD-SHELL, pg_isready -U postgres -d deviceops]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    restart: unless-stopped
+  web:
+    <<: *app
+    command: [npm, run, dev, --workspace, "@deviceops/web", --, --hostname, 0.0.0.0]
+    ports: ["127.0.0.1:${HACKATHON_PORT:-3030}:3000"]
+    volumes: [media:/app/.data]
+    restart: unless-stopped
+  worker:
+    <<: *app
+    command: [node, --import, tsx, apps/worker/src/index.ts]
+    volumes: [media:/app/.data]
+    restart: unless-stopped
+  migrate:
+    <<: *app
+    profiles: [tools]
+    command: [node, --import, tsx, scripts/migrate.ts]
+  seed:
+    <<: *app
+    profiles: [tools]
+    environment:
+      <<: *app-environment
+      SEED_PASSWORD: ${SEED_PASSWORD:?Generate .env.hackathon}
+    command: [node, --import, tsx, scripts/seed.ts]
+  strands:
+    profiles: [bedrock]
+    image: deviceops-strands:local
+    build:
+      context: .
+      dockerfile: Dockerfile.strands
+    environment:
+      DEVICEOPS_URL: http://web:3000
+      STRANDS_SERVICE_TOKEN: ${STRANDS_SERVICE_TOKEN:?Generate .env.hackathon}
+      AWS_CREDITS_CONFIRMED: ${AWS_CREDITS_CONFIRMED:-false}
+      AWS_REGION: ${AWS_REGION:-us-east-1}
+      BEDROCK_MODEL_ID: ${BEDROCK_MODEL_ID:-us.amazon.nova-lite-v1:0}
+      BEDROCK_EMBEDDING_MODEL_ID: ${BEDROCK_EMBEDDING_MODEL_ID:-amazon.titan-embed-text-v2:0}
+      AWS_SHARED_CREDENTIALS_FILE: /run/secrets/aws_credentials
+      AWS_PROFILE: ${AWS_PROFILE:-default}
+      OTEL_SDK_DISABLED: "true"
+    secrets: [aws_credentials]
+    init: true
+    restart: unless-stopped
+  n8n:
+    profiles: [notifications]
+    image: n8nio/n8n:2.0.0
+    environment:
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY:-${N8N_WEBHOOK_SECRET}}
+      N8N_WEBHOOK_SECRET: ${N8N_WEBHOOK_SECRET}
+      DEVICEOPS_CORE_URL: http://web:3000
+      MAILPIT_API_URL: http://mailpit:8025/api/v1/send
+      ALERT_FROM: deviceops@demo.test
+      ALERT_RECIPIENT: technician@demo.test
+      NODE_FUNCTION_ALLOW_BUILTIN: crypto
+      N8N_BLOCK_ENV_ACCESS_IN_NODE: "false"
+      N8N_SECURE_COOKIE: "false"
+      N8N_DIAGNOSTICS_ENABLED: "false"
+      N8N_PERSONALIZATION_ENABLED: "false"
+      N8N_VERSION_NOTIFICATIONS_ENABLED: "false"
+    ports: ["127.0.0.1:15678:5678"]
+    volumes: [n8n:/home/node/.n8n]
+    restart: unless-stopped
+  mailpit:
+    profiles: [notifications]
+    image: axllent/mailpit:v1.27.8
+    environment:
+      MP_MAX_MESSAGES: 500
+    ports: ["127.0.0.1:18025:8025"]
+    restart: unless-stopped
+volumes:
+  postgres:
+  media:
+  n8n:
+secrets:
+  aws_credentials:
+    file: ${AWS_SHARED_CREDENTIALS_FILE:-./.data/aws-credentials-not-configured}
