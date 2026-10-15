@@ -1,4 +1,4 @@
-"""Original MIT fixture. Run with pypdf 5.9.0; writes a synthetic PDF to stdout."""
+"""Original synthetic fixture. Run with pypdf 5.9.0; writes a synthetic PDF to stdout."""
 import sys, io
 from pypdf import PdfWriter
 from pypdf.generic import DictionaryObject, NameObject, DecodedStreamObject

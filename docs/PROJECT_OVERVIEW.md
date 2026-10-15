@@ -50,4 +50,4 @@ Real equipment remains read-only, and remediation is restricted to simulators. A
 - [Integration catalog](INTEGRATIONS.md)
 - [Security controls](../SECURITY.md)
 
-The project is MIT licensed. Frameworks, SDKs and adapted UI components retain their respective notices.
+Frameworks, SDKs and adapted UI components retain their respective third-party notices.

@@ -72,8 +72,8 @@ npm run build --workspace @deviceops/web
 
 Real equipment is read-only; recovery actions are restricted to enrolled simulators. Vendor compatibility is documented per adapter in [integration statuses](docs/INTEGRATIONS.md). Production fleet scale, high availability and regulated-environment certification are not established by these demonstrations. See [security controls](SECURITY.md) and the [threat model](THREAT_MODEL.md).
 
-## Companion projects and license
+## Companion projects and third-party notices
 
 [DeviceOps Mobile](https://github.com/U7ama/deviceops-mobile) provides the Expo technician client. [DeviceOps Automations](https://github.com/U7ama/deviceops-automations) contains signed n8n notification workflows.
 
-MIT licensed; see [LICENSE](LICENSE). Third-party dependencies retain their own licenses, including the [dashboard UI notice](docs/licenses/kiranism-dashboard-MIT.txt).
+Third-party dependencies retain their own licenses. The adapted dashboard components retain the [upstream UI notice](docs/licenses/kiranism-dashboard-MIT.txt).

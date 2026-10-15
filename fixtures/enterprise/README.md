@@ -1,6 +1,6 @@
 # Original synthetic evidence fixtures
 
-All files are original MIT demonstration material. They are not vendor measurements, real rack photographs or surveyed installation drawings.
+All files are original demonstration material. They are not vendor measurements, real rack photographs or surveyed installation drawings.
 
 - `staged-rack.png`: drawn rack illustration for bounded visual observations.
 - `manual.pdf`: short synthetic equipment manual for document/page citations.

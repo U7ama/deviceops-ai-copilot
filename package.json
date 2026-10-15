@@ -2,7 +2,7 @@
   "name": "deviceops-ai-copilot",
   "version": "0.1.0",
   "private": true,
-  "license": "MIT",
+  "license": "UNLICENSED",
   "description": "Production-ready Applied AI platform for enterprise device-operations teams.",
   "engines": {
     "node": "22.16.0",

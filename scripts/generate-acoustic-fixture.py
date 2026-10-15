@@ -1,4 +1,4 @@
-"""Original MIT synthetic waveform, with an injected tone; not equipment measurements."""
+"""Original synthetic waveform, with an injected tone; not equipment measurements."""
 import csv,math,random
 from pathlib import Path
 random.seed(7)
