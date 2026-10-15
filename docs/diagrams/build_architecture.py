@@ -1,4 +1,4 @@
-"""Generate the editable submission SVG without third-party dependencies."""
+"""Generate the editable architecture SVG without third-party dependencies."""
 from pathlib import Path
 from html import escape
 OUT = Path(__file__).parent

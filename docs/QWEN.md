@@ -1,6 +1,6 @@
 # Qwen reasoning provider
 
-DeviceOps uses Strands OpenAIModel with Alibaba Cloud Qwen (such as `qwen3.7-max` or `qwen3.7-flash`) at https://dashscope-intl.aliyuncs.com/compatible-mode/v1. The private .env.hackathon contains ABQWEN_API_KEY, QWEN_MODEL_ID, QWEN_BASE_URL and QWEN_USAGE_CONFIRMED=true. Set OPS_AGENT_MODE=qwen. Gemini is no longer selectable; historical Gemini diagnoses remain readable.
+DeviceOps uses Strands OpenAIModel with Alibaba Cloud Qwen (such as `qwen3.7-max` or `qwen3.7-flash`) at https://dashscope-intl.aliyuncs.com/compatible-mode/v1. The private .env.demo contains ABQWEN_API_KEY, QWEN_MODEL_ID, QWEN_BASE_URL and QWEN_USAGE_CONFIRMED=true. Set OPS_AGENT_MODE=qwen. Gemini is no longer selectable; historical Gemini diagnoses remain readable.
 
 Thinking is disabled, provider retries are disabled, and model/tool/token ceilings and backend approval policy remain enforced. Rates supplied for this model are $0.15 input and $0.47 output per million tokens; free quota is still metered at these rates. Keep the provider account in Free Quota Only mode. No automatic provider fallback occurs.
 
@@ -8,7 +8,7 @@ Bedrock remains an explicitly selected alternative. Qwen uses lexical retrieval;
 
 ## Cached local development
 
-Use compose.hackathon.yaml, compose.enterprise.yaml, compose.qwen.yaml and compose.qwen-dev.yaml together with --env-file .env.hackathon and --profile qwen. Use up -d --no-build --pull never web worker strands. The development override mounts source and the installed OpenAI client packages read-only into existing images. It is not a portable release image. No Docker caches need deletion.
+Use compose.demo.yaml, compose.enterprise.yaml, compose.qwen.yaml and compose.qwen-dev.yaml together with --env-file .env.demo and --profile qwen. Use up -d --no-build --pull never web worker strands. The development override mounts source and the installed OpenAI client packages read-only into existing images. It is not a portable release image. No Docker caches need deletion.
 
 A bounded live tool-call probe succeeded with 290 input and 18 output tokens. Full operational investigation verification is recorded separately; this probe alone does not establish it.
 

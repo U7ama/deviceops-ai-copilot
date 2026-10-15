@@ -1,111 +1,79 @@
-# DeviceOps — Autonomous Multi-Agent Operations & Incident Resolution for Enterprise Infrastructure
+# DeviceOps — Evidence-backed incident investigation and recovery
 
-> **Agents for Humans Hackathon Submission**  
-> *Autonomous infrastructure diagnosis, evidence-backed multi-specialist investigation, and closed-loop verified recovery.*
+DeviceOps helps operations teams investigate failing equipment, review evidence and recover safely. It connects device observations, topology, specialist AI investigations and human approvals in one workspace.
 
----
+The backend controls which actions are allowed. A model recommendation cannot bypass permissions, approve its own proposal or mark an incident resolved without fresh recovery observations.
 
-### ⚡ Executive Summary
+## What it does
 
-* **The Problem:** Universities, healthcare networks, and enterprise facilities manage hundreds of network switches, telemetry displays, and edge services. When critical equipment fails, on-call engineers are inundated with alerts and forced into manual triage under severe pressure. In high-stakes environments—like hospital clinics or university lecture halls—an offline display is often just a symptom of an upstream network switch or power failure. Blindly power-cycling shared infrastructure without understanding dependencies causes cascading outages, interrupts critical operations, and destroys forensic logs.
-* **Who It's For:** Higher education campuses, healthcare and hospital networks, and enterprise facilities operations teams managing mixed fleets of IoT hardware, networking gear, and mission-critical edge services.
-* **Why It Matters:** DeviceOps transforms reactive alert firefighting into an autonomous, evidence-backed workflow. Built with **AWS Strands Agents** and deployed on **AWS Bedrock AgentCore** with **Alibaba Cloud Qwen** inference, it proactively detects telemetry drift before full outages occur, routes investigations across specialized sub-agents (Network, System, Power, and Critic), enforces strict manager approval for disruptive actions, and requires 3 consecutive fresh healthy observations across all affected devices before resolving incidents.
+- **Detect and group incidents:** normalized observations, telemetry drift detection and dependency-aware impact.
+- **Investigate with evidence:** bounded Network, System and Power specialists, followed by a Critic review, using Strands and scoped MCP tools.
+- **Review consequential actions:** exact proposal hashes, role restrictions, CSRF protection and idempotent decisions.
+- **Verify recovery:** three fresh healthy observations across the affected devices before resolution; command acknowledgment alone is insufficient.
+- **Collect field evidence:** mobile photo capture, checksums, quarantine scanning, PDF citations and confirmed device associations.
+- **Analyze observations:** restricted container-based CSV statistics, charts and waveform spectra.
+- **Reuse reviewed knowledge:** tenant-scoped incident history, runbooks and baselines.
 
----
+## Dashboard
 
-This repository contains a working synthetic incident workflow, a private Strands service, and verified live multi-agent reasoning with Alibaba Cloud Qwen (`qwen3.7-max` and `qwen3.7-plus`; see [Qwen documentation](docs/QWEN.md)). **Fixture mode is the default and uses deterministic logic, with no live AI claim.** Live Bedrock reasoning requires verified AWS credits and model access. Vendor compatibility is reported per connector; the full 57-entry catalog includes planned integrations.
+The dashboard provides Overview, Incidents, Rooms & Equipment, Approvals, Knowledge and Administration views. Start at `/operations`; incident links use `/operations?view=incidents&incident=<id>`. Existing v1 diagnosis, approvals, incidents and run timelines remain available.
 
-## Run the local demonstration
-
-The dashboard uses the Kiranism starter's UI foundation with DeviceOps workflows.
-See [UI migration and verification](docs/UI_MIGRATION.md) for provenance, themes,
-and fixture-backed browser checks.
-
-Prerequisites: Node **22.16.0**, Docker with Compose, and Linux/WSL. Python 3.12 is needed only for host-side Strands tests or a host-run agent.
-
-```sh
-npm ci
-node scripts/hackathon-env.mjs
-node scripts/hackathon-preflight.mjs
-docker compose --env-file .env.hackathon -f compose.hackathon.yaml up -d postgres
-docker compose --env-file .env.hackathon -f compose.hackathon.yaml run --build --rm migrate
-docker compose --env-file .env.hackathon -f compose.hackathon.yaml run --rm seed
-docker build -t deviceops-analysis:local apps/analysis-sandbox
-docker compose --env-file .env.hackathon -f compose.hackathon.yaml -f compose.enterprise.yaml -f compose.media-scan.yaml up -d --build web worker
-```
-
-Open [localhost:3030](http://localhost:3030), sign in with `usamaaslam8726@gmail.com` and the generated `SEED_PASSWORD` from private `.env.hackathon`, then open `/operations`. The seed command also prints the demo credentials locally. Seed only a disposable demo database; reseeding resets fixture accounts and legacy test data.
-
-Use **Demo scenarios → Upstream switch failure**. The worker detects the fault and investigates. Review the exact switch-restart proposal, approve it, and observe recovery verification. Also try permitted service recovery, authentication failure, stale/conflicting sources, and acknowledged-but-failed recovery.
-
-The enterprise overlay adds the private analysis broker. The media-scan overlay adds ClamAV for arbitrary photo uploads; allow its health check to pass before capture testing. Images remain quarantined until scanning and parsing succeed. See [mobile and acoustic setup](docs/ACOUSTIC_AND_MOBILE.md).
-
-The standalone Compose file uses a separate project and private database volume. It binds the UI only to localhost and is a development demonstration. Stop it with the same Compose command followed by `down`; omit `--volumes` to preserve evidence.
-
-See [the hackathon runbook](docs/HACKATHON.md) for host-run commands, optional Strands and notification setup, scenario expectations, submission work, and remaining verification gates.
+The UI adapts the Kiranism dashboard foundation to DeviceOps, with responsive navigation, ten palettes and Light/Dark/System preferences. See [UI provenance and verification](docs/UI_MIGRATION.md).
 
 ## Architecture
 
 ![DeviceOps architecture](docs/diagrams/deviceops-architecture.png)
 
-[Diagram explanation and source](docs/ARCHITECTURE.md) · [SVG](docs/diagrams/deviceops-architecture.svg) · [PDF](docs/diagrams/deviceops-architecture.pdf)
-
-## Implementation map
+[Architecture and boundaries](docs/ARCHITECTURE.md) · [Project overview](docs/PROJECT_OVERVIEW.md) · [Editable diagram](docs/diagrams/deviceops-architecture.svg)
 
 | Component | Responsibility |
 | --- | --- |
-| `apps/web` | Existing authentication and API v1; new `/operations` UI and scoped API v2 |
-| `packages/operations` | Durable incidents, observations, approvals, evidence validation, commands, recovery, grants and model-budget ledger |
-| `apps/worker` | Continuous polling/detection, durable investigation jobs and notification dispatch |
-| `apps/strands-agent` | Bounded Python Strands/Bedrock reasoning and Titan embeddings; read-only MCP tools |
-| `infra/agentcore` | AWS Bedrock AgentCore serverless microVM runtime, deployment scripts, and loopback tool proxy |
-| `apps/mcp` | Invocation-scoped tool proxy; separate legacy read-only adapter |
-| `packages/connectors` / `apps/edge` | Normalized adapters, local credential vault, bounded discovery, collector and protocol simulator |
-| `packages/db` | PostgreSQL migrations, tenant transaction context, RLS and audit records |
+| `apps/web` | Next.js dashboard, authentication and tenant-scoped v1/v2 APIs |
+| `apps/worker` | Observation polling, detection, durable investigations and notification dispatch |
+| `packages/operations` | Incidents, evidence, approvals, commands, recovery and model-budget accounting |
+| `apps/strands-agent` | Bounded Python Strands reasoning with explicit Qwen or Bedrock provider selection |
+| `apps/mcp` | Invocation-scoped evidence tools and the legacy read-only adapter |
+| `packages/connectors` / `apps/edge` | Adapters, credential vault, discovery, collector and protocol simulator |
+| `packages/db` | PostgreSQL migrations, tenant transaction context, row-level security and audit records |
+| `infra/agentcore` | AgentCore packaging, bridge and restricted callback proxy |
 
-### The Hackathon Engineering Journey: From Copilot (v1) to Autonomous Operations (v2)
+## Local setup
 
-**Both v1 and v2 were engineered 100% within the active hackathon dates.** Their presence reflects a deliberate two-phase technical evolution:
+Use Node **22.16.0**, npm and Docker Compose on Linux/WSL. Python 3.12 is needed for host-side Strands development. The local container build currently requires the prepared dependency image described in [hosting notes](infra/hosting/README.md).
 
-1. **Phase 1 (v1 — Interactive Copilot):** Development initially began on an interactive diagnostic copilot (`/diagnosis`, `/api/v1`) designed for on-call engineers before we discovered the hackathon. This workflow allowed technicians to select a device, query technical manuals, and ask questions.
-2. **The Hackathon Discovery & Pivot:** Upon discovering the AWS / AI hackathon shortly afterward, we realized that passive, prompt-based chatbots fail enterprise infrastructure requirements. Unattended equipment demands autonomous drift detection, topology-aware multi-agent investigation, and verified closed-loop recovery.
-3. **Phase 2 (v2 — Autonomous Operations Platform):** We took on the hackathon challenge and engineered v2 (`/operations`, `/api/v2`): a serverless **AWS Bedrock AgentCore** multi-specialist system running on Alibaba Cloud Qwen (`qwen3.7-max`), backed by real EWMA telemetry drift detection, zero-trust hybrid loopback tools, cryptographic approval hashes, and multi-sample recovery verification.
+```sh
+npm ci
+npm run demo:env
+npm run demo:preflight
+docker compose --env-file .env.demo -f compose.demo.yaml up -d postgres
+docker compose --env-file .env.demo -f compose.demo.yaml run --build --rm migrate
+docker compose --env-file .env.demo -f compose.demo.yaml run --rm seed
+docker build -t deviceops-analysis:local apps/analysis-sandbox
+docker compose --env-file .env.demo -f compose.demo.yaml -f compose.enterprise.yaml -f compose.media-scan.yaml up -d --build web worker
+```
 
-The v1 diagnostic workflow is preserved as a manual fallback and technician interface, while v2 serves as the primary autonomous hackathon submission.
+Open [localhost:3030](http://localhost:3030), use the seeded account and private generated `SEED_PASSWORD`, then open `/operations`. Seed only a disposable database: reseeding resets fixture accounts and legacy test data. Preserve volumes when stopping the stack.
 
+Use **Operational Scenarios → Upstream switch failure** to inspect investigation, manager approval and verified simulator recovery. Fixture mode is deterministic and makes no model calls. Live reasoning requires explicit provider configuration and service access; see [Qwen setup](docs/QWEN.md) and the [operations runbook](docs/OPERATIONS_RUNBOOK.md).
 
-## Verification and boundaries
+The environment helper preserves existing local configuration. Scanner health is required for arbitrary photo uploads. See [mobile and acoustic setup](docs/ACOUSTIC_AND_MOBILE.md) and [notification workflows](https://github.com/U7ama/deviceops-automations).
+
+## Verification
 
 ```sh
 npm run typecheck
+npm run lint
 npm test
+npm run contracts:check
 npm run build --workspace @deviceops/web
-python3 -m venv apps/strands-agent/.venv
-apps/strands-agent/.venv/bin/pip install -r apps/strands-agent/requirements-dev.txt
-apps/strands-agent/.venv/bin/python -m pytest apps/strands-agent/tests -q
-apps/strands-agent/.venv/bin/python apps/strands-agent/export_schemas.py --check
 ```
 
-The implementation session exercised the operation workflow against native PostgreSQL 17 and tested the installed Strands SDK using deterministic model streams and a real local MCP transport. Check [the runbook](docs/HACKATHON.md) for recorded verification and unresolved checks. No live Bedrock evaluation, AWS deployment, hardware certification, or public submission is implied by passing offline tests.
+[Browser verification instructions](docs/UI_MIGRATION.md) cover fixture-backed UI flows. [Recorded verification](docs/verification/) distinguishes simulator, local API, physical-phone and live-provider checks. Historical cloud recovery records do not establish current deployment availability.
 
-Read [integration statuses](docs/INTEGRATIONS.md), [the Strands service contract](apps/strands-agent/README.md), and [reviewable AWS infrastructure](infra/hackathon/README.md). Credentials remain outside model tools. Local deployment still sends selected evidence to Bedrock when live reasoning is enabled. Real device writes remain disabled for this submission.
+Real equipment is read-only; recovery actions are restricted to enrolled simulators. Vendor compatibility is documented per adapter in [integration statuses](docs/INTEGRATIONS.md). Production fleet scale, high availability and regulated-environment certification are not established by these demonstrations. See [security controls](SECURITY.md) and the [threat model](THREAT_MODEL.md).
 
-## License and provenance
+## Companion projects and license
 
-MIT; see [LICENSE](LICENSE). Third-party dependencies retain their own licenses. The root Git commit is `eadfcae9814ec5e10dc9a6361b48c419c3aa7ddb`, dated August 11, 2026, 17:43:27 PKT. All code for both Phase 1 (v1) and Phase 2 (v2) was authored and committed 100% within the official hackathon window following the event kickoff.
+[DeviceOps Mobile](https://github.com/U7ama/deviceops-mobile) provides the Expo technician client. [DeviceOps Automations](https://github.com/U7ama/deviceops-automations) contains signed n8n notification workflows.
 
-Companion repositories: [DeviceOps Mobile](https://github.com/U7ama/deviceops-mobile) and [DeviceOps Automations](https://github.com/U7ama/deviceops-automations). They have their own setup and verification boundaries.
-
-Use [Qwen through Strands](docs/QWEN.md) for Alibaba Cloud Model Studio inference. Bedrock remains supported; no automatic provider fallback is enabled.
-
-## Five-pillar release
-
-See [the hackathon engineering overview](docs/HACKATHON.md) for specialist investigations, proactive anomalies, photo/PDF evidence, restricted analysis, memory, deployment settings and the recording script. Open the Enterprise tab in `/operations`. AWS adapters remain separately gated by actual service access.
-
-Recording and submission drafts: [word-for-word script](docs/RECORDING_SCRIPT.md) · [Devpost narrative](docs/DEVPOST_SUBMISSION.md). Both document the verified live Alibaba Qwen recovery rehearsals and clearly distinguish verified local operations from hardware and AWS deployment boundaries.
-
-## Operations navigation
-
-Start at `/operations?view=overview`. **Incidents** contains findings, uploads, specialist progress, acoustic/CSV analysis, approvals and recovery. **Rooms & Equipment** contains inventory and topology. **Approvals** lists v2 proposals, **Knowledge** provides memory and runbooks, and **Administration** contains service status, detector controls, discovery and integrations.
-
-Deep links use `/operations?view=incidents&incident=<id>`. Existing `/incidents` and `/approvals` routes retain the v1 workflow. Demo scenarios are synthetic and manager-only. Light/Dark/System preferences are available; System follows browser-reported preferences. See [Architecture](docs/ARCHITECTURE.md) and [diagrams](docs/diagrams/).
+MIT licensed; see [LICENSE](LICENSE). Third-party dependencies retain their own licenses, including the [dashboard UI notice](docs/licenses/kiranism-dashboard-MIT.txt).

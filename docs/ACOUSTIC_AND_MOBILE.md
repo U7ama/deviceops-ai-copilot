@@ -27,7 +27,7 @@ For a physical phone, `EXPO_PUBLIC_DEVICEOPS_API_URL` must point to a backend ad
 Camera/gallery processing re-encodes images, so their checksums will not match a synthetic-fixture allowlist. Use the optional `compose.media-scan.yaml` overlay to scan real uploads with private ClamAV:
 
 ```sh
-docker compose --env-file .env.hackathon -f compose.hackathon.yaml -f compose.enterprise.yaml -f compose.media-scan.yaml up -d
+docker compose --env-file .env.demo -f compose.demo.yaml -f compose.enterprise.yaml -f compose.media-scan.yaml up -d
 ```
 
 The scanner port is not published; definitions persist in a Docker volume. The image is pinned to the digest verified for this release, and it has a 4 GiB local memory limit. Plan hosted resource costs separately before enabling this overlay on AWS. The configuration follows the [official ClamAV Docker guidance](https://docs.clamav.net/manual/Installing/Docker.html). An unavailable or failed scan never admits a photo to model input.

@@ -17,9 +17,9 @@ staging directory with those dependencies and enforces ZIP size limits.
 
 ## Local connection
 
-Add `compose.agentcore.yaml` after the existing hackathon, enterprise, Qwen and
+Add `compose.agentcore.yaml` after the existing local demonstration, enterprise, Qwen and
 Qwen development overlays. Recreate web, worker and strands with `--no-build
---pull never --no-deps`; do not rebuild images. `.env.hackathon` stores the runtime
+--pull never --no-deps`; do not rebuild images. `.env.demo` stores the runtime
 ARN and matching Qwen model. The bridge alone receives read-only AWS credentials.
 The Qwen child process strips AWS credentials from its environment.
 
@@ -62,4 +62,3 @@ Deployed as hardened candidate runtime:
 - **Autonomous Recovery (PASSED)**: Verified automatic remediation of simulator service hang in **100.5 seconds** (`docs/verification/agentcore-bounded-recovery.json`).
 - **Human Manager Approval Recovery (PASSED)**: Verified complete human approval lifecycle on a shared distribution switch in **114.3 seconds** (`docs/verification/agentcore-switch-approval.json`): multi-specialist investigation, proposal requiring manager approval, zero pre-approval commands verified, authenticated manager API decision, simulator restart, and 3 consecutive healthy observation cycles before resolution.
 - See full hardening audit log in [`docs/verification/AGENTCORE_HARDENING.md`](../../docs/verification/AGENTCORE_HARDENING.md).
-

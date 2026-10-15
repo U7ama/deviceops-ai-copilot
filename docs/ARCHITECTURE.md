@@ -82,9 +82,7 @@ Sources: [bounded service recovery record](verification/agentcore-bounded-recove
 Cold-start latency and ongoing availability are not established by this record.
 No zero-cost or unlimited-quota guarantee is made. See
 [AgentCore implementation limitations](verification/AGENTCORE_HARDENING.md).
-Existing v1 pages remain available alongside the v2 operations workflow; this
-architecture document does not independently establish project creation dates
-or hackathon eligibility.
+Existing v1 pages remain available alongside the v2 operations workflow.
 
 ## Maintenance
 

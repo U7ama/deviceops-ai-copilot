@@ -38,6 +38,8 @@
     "stack:up": "docker compose up -d postgres n8n mailpit jaeger",
     "stack:down": "docker compose down",
     "stack:status": "docker compose ps",
+    "demo:env": "node scripts/demo-env.mjs",
+    "demo:preflight": "node scripts/demo-preflight.mjs",
     "hackathon:env": "node scripts/hackathon-env.mjs",
     "hackathon:preflight": "node scripts/hackathon-preflight.mjs",
     "test:ops": "node --import tsx scripts/ops-integration.mts",
