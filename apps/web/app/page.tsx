@@ -1,4 +1,6 @@
 'use client';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
@@ -68,9 +70,9 @@ export default function HomePage() {
     <h2>Sign in to DeviceOps</h2>
     <p className="muted">Sign in to access tenant-scoped diagnostics, cited manual retrieval, and policy-constrained device operations.</p>
     <form onSubmit={login} className="stack">
-      <label>Email<input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="username" required /></label>
-      <label>Password<input value={password} onChange={(event) => setPassword(event.target.value)} type="password" autoComplete="current-password" required /></label>
-      <button disabled={busy} type="submit">{busy ? 'Signing in…' : 'Sign in'}</button>
+      <label>Email<Input value={email} onChange={(event) => setEmail(event.target.value)} type="email" autoComplete="username" required /></label>
+      <label>Password<Input value={password} onChange={(event) => setPassword(event.target.value)} type="password" autoComplete="current-password" required /></label>
+      <Button disabled={busy} type="submit">{busy ? 'Signing in…' : 'Sign in'}</Button>
     </form>
     {message && <p className="notice">{message}</p>}
   </section>;

@@ -1,9 +1,10 @@
 'use client';
+import { Button } from '@/components/ui/button';
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '../components/Toast';
-import { AppSidebar } from '../components/AppSidebar';
+import { WorkspaceLayout } from '../components/WorkspaceLayout';
 import { cleanSummary } from '../operations/presentation';
 import type { IncidentState } from '@deviceops/contracts';
 
@@ -103,7 +104,7 @@ export default function IncidentsPage() {
         <div className="eyebrow">Enterprise Infrastructure Operations · Incidents</div>
         <h2>Sign in required</h2>
         <p className="muted">Please sign in to view notification delivery records. Operational investigations are in the Operations workspace.</p>
-        <Link href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+        <Link href="/" className="ops-link-button">
           Go to Sign In
         </Link>
       </section>
@@ -111,18 +112,16 @@ export default function IncidentsPage() {
   }
 
   return (
-    <div className="ops ops-workspace">
-      <AppSidebar currentPath="/incidents" user={user} />
-      <div className="ops-content">
+    <WorkspaceLayout currentPath="/incidents" user={user}>
         <section>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div className="eyebrow">Legacy Notification Workflow</div>
               <h2>Notification Delivery</h2>
             </div>
-            <button type="button" onClick={() => loadIncidents()}>
+            <Button type="button" onClick={() => loadIncidents()}>
               Refresh Incidents
-            </button>
+            </Button>
           </div>
           <p className="muted">
             These records track notification delivery through n8n. Delivery does not confirm device recovery. View investigations and recovery in the Operations workspace.
@@ -150,13 +149,13 @@ export default function IncidentsPage() {
                 {item.lastError ? <p className="notice">{item.lastError}</p> : null}
                 {['manager', 'admin', 'owner'].includes(role) && (item.state === 'dead_lettered' || item.state === 'retrying') ? (
                   <div style={{ marginTop: '14px' }}>
-                    <button
+                    <Button
                       type="button"
                       disabled={retryingId !== null || !csrf}
                       onClick={() => handleRetry(item.id)}
                     >
                       {retryingId === item.id ? 'Retrying…' : 'Retry Dispatch'}
-                    </button>
+                    </Button>
                   </div>
                 ) : null}
               </article>
@@ -164,7 +163,6 @@ export default function IncidentsPage() {
             {!message && !items.length && <p className="muted">No incidents in this tenant.</p>}
           </div>
         </section>
-      </div>
-    </div>
+    </WorkspaceLayout>
   );
 }

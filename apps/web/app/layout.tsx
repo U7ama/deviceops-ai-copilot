@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import React from 'react';
-import Link from 'next/link';
+import { ThemeProvider } from './components/ThemeProvider';
+import { PublicHeader } from './components/WorkspaceLayout';
+import { TooltipProvider } from '@/components/ui/tooltip';
 import './globals.css';
-import { ThemeToggle } from './components/ThemeToggle';
 import { ToastProvider } from './components/Toast';
 
 export const metadata: Metadata = {
@@ -17,11 +18,11 @@ export const metadata: Metadata = {
   }
 };
 
-const themeScript = `(function(){try{var p=localStorage.getItem('deviceops-theme')||'system';if(!['light','dark','system'].includes(p))p='system';var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='system'?(d?'dark':'light'):p;document.documentElement.setAttribute('data-theme',t);document.documentElement.setAttribute('data-theme-preference',p);document.documentElement.style.colorScheme=t;}catch(e){}})();`;
+const themeScript = `(function(){var p='system',c='vercel';try{p=localStorage.getItem('deviceops-theme')||p;c=localStorage.getItem('deviceops-palette')||c;}catch(e){}if(!['light','dark','system'].includes(p))p='system';if(!['vercel','claude','discord','supabase','mono','notebook','light-green','zen','astro-vista','whatsapp'].includes(c))c='vercel';var d=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var t=p==='system'?(d?'dark':'light'):p;var h=document.documentElement;h.setAttribute('data-theme',t);h.setAttribute('data-theme-preference',p);h.setAttribute('data-palette',c);h.classList.toggle('dark',t==='dark');h.style.colorScheme=t;})();`;
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" data-palette="vercel" suppressHydrationWarning>
       <head>
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
         <link rel="icon" href="/favicon.ico" sizes="32x32" />
@@ -29,19 +30,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
-    <ToastProvider>
-    <header className="topbar">
-      <div className="topbar-inner">
-        <div className="brand">
-          <Link className="brand-logo" href="/">DeviceOps</Link>
-          <span className="brand-sep" aria-hidden="true">/</span>
-          <Link className="brand-section" href="/operations">Operations workspace</Link>
-        </div>
-        <ThemeToggle />
-      </div>
-    </header>
-    <main className="shell">{children}</main>
-    </ToastProvider>
+        <ThemeProvider><TooltipProvider><ToastProvider>
+          <PublicHeader />
+          <div className="shell">{children}</div>
+        </ToastProvider></TooltipProvider></ThemeProvider>
   </body></html>
   );
 }

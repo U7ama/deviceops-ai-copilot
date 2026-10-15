@@ -1,11 +1,14 @@
 'use client';
+import { NativeSelect } from '@/components/ui/native-select';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 import { useEffect, useState } from 'react';
 import type { FormEvent } from 'react';
 import Link from 'next/link';
 import { LogOut } from 'lucide-react';
 import { useToast } from '../components/Toast';
-import { AppSidebar } from '../components/AppSidebar';
+import { WorkspaceLayout } from '../components/WorkspaceLayout';
 
 type User = {
   email: string;
@@ -140,9 +143,7 @@ export default function DiagnosisPage() {
   }
 
   return (
-    <div className="ops ops-workspace">
-      <AppSidebar currentPath="/diagnosis" user={user} />
-      <div className="ops-content">
+    <WorkspaceLayout currentPath="/diagnosis" user={user}>
         <div className="page-grid">
           <section>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -158,9 +159,9 @@ export default function DiagnosisPage() {
                 </div>
                 <span className="badge">{user.demoMode ? 'staging environment' : 'enterprise tenant'}</span>
               </div>
-              <label>Question or Observed Symptom<textarea value={question} onChange={(event) => setQuestion(event.target.value)} rows={5} required /></label>
-              <div className="context-grid"><div><span className="label">Room</span><strong>{devices.find((device) => device.id === selectedDeviceId)?.room.name ?? 'Select a device'}</strong></div><div><span className="label">Device</span><select aria-label="Device" value={selectedDeviceId} onChange={(event) => setSelectedDeviceId(event.target.value)} required><option value="" disabled>Select a device</option>{devices.map((device) => <option key={device.id} value={device.id}>{device.name} · {device.model}</option>)}</select></div></div>
-              <button disabled={busy || !selectedDeviceId} type="submit">{busy ? 'Queueing…' : 'Queue diagnosis'}</button>
+              <label>Question or Observed Symptom<Textarea value={question} onChange={(event) => setQuestion(event.target.value)} rows={5} required /></label>
+              <div className="context-grid"><div><span className="label">Room</span><strong>{devices.find((device) => device.id === selectedDeviceId)?.room.name ?? 'Select a device'}</strong></div><div><span className="label">Device</span><NativeSelect aria-label="Device" value={selectedDeviceId} onChange={(event) => setSelectedDeviceId(event.target.value)} required><option value="" disabled>Select a device</option>{devices.map((device) => <option key={device.id} value={device.id}>{device.name} · {device.model}</option>)}</NativeSelect></div></div>
+              <Button disabled={busy || !selectedDeviceId} type="submit">{busy ? 'Queueing…' : 'Queue diagnosis'}</Button>
               {runId && <Link className="run-link" href={`/runs/${runId}`}>Open run timeline →</Link>}
             </form>
             {message && <p className="notice">{message}</p>}
@@ -177,7 +178,6 @@ export default function DiagnosisPage() {
             </>; })()}
           </aside>
         </div>
-      </div>
-    </div>
+    </WorkspaceLayout>
   );
 }

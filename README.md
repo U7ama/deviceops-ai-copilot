@@ -17,6 +17,10 @@ This repository contains a working synthetic incident workflow, a private Strand
 
 ## Run the local demonstration
 
+The dashboard uses the Kiranism starter's UI foundation with DeviceOps workflows.
+See [UI migration and verification](docs/UI_MIGRATION.md) for provenance, themes,
+and fixture-backed browser checks.
+
 Prerequisites: Node **22.16.0**, Docker with Compose, and Linux/WSL. Python 3.12 is needed only for host-side Strands tests or a host-run agent.
 
 ```sh

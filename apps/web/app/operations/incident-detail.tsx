@@ -1,4 +1,8 @@
 'use client';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 
 import { useState } from 'react';
 import { CheckCircle2, AlertCircle } from 'lucide-react';
@@ -13,7 +17,13 @@ export function Status({ value }: { value: string | null | undefined }) {
   const tone = ['online', 'resolved', 'approved', 'enrolled', 'hardware/service-verified', 'simulator-tested'].includes(known) ? 'good'
     : ['offline', 'error', 'escalated', 'rejected', 'failed', 'critical'].includes(known) ? 'bad'
     : ['warning', 'awaiting_approval', 'pending', 'high', 'verifying'].includes(known) ? 'warn' : 'neutral';
-  return <span className={`ops-status ops-status-${tone}`}><span aria-hidden="true" />{human(value)}</span>;
+  const tones = {
+    good: 'bg-[var(--success-bg)] text-[var(--success)]',
+    bad: 'bg-[var(--danger-bg)] text-[var(--danger)]',
+    warn: 'bg-[var(--warning-bg)] text-[var(--warning)]',
+    neutral: 'bg-muted text-muted-foreground'
+  };
+  return <Badge variant="outline" className={`ops-status ops-status-${tone} border-0 ${tones[tone]}`}><span aria-hidden="true" />{human(value)}</Badge>;
 }
 
 export function ApprovalCard({ approval, devices, canManage, busy, mutate }: {
@@ -48,12 +58,12 @@ export function ApprovalCard({ approval, devices, canManage, busy, mutate }: {
       <div><dt>Expected Disruption</dt><dd>Not available</dd></div>{approval.reason&&<div><dt>Rationale</dt><dd>{approval.reason}</dd></div>}
       <div><dt>Evidence</dt><dd>{approval.evidenceIds.length ? approval.evidenceIds.join(', ') : 'No evidence references supplied'}</dd></div>
     </dl>
-    <details className="ops-accordion"><summary>Proposal Hash, Preconditions &amp; Exact Arguments</summary><code>{approval.hash}</code><pre>{JSON.stringify({ preconditions: approval.preconditions, arguments: approval.arguments ?? {} }, null, 2)}</pre></details>
+    <details className="ops-accordion"><summary>Technical details: exact proposal &amp; safety checks</summary><code>{approval.hash}</code><pre>{JSON.stringify({ preconditions: approval.preconditions, arguments: approval.arguments ?? {} }, null, 2)}</pre></details>
     {pending && canManage ? <div className="ops-approval-controls">
-      <label htmlFor={`reason-${approval.id}`}>Decision note<textarea id={`reason-${approval.id}`} value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Record why this operation is appropriate or should be rejected." maxLength={1000} rows={2} /></label>
+      <label htmlFor={`reason-${approval.id}`}>Decision note<Textarea id={`reason-${approval.id}`} value={reason} onChange={(event) => setReason(event.target.value)} placeholder="Record why this operation is appropriate or should be rejected." maxLength={1000} rows={2} /></label>
       <div className="ops-actions">
-        <button disabled={busy || actionBusy !== null} onClick={() => void handleApprove()}>{actionBusy === 'approve' ? 'Approving…' : 'Approve Operation'}</button>
-        <button className="ops-button-danger" disabled={busy || actionBusy !== null} onClick={() => void handleReject()}>{actionBusy === 'reject' ? 'Rejecting…' : 'Reject Operation'}</button>
+        <Button disabled={busy || actionBusy !== null} onClick={() => void handleApprove()}>{actionBusy === 'approve' ? 'Approving…' : 'Approve Operation'}</Button>
+        <Button variant="destructive" className="ops-button-danger" disabled={busy || actionBusy !== null} onClick={() => void handleReject()}>{actionBusy === 'reject' ? 'Rejecting…' : 'Reject Operation'}</Button>
       </div>
     </div> : pending ? <p className="ops-footnote">A manager, admin, or owner must review this proposal.</p> : null}
   </article>;
@@ -64,7 +74,7 @@ function Diagnosis({ value, runbooks, suppliedEvidence, devices }: { value: Reco
   const citations = Array.isArray(value.citations) ? value.citations : [];
   const evidenceIds = Array.isArray(value.evidenceIds) ? value.evidenceIds : [];
   return <section className="ops-diagnosis">
-    <h4>Investigation Findings</h4><p className="ops-footnote">Agent hypotheses are distinct from observed evidence and backend policy.</p>
+    <h4>Investigation Findings</h4><p className="ops-footnote">These findings suggest possible causes. Compare them with the recorded evidence before taking action.</p>
     {Boolean(value.provider) && <p className="ops-footnote">Provider: {human(text(value.provider))}{Boolean(value.modelId) && <> · {text(value.modelId)}</>}</p>}
     <p>{cleanSummary(text(value.summary) || text(value.diagnosis) || text(value.likelyCause) || text(value.cause) || 'Structured findings are available below.')}</p>
     {Boolean(value.likelyCause || value.probableCause || value.cause) && <p><strong>Likely cause: </strong>{cleanSummary(text(value.likelyCause) || text(value.probableCause) || text(value.cause))}</p>}
@@ -89,7 +99,7 @@ function Diagnosis({ value, runbooks, suppliedEvidence, devices }: { value: Reco
             <div className="ops-evidence-footer">
               <small>{entry.version ? `Version ${text(entry.version)} · ` : ''}{text(entry.id)}</small>
             </div>
-            {entry.kind === 'observation' && Boolean(entry.metrics) && <details className="ops-accordion"><summary>Raw Metrics</summary><pre>{JSON.stringify(entry.metrics, null, 2)}</pre></details>}
+            {entry.kind === 'observation' && Boolean(entry.metrics) && <details className="ops-accordion"><summary>View recorded measurements</summary><pre>{JSON.stringify(entry.metrics, null, 2)}</pre></details>}
           </div>;
         })}
       </div>
@@ -148,10 +158,10 @@ export function RunbookReview({ incident, busy, mutate }: { incident: Incident; 
   return <details className="ops-runbook-review ops-accordion"><summary>Review &amp; Publish Runbook</summary>
     <form className="stack" onSubmit={handleSubmit}>
       <p className="ops-footnote">Edit this draft into reusable instructions. Publishing makes this knowledge available to subsequent investigations in your tenant.</p>
-      <label>Runbook Title<input value={title} onChange={(event) => setTitle(event.target.value)} minLength={5} maxLength={160} required /></label>
-      <label>Reviewed Runbook Content<textarea value={content} onChange={(event) => setContent(event.target.value)} minLength={40} maxLength={12000} rows={8} required /></label>
+      <label>Runbook Title<Input value={title} onChange={(event) => setTitle(event.target.value)} minLength={5} maxLength={160} required /></label>
+      <label>Reviewed Runbook Content<Textarea value={content} onChange={(event) => setContent(event.target.value)} minLength={40} maxLength={12000} rows={8} required /></label>
       <div className="ops-actions">
-        <button disabled={busy || submitting} type="submit">{submitting ? 'Publishing…' : 'Publish Reviewed Runbook'}</button>
+        <Button disabled={busy || submitting} type="submit">{submitting ? 'Publishing…' : 'Publish Reviewed Runbook'}</Button>
       </div>
       {feedback && (
         <div className={`ops-alert ${feedback.type === 'error' ? 'ops-alert-error' : ''}`} role={feedback.type === 'error' ? 'alert' : undefined} style={{ marginTop: '12px' }}>
@@ -185,7 +195,7 @@ export function IncidentDetail({ incident, devices, runbooks, notifications, eve
         <span className="ops-step-number">1</span>
         <div className="ops-step-info">
           <h4 className="ops-step-title">What Needs Attention</h4>
-          <span className="ops-step-subtitle">Incident status and operational summary</span>
+          <span className="ops-step-subtitle">Current status and when the incident was recorded</span>
         </div>
         <Status value={incident.status} />
       </div>
@@ -201,7 +211,7 @@ export function IncidentDetail({ incident, devices, runbooks, notifications, eve
         <span className="ops-step-number">2</span>
         <div className="ops-step-info">
           <h4 className="ops-step-title">What Is Affected</h4>
-          <span className="ops-step-subtitle">Equipment, rooms, and topology dependencies</span>
+          <span className="ops-step-subtitle">Devices and rooms affected by this incident</span>
         </div>
       </div>
       <div className="ops-step-body">
@@ -214,13 +224,13 @@ export function IncidentDetail({ incident, devices, runbooks, notifications, eve
       </div>
     </div>
 
-    {/* Step 3: What The Agent Found */}
+    {/* Step 3: Investigation findings */}
     <div className="ops-step-card">
       <div className="ops-step-header">
         <span className="ops-step-number">3</span>
         <div className="ops-step-info">
-          <h4 className="ops-step-title">What The Agent Found</h4>
-          <span className="ops-step-subtitle">Hypotheses, cited evidence, and autonomous agent analysis</span>
+          <h4 className="ops-step-title">Investigation findings</h4>
+          <span className="ops-step-subtitle">Likely causes, supporting evidence, and remaining uncertainty</span>
         </div>
       </div>
       <div className="ops-step-body">
@@ -229,24 +239,24 @@ export function IncidentDetail({ incident, devices, runbooks, notifications, eve
       </div>
     </div>
 
-    {/* Step 4: What Action Is Required */}
+    {/* Step 4: Review the next action */}
     <div className="ops-step-card">
       <div className="ops-step-header">
         <span className="ops-step-number">4</span>
         <div className="ops-step-info">
-          <h4 className="ops-step-title">What Action Is Required</h4>
-          <span className="ops-step-subtitle">Human-in-the-loop approvals, controlled execution, and recovery verification</span>
+          <h4 className="ops-step-title">Review the next action</h4>
+          <span className="ops-step-subtitle">Review a proposal, decide, then check recovery</span>
         </div>
       </div>
       <div className="ops-step-body">
         {!approvals.length && <p>{incident.status==='escalated'?'Escalation required. Review the investigation and policy outcome.':incident.status==='resolved'?'Recovery confirmed. Review the report before publishing reusable guidance.':incident.status==='cancelled'?'Investigation cancelled. Dispatched actions are not rolled back.':'No approval proposal recorded. This does not authorize an action.'}</p>}
         <div className="ops-actions">
-          {canManage && <button className="ops-button-secondary" disabled={busy || investigating || ['investigating', 'executing', 'verifying', 'awaiting_approval'].includes(incident.status)} onClick={async () => {
+          {canManage && <Button variant="outline" className="ops-button-secondary" disabled={busy || investigating || ['investigating', 'executing', 'verifying', 'awaiting_approval'].includes(incident.status)} onClick={async () => {
             setInvestigating(true);
             await mutate(`/api/v2/incidents/${encodeURIComponent(incident.id)}/investigate`, {}, 'Investigation requested. New findings will appear in the timeline.');
             setInvestigating(false);
-          }}>{investigating ? 'Requesting…' : 'Request Investigation'}</button>}
-          {incident.report && <button className="ops-button-secondary" onClick={downloadReport}>Download Report</button>}
+          }}>{investigating ? 'Requesting…' : 'Request Investigation'}</Button>}
+          {incident.report && <Button variant="outline" className="ops-button-secondary" onClick={downloadReport}>Download Report</Button>}
         </div>
         {approvals.map((approval) => <ApprovalCard key={approval.id} approval={approval} devices={devices} canManage={canManage} busy={busy} mutate={mutate} />)}
         {incident.status==='verifying'&&<section className="ops-evidence" style={{ marginTop: '14px' }}><h4>Recovery Verification</h4><p>{Number.isFinite(incident.healthySamples)?`${incident.healthySamples} / ${RECOVERY_HEALTHY_SAMPLES} qualifying observations per affected device`:'Observation count unavailable'}</p><p>Fresh, healthy observations are required after execution. Verification timeout: {RECOVERY_TIMEOUT_MS/1000} seconds.</p></section>}
@@ -255,7 +265,7 @@ export function IncidentDetail({ incident, devices, runbooks, notifications, eve
           <h4>Draft Incident Report</h4>
           <p className="ops-footnote">This report is a draft. Publication to the runbook library requires separate review.</p>
           <p>{text(incident.report.outcome)}</p>
-          <details className="ops-accordion"><summary>Full Report Data</summary><pre>{JSON.stringify(incident.report, null, 2)}</pre></details>
+          <details className="ops-accordion"><summary>View complete report data</summary><pre>{JSON.stringify(incident.report, null, 2)}</pre></details>
           {incident.report.publication === 'published' ? (
             <div className="ops-alert ops-alert-published" style={{ marginTop: '14px' }}>
               <CheckCircle2 size={16} aria-hidden="true" />

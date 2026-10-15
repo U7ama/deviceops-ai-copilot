@@ -2,6 +2,7 @@
 
 import React, { createContext, useCallback, useContext, useState } from 'react';
 import { CheckCircle2, AlertCircle, X } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 export type ToastType = 'success' | 'error';
 export type ToastItem = {
@@ -51,13 +52,15 @@ export function ToastProvider({ children }: { children: React.ReactNode }) {
               <AlertCircle size={18} aria-hidden="true" />
             )}
             <span>{toast.message}</span>
-            <button
+            <Button
+              variant="ghost"
+              size="icon-xs"
               type="button"
               onClick={() => removeToast(toast.id)}
               aria-label="Dismiss notification"
             >
               <X size={14} aria-hidden="true" />
-            </button>
+            </Button>
           </div>
         ))}
       </div>

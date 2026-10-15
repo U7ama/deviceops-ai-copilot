@@ -1,6 +1,10 @@
 'use client';
+import { NativeSelect } from '@/components/ui/native-select';
+import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
+import { Textarea } from '@/components/ui/textarea';
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { UploadCloud, FileText, Image as ImageIcon, Shield, Cpu, Network, Radio } from 'lucide-react';
+import { UploadCloud, FileText, Image as ImageIcon, Shield, Cpu, Network, Radio, Settings, BookOpen, Activity, Search, Paperclip, TriangleAlert } from 'lucide-react';
 import type { OperationsState, Mutation } from './types';
 import { acousticSpectrumScript } from './analysis-presets';
 import { human, timestamp, object } from './types';
@@ -51,25 +55,25 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
  async function action(path:string,body:Record<string,unknown>,message:string){await mutate(`/api/v2/${path}`,body,message);await refresh();}
  async function upload(file:File){try{if(!incident)throw new Error('Select an incident first');if(file.size>(file.type.startsWith('image/')?10:50)*1024*1024)throw new Error('File exceeds upload limit');const bytes=new Uint8Array(await file.arrayBuffer());const hash=Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256',bytes))).map(x=>x.toString(16).padStart(2,'0')).join('');let binary='';for(let n=0;n<bytes.length;n+=32768)binary+=String.fromCharCode(...bytes.subarray(n,n+32768));const contentType=file.type|| (file.name.endsWith('.csv')?'text/csv':'text/plain');await action('artifacts',{incidentId:incident,name:file.name,contentType,sha256:hash,data:btoa(binary)},'Evidence quarantined for processing.');}catch(e){const msg=e instanceof Error?e.message:'Upload failed';setError(msg);showToast('error',msg);}}
  return <div className="ops-enterprise">{localError&&<p role="alert">{localError}</p>}
-  {section==='admin'&&(<section className="ops-panel"><div className="ops-row"><div><span className="eyebrow">Five-Pillar Operations</span><h3>Investigate with evidence.</h3><p>Specialists, proactive telemetry, visual evidence, isolated analysis and organizational memory.</p></div>{canManage&&data&&<button className="ops-button-secondary" onClick={()=>void action('enterprise/controls',{stopped:!data.controls.stopped},'Operations control updated.')}>{data.controls.stopped?'Resume operations':'Stop operations'}</button>}</div>
+  {section==='admin'&&(<section className="ops-panel"><div className="ops-row"><div><span className="eyebrow">Automation settings</span><h3><Settings aria-hidden="true" />Operations controls</h3><p>Pause new automated operations or choose whether detected anomalies can trigger an investigation. Dispatched actions are not rolled back.</p></div>{canManage&&data&&<Button variant="outline" className="ops-button-secondary" onClick={()=>void action('enterprise/controls',{stopped:!data.controls.stopped},'Operations control updated.')}>{data.controls.stopped?'Resume operations':'Stop operations'}</Button>}</div>
   {data&&<p>{Object.entries(data.providers).map(([key,value])=>`${human(key)}: ${human(value)}`).join(' · ')}</p>}{(error||localError)&&<p role="alert">{localError||error}</p>}
-  {canManage&&data&&<button onClick={()=>void action('enterprise/controls',{detectorMode:data.controls.detectorMode==='trigger'?'observe':'trigger'},'Detector mode updated.')} disabled={!data.controls.replayVerified}>{data.controls.detectorMode==='trigger'?'Observe only':'Enable investigation triggers'}</button>}</section>)}
-  {section==='fleet'&&( <section className="ops-panel"><h3>Campus Dependency Impact</h3><p>Stored device relationships and current health. Fault injection scenarios affect enrolled simulation targets only.</p>
-  <label>Inspect Device<select value={focus} onChange={e=>setFocus(e.target.value)}>{state.devices.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</select></label>
+  {canManage&&data&&<Button onClick={()=>void action('enterprise/controls',{detectorMode:data.controls.detectorMode==='trigger'?'observe':'trigger'},'Detector mode updated.')} disabled={!data.controls.replayVerified}>{data.controls.detectorMode==='trigger'?'Observe only':'Enable investigation triggers'}</Button>}</section>)}
+  {section==='fleet'&&( <section className="ops-panel"><h3><Network aria-hidden="true" />Connected equipment</h3><p>Choose a device to see its known connections and potential downstream impact.</p>
+  <label>Inspect Device<NativeSelect value={focus} onChange={e=>setFocus(e.target.value)}>{state.devices.map(d=><option key={d.id} value={d.id}>{d.name}</option>)}</NativeSelect></label>
   <svg viewBox={`0 0 640 ${Math.max(160,state.devices.length*70)}`} role="img" aria-label="Campus device dependency map" style={{width:'100%',maxWidth:720}}>
   {data?.topology.map(edge=>{const a=state.devices.findIndex(d=>d.id===edge.upstreamId),b=state.devices.findIndex(d=>d.id===edge.downstreamId);if(a<0||b<0)return null;return <line key={edge.id} x1={state.devices[a]?.kind==='switch'?155:465} y1={35+a*70} x2={state.devices[b]?.kind==='switch'?155:465} y2={35+b*70} stroke={edge.upstreamId===focus||edge.downstreamId===focus?'var(--primary)':'var(--border)'} strokeWidth="3"/>;})}
   {state.devices.map((d,n)=><g key={d.id}><rect x={d.kind==='switch'?10:320} y={10+n*70} width="290" height="50" rx="8" fill={d.id===focus?'var(--surface-secondary)':'var(--surface)'} stroke={d.health==='offline'||d.criticality==='critical'?'var(--danger)':'var(--border)'}/><text x={d.kind==='switch'?22:332} y={30+n*70} fontSize="13" fill="var(--text)">{d.name.slice(0,36)}</text><text x={d.kind==='switch'?22:332} y={49+n*70} fontSize="12" fill="var(--text-muted)">{d.health} · {d.criticality??'unclassified'} · {d.sourceMode}</text></g>)}
   </svg>
   {data?.impact.filter(i=>i.deviceId===focus).map(i=><p key={i.deviceId}>{i.downstreamCount} known downstream devices · {i.criticalCount} critical · {i.unknownCount} unknown impact · {i.requiresEscalation?'Backend policy blocks recovery; escalation required.':'Existing approval and freshness policies still apply.'}</p>)}
   <details className="ops-accordion"><summary>Stored Dependency Relationships</summary>{data?.topology.map(e=><p key={e.id}>{state.devices.find(d=>d.id===e.upstreamId)?.name??e.upstreamId} → {state.devices.find(d=>d.id===e.downstreamId)?.name??e.downstreamId}</p>)}{!data?.topology.length&&<p>No relationships recorded. Downstream impact is unknown.</p>}</details>
-  {canManage&&<>{state.devices.find(d=>d.id===focus)?.sourceMode==='simulated'&&<label>Device Criticality Policy<select value={state.devices.find(d=>d.id===focus)?.criticality??'unknown'} onChange={e=>void action(`devices/${focus}/policy`,{criticality:e.target.value,maintenanceUntil:state.devices.find(d=>d.id===focus)?.maintenanceUntil??null},'Device policy reviewed.')}><option value="standard">Standard</option><option value="critical">Critical</option><option value="unknown">Unknown</option></select></label>}</>}
+  {canManage&&<>{state.devices.find(d=>d.id===focus)?.sourceMode==='simulated'&&<label>Device Criticality Policy<NativeSelect value={state.devices.find(d=>d.id===focus)?.criticality??'unknown'} onChange={e=>void action(`devices/${focus}/policy`,{criticality:e.target.value,maintenanceUntil:state.devices.find(d=>d.id===focus)?.maintenanceUntil??null},'Device policy reviewed.')}><option value="standard">Standard</option><option value="critical">Critical</option><option value="unknown">Unknown</option></NativeSelect></label>}</>}
   </section>)}
   {section==='incidents'&&( <section className="ops-panel ops-specialists-panel" style={{ marginTop: '36px' }}>
     <div className="ops-row">
       <div>
         <span className="eyebrow">Multi-Agent System</span>
-        <h3>Specialist AI Investigations</h3>
-        <p>Autonomous specialized sub-agents (Network, System, Power, and Critic) analyze telemetry, topology, and physical evidence in parallel to generate verified hypotheses.</p>
+        <h3><Cpu aria-hidden="true" />Specialist findings</h3>
+        <p>Network, system, and power specialists examine the evidence. A reviewer checks their findings for gaps and contradictions.</p>
       </div>
     </div>
     {state.events.filter(e=>e.type==="specialist.progress"&&e.incidentId===incident).length > 0 && (
@@ -110,13 +114,13 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
               </small>
             </div>
             {canManage && !['resolved', 'cancelled'].includes(i.status) && (
-              <button
+              <Button
                 className="ops-button-secondary ops-cancel-investigation-btn"
                 type="button"
                 onClick={() => void action(`incidents/${i.id}/cancel`, {}, 'Cancellation recorded. Dispatched actions are not rolled back.')}
               >
                 Cancel Investigation
-              </button>
+              </Button>
             )}
           </div>
 
@@ -186,7 +190,7 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
                         <div className="ops-evidence-pills">
                           {f.evidenceIds.map((id, idx)=>(
                             <span key={idx} className="ops-evidence-pill">
-                              📎 {String(id)}
+                              <Paperclip size={12} aria-hidden="true" /> {String(id)}
                             </span>
                           ))}
                         </div>
@@ -195,7 +199,7 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
 
                     {Array.isArray(f.gaps) && f.gaps.length > 0 && (
                       <p className="ops-missing-gaps">
-                        ⚠ Unobserved parameters: {f.gaps.map(g => cleanSummary(String(g))).join('; ')}
+                        <TriangleAlert size={14} aria-hidden="true" /> Missing observations: {f.gaps.map(g => cleanSummary(String(g))).join('; ')}
                       </p>
                     )}
                   </div>
@@ -209,15 +213,16 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
       );
     })}
   </section>)}
-  {(section==='overview'||section==='demo')&&( <section className="ops-panel" id="anomalies"><div className="ops-row"><div><h3>Proactive Anomalies</h3>{section==='demo'&&canManage&&<button className="ops-button-secondary" onClick={()=>void action('enterprise/critical-demo',{},'Critical campus dependency scenario started.')}>Replay critical dependency drill</button>}<p>Detector mode: {data?.controls.detectorMode??'loading'} · Telemetry replay: {data?.controls.replayVerified?'passed':'not verified'}</p></div>{canManage&&section==='demo'&&<div><button className="ops-button-secondary" onClick={()=>void action('enterprise/replay',{},'Thermal drift telemetry replay completed.')}>Replay thermal drift telemetry</button><button className="ops-button-secondary" onClick={()=>void action('enterprise/replay',{metric:'opticalRxPower'},'Optical power attenuation telemetry replay completed.')}>Replay optical attenuation telemetry</button>{data?.controls.replayVerified&&<button className="ops-button-secondary" onClick={()=>void action('enterprise/controls',{detectorMode:data.controls.detectorMode==='trigger'?'observe':'trigger'},'Detector mode updated.')}>{data.controls.detectorMode==='trigger'?'Observe only':'Enable investigation triggers'}</button>}</div>}</div>
+  {(section==='overview'||section==='demo')&&( <section className="ops-panel" id="anomalies"><div className="ops-row"><div><h3><Activity aria-hidden="true" />Unusual device readings</h3>{section==='demo'&&canManage&&<Button variant="outline" className="ops-button-secondary" onClick={()=>void action('enterprise/critical-demo',{},'Critical campus dependency scenario started.')}>Replay critical dependency drill</Button>}<p>Detector mode: {data?.controls.detectorMode??'loading'} · Telemetry replay: {data?.controls.replayVerified?'passed':'not verified'}</p></div>{canManage&&section==='demo'&&<div><Button variant="outline" className="ops-button-secondary" onClick={()=>void action('enterprise/replay',{},'Thermal drift telemetry replay completed.')}>Replay thermal drift telemetry</Button><Button variant="outline" className="ops-button-secondary" onClick={()=>void action('enterprise/replay',{metric:'opticalRxPower'},'Optical power attenuation telemetry replay completed.')}>Replay optical attenuation telemetry</Button>{data?.controls.replayVerified&&<Button variant="outline" className="ops-button-secondary" onClick={()=>void action('enterprise/controls',{detectorMode:data.controls.detectorMode==='trigger'?'observe':'trigger'},'Detector mode updated.')}>{data.controls.detectorMode==='trigger'?'Observe only':'Enable investigation triggers'}</Button>}</div>}</div>
   {data?.anomalies.slice(-6).reverse().map(a=><article key={a.id}><h4>{human(a.metric)}: {a.value.toFixed(1)} {a.unit}</h4><p>Baseline {a.baseline.toFixed(1)} {a.unit} · Trend {a.slope.toFixed(2)} / minute · {a.sourceMode} · {a.status}</p><Sparkline points={a.points}/><small>{timestamp(a.observedAt)} · Observed drift; failure time is not predicted.</small></article>)}
-  <details className="ops-accordion"><summary>Fleet Baselines</summary>{data?.baselines.map(b=><p key={b.id}>{b.metric}: {b.mean.toFixed(2)} {b.unit} · {b.count} samples · version {b.version} · {b.count<48?'insufficient history':'warm'}</p>)}</details></section>)}
+  {data && !data.anomalies.length && <p className="ops-empty">No unusual readings recorded. New detections will appear here.</p>}
+  <details className="ops-accordion"><summary>Compare with normal readings</summary>{data && !data.baselines.length && <p>Not enough observations to establish normal readings yet.</p>}{data?.baselines.map(b=><p key={b.id}>{b.metric}: {b.mean.toFixed(2)} {b.unit} · {b.count} samples · version {b.version} · {b.count<48?'insufficient history':'warm'}</p>)}</details></section>)}
   {section==='incidents'&&Boolean(incident)&&(<section className="ops-panel">
     <div className="ops-row">
       <div>
         <span className="eyebrow">Physical &amp; Forensic Telemetry</span>
-        <h3>Incident Evidence &amp; Isolated Analysis</h3>
-        <p>Multi-modal evidence is isolated, scanned for malware with ClamAV, and verified before inclusion in sandboxed Python analysis.</p>
+        <h3><FileText aria-hidden="true" />Evidence &amp; analysis</h3>
+        <p>Upload photos, documents, or logs for this incident. Files are scanned before they can be used in an isolated analysis.</p>
       </div>
     </div>
 
@@ -228,6 +233,7 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
       onDrop={(e) => { e.preventDefault(); setIsDragging(false); const f = e.dataTransfer.files?.[0]; if (f) void upload(f); }}
       onClick={() => fileInputRef.current?.click()}
       role="button"
+      onKeyDown={event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); fileInputRef.current?.click(); } }}
       tabIndex={0}
       aria-label="Upload evidence files"
     >
@@ -281,14 +287,14 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
               </label>
               <label className="ops-artifact-target-label">
                 <span>Associated equipment target:</span>
-                <select
+                <NativeSelect
                   value={a.confirmedDeviceId??''}
                   onChange={e=>{if(e.target.value)void action(`artifacts/${a.id}/confirm`,{deviceId:e.target.value},'Device association confirmed.');}}
                   style={{ padding: '6px 10px', borderRadius: '6px' }}
                 >
                   <option value="">Unconfirmed / general incident evidence</option>
                   {state.devices.filter(d=>state.incidents.find(i=>i.id===incident)?.deviceIds.includes(d.id)).map(d=><option key={d.id} value={d.id}>{d.name}</option>)}
-                </select>
+                </NativeSelect>
               </label>
             </div>
           )}
@@ -312,7 +318,7 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
         </div>
         <div className="ops-sandbox-body">
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '10px' }}>
-            <button
+            <Button variant="outline"
               className="ops-button-secondary"
               onClick={()=>{
                 setScript(acousticSpectrumScript);
@@ -327,21 +333,21 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
               }}
             >
               Load Acoustic Spectrum Preset
-            </button>
-            <button
+            </Button>
+            <Button variant="outline"
               className="ops-button-secondary"
               disabled={!selected.length}
               title={!selected.length ? 'Check "Include in isolated sandbox analysis" on a clean evidence file above to enable' : 'Run sandboxed Python analysis with selected evidence'}
               onClick={()=>void action('analyses',{incidentId:incident,artifactIds:selected,script},'Analysis queued in restricted sandbox.')}
             >
               Run Isolated Analysis ({selected.length} file{selected.length === 1 ? '' : 's'})
-            </button>
+            </Button>
           </div>
           <p style={{ fontSize: '12px', margin: '4px 0', color: 'var(--text-muted)' }}>For acoustics, select exactly one waveform CSV with time_seconds, baseline_amplitude and observed_amplitude. Spectral peaks are observations, not diagnosed faults.</p>
           <details className="ops-accordion" open>
-            <summary>Sandboxed Python Script (Read/Write)</summary>
+            <summary>Review the Python analysis script</summary>
             <label style={{ margin: '8px 0 0' }}>
-              <textarea rows={8} value={script} onChange={e=>setScript(e.target.value)} style={{ width: '100%', fontFamily: 'monospace', fontSize: '12.5px' }} />
+              <Textarea aria-label="Python analysis" rows={8} value={script} onChange={e=>setScript(e.target.value)} style={{ width: '100%', fontFamily: 'monospace', fontSize: '12.5px' }} />
             </label>
           </details>
         </div>
@@ -353,15 +359,15 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
     <div className="ops-row">
       <div>
         <span className="eyebrow">Institutional Memory</span>
-        <h3>Organizational Memory</h3>
-        <p>Retrieval mode: <strong>{human(data?.memory.retrievalMode ?? 'semantic')}</strong> · Historical advice cannot override current evidence or policy.</p>
+        <h3><Search aria-hidden="true" />Search team knowledge</h3>
+        <p>Retrieval mode: <strong>{human(data?.memory.retrievalMode ?? 'loading')}</strong> · Historical advice cannot override current evidence or policy.</p>
       </div>
     </div>
     <label style={{ display: 'block', margin: '20px 0 26px' }}>
       <span style={{ fontSize: '11.5px', fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', color: 'var(--text-muted)', display: 'block', marginBottom: '8px' }}>
         Search Incident History &amp; Reviewed Knowledge
       </span>
-      <input
+      <Input
         value={query}
         onChange={e=>setQuery(e.target.value)}
         placeholder="Search past incidents, runbooks, and failure signatures…"
@@ -381,7 +387,7 @@ export function EnterprisePanel({state,mutate,canManage,data,error,refresh,query
         </div>
       ))}
       {!data?.memory.results.length && (
-        <p className="ops-empty">No organizational memory records match your search.</p>
+        <p className="ops-empty">No matching records yet. Try a device name, symptom, or incident keyword.</p>
       )}
     </div>
   </section>)}

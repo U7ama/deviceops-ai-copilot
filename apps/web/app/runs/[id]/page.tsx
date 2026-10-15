@@ -1,8 +1,10 @@
 'use client';
+import { Button } from '@/components/ui/button';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '../../components/Toast';
+import { WorkspaceLayout } from '../../components/WorkspaceLayout';
 
 type Run = { id: string; state: string; question: string; roomName: string; deviceName: string; diagnosis: any; };
 type EventItem = { sequence: string; type: string; data: Record<string, any>; occurredAt: string };
@@ -15,6 +17,7 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
   const [message, setMessage] = useState('Loading durable run state…');
   const [csrf, setCsrf] = useState('');
   const [role, setRole] = useState('');
+  const [user, setUser] = useState<{ displayName?: string; tenantName?: string; role?: string } | null>(null);
   const [decisionBusy, setDecisionBusy] = useState(false);
 
   useEffect(() => { params.then(({ id }) => setRunId(id)); }, [params]);
@@ -32,7 +35,7 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
       if (active) setRun(runBody.run);
       if (eventsResponse.ok) setEvents(parseSse(await eventsResponse.text()));
       if (meResponse.ok) {
-        const me = await meResponse.json(); setRole(me.user.role);
+        const me = await meResponse.json(); setRole(me.user.role); setUser(me.user);
         const csrfResponse = await fetch('/api/v1/auth/csrf');
         if (csrfResponse.ok) setCsrf((await csrfResponse.json()).csrfToken);
       }
@@ -93,7 +96,7 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
     );
   }
 
-  return <section>
+  return <WorkspaceLayout currentPath="/runs" user={user}><section>
     <Link href="/diagnosis">← Back to workspace</Link>
     <div className="eyebrow" style={{ marginTop: 28 }}>Durable run timeline</div>
     <h2>{run?.deviceName ?? 'Diagnosis run'}</h2>
@@ -104,9 +107,9 @@ export default function RunTimelinePage({ params }: { params: Promise<{ id: stri
         <section className="panel"><div className="panel-heading"><div><span className="eyebrow">Server events</span><h3>Replayable execution evidence</h3></div><span className="badge">Last-Event-ID safe</span></div><div className="timeline">{events.map((event) => <article key={`${event.sequence}-${event.type}`}><span className="timeline-sequence">{event.sequence}</span><div><strong>{event.type}</strong><p className="small muted">{new Date(event.occurredAt).toLocaleTimeString()}</p></div></article>)}</div></section>
         {diagnosis && <section className="panel"><span className="eyebrow">Validated output</span><h3>{diagnosis.summary}</h3><p className="muted">{diagnosis.uncertainty}</p><h4>Citations</h4><ul>{diagnosis.citations.map((citation: any) => <li key={citation.id}><strong>{citation.title}</strong> · page {citation.page ?? 'n/a'} · “{citation.excerpt}”</li>)}</ul></section>}
       </div>
-      <aside className="panel"><span className="eyebrow">Policy decision</span><h3>{diagnosis?.serverDecision?.requiresApproval ? 'Manager approval required' : 'No approval required'}</h3><p className="muted">Risk and approval are derived by the server from validated steps and evidence. Model advisory flags are not trusted.</p>{approval && role !== 'technician' && csrf && <button disabled={decisionBusy} onClick={() => decide(approval.data.approvalId, approval.data.proposalHash)}>{decisionBusy ? 'Approving…' : 'Approve incident proposal'}</button>}{approval && role === 'technician' && <p className="notice">The requester cannot approve their own proposal.</p>}<div className="small muted" style={{ marginTop: 18 }}>Run ID: {runId}</div></aside>
+      <aside className="panel"><span className="eyebrow">Policy decision</span><h3>{diagnosis?.serverDecision?.requiresApproval ? 'Manager approval required' : 'No approval required'}</h3><p className="muted">Risk and approval are derived by the server from validated steps and evidence. Model advisory flags are not trusted.</p>{approval && role !== 'technician' && csrf && <Button disabled={decisionBusy} onClick={() => decide(approval.data.approvalId, approval.data.proposalHash)}>{decisionBusy ? 'Approving…' : 'Approve incident proposal'}</Button>}{approval && role === 'technician' && <p className="notice">The requester cannot approve their own proposal.</p>}<div className="small muted" style={{ marginTop: 18 }}>Run ID: {runId}</div></aside>
     </div>
-  </section>;
+  </section></WorkspaceLayout>;
 }
 
 function parseSse(text: string): EventItem[] {

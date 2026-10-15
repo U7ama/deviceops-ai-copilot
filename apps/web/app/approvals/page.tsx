@@ -1,9 +1,10 @@
 'use client';
+import { Button } from '@/components/ui/button';
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '../components/Toast';
-import { AppSidebar } from '../components/AppSidebar';
+import { WorkspaceLayout } from '../components/WorkspaceLayout';
 
 type ApprovalItem = {
   id: string;
@@ -114,7 +115,7 @@ export default function ApprovalsPage() {
         <div className="eyebrow">Enterprise Infrastructure Operations · Approvals</div>
         <h2>Sign in required</h2>
         <p className="muted">Please sign in with a manager or operator account to view pending approvals.</p>
-        <Link href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+        <Link href="/" className="ops-link-button">
           Go to Sign In
         </Link>
       </section>
@@ -122,16 +123,14 @@ export default function ApprovalsPage() {
   }
 
   return (
-    <div className="ops ops-workspace">
-      <AppSidebar currentPath="/approvals" user={user} />
-      <div className="ops-content">
+    <WorkspaceLayout currentPath="/approvals" user={user}>
         <section>
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div>
               <div className="eyebrow">Server Policy Queue</div>
               <h2>Approvals</h2>
             </div>
-            <button
+            <Button
               type="button"
               onClick={async () => {
                 const ok = await loadApprovals();
@@ -143,7 +142,7 @@ export default function ApprovalsPage() {
               }}
             >
               Refresh Queue
-            </button>
+            </Button>
           </div>
           <p className="muted">
             Only manager/admin sessions can approve, and the requester can never approve their own proposal.
@@ -172,21 +171,21 @@ export default function ApprovalsPage() {
                   </p>
                   {canDecide ? (
                     <div style={{ display: 'flex', gap: '12px', marginTop: '16px' }}>
-                      <button
+                      <Button
                         type="button"
                         disabled={busyId === item.id}
                         onClick={() => handleDecision(item.id, item.proposalHash, 'approved')}
                       >
                         {busyId === item.id ? 'Processing…' : 'Approve Proposal'}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
-                        style={{ background: 'linear-gradient(135deg, #be123c, #9f1239)', color: '#ffffff' }}
+                        variant="destructive"
                         disabled={busyId === item.id}
                         onClick={() => handleDecision(item.id, item.proposalHash, 'rejected')}
                       >
                         Reject
-                      </button>
+                      </Button>
                     </div>
                   ) : isPending && role === 'technician' ? (
                     <p className="small muted">
@@ -201,7 +200,6 @@ export default function ApprovalsPage() {
             )}
           </div>
         </section>
-      </div>
-    </div>
+    </WorkspaceLayout>
   );
 }

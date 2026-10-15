@@ -1,9 +1,10 @@
 'use client';
+import { Button } from '@/components/ui/button';
 
 import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useToast } from '../components/Toast';
-import { AppSidebar } from '../components/AppSidebar';
+import { WorkspaceLayout } from '../components/WorkspaceLayout';
 
 type EvalRun = {
   id: string;
@@ -107,7 +108,7 @@ export default function EvaluationsPage() {
         <div className="eyebrow">Enterprise Infrastructure Operations · Evaluations</div>
         <h2>Sign in required</h2>
         <p className="muted">Please sign in to view benchmark evaluation datasets and runs.</p>
-        <Link href="/" style={{ display: 'inline-block', backgroundColor: 'var(--accent)', color: '#0f172a', padding: '10px 20px', borderRadius: '6px', fontWeight: '600', textDecoration: 'none', textAlign: 'center', marginTop: '14px' }}>
+        <Link href="/" className="ops-link-button">
           Go to Sign In
         </Link>
       </section>
@@ -115,26 +116,24 @@ export default function EvaluationsPage() {
   }
 
   return (
-    <div className="ops ops-workspace">
-      <AppSidebar currentPath="/evaluations" user={user} />
-      <div className="ops-content">
+    <WorkspaceLayout currentPath="/evaluations" user={user}>
         <section>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+          <div className="specialist-toolbar">
             <div>
               <div className="eyebrow">Versioned Quality Evidence</div>
               <h2>Evaluations</h2>
             </div>
-            <div style={{ display: 'flex', gap: '10px' }}>
-              <button type="button" disabled={queuing || !csrf} onClick={handleQueueEval}>
+            <div className="specialist-toolbar-actions">
+              <Button type="button" disabled={queuing || !csrf} onClick={handleQueueEval}>
                 {queuing ? 'Queueing…' : 'Queue Evaluation Run'}
-              </button>
-              <button
+              </Button>
+              <Button
                 type="button"
-                style={{ background: 'transparent', border: '1px solid var(--line)', color: 'var(--text)' }}
+                variant="outline"
                 onClick={() => loadEvalRuns()}
               >
                 Refresh
-              </button>
+              </Button>
             </div>
           </div>
           <p className="muted">
@@ -163,15 +162,15 @@ export default function EvaluationsPage() {
                     </div>
                     <div>
                       <span className="label">Retrieval Hit@5</span>
-                      <strong style={{ color: '#38bdf8' }}>{Number(item.summary.retrievalHitAt5 ?? 1.0).toFixed(4)} (100%)</strong>
+                      <strong style={{ color: 'var(--primary)' }}>{Number(item.summary.retrievalHitAt5 ?? 1.0).toFixed(4)} (100%)</strong>
                     </div>
                     <div>
                       <span className="label">Abstention Recall</span>
-                      <strong style={{ color: '#38bdf8' }}>{Number(item.summary.abstentionRecall ?? 1.0).toFixed(4)} (100%)</strong>
+                      <strong style={{ color: 'var(--primary)' }}>{Number(item.summary.abstentionRecall ?? 1.0).toFixed(4)} (100%)</strong>
                     </div>
                     <div>
                       <span className="label">Schema Validity</span>
-                      <strong style={{ color: '#38bdf8' }}>{Number(item.summary.diagnosisSchemaValidity ?? 1.0).toFixed(4)} (100%)</strong>
+                      <strong style={{ color: 'var(--primary)' }}>{Number(item.summary.diagnosisSchemaValidity ?? 1.0).toFixed(4)} (100%)</strong>
                     </div>
                   </div>
                 ) : (
@@ -184,7 +183,6 @@ export default function EvaluationsPage() {
             )}
           </div>
         </section>
-      </div>
-    </div>
+    </WorkspaceLayout>
   );
 }

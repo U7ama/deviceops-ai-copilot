@@ -1,43 +1,8 @@
 import { expect, test } from '@playwright/test';
-import type { Page } from '@playwright/test';
+import { approval, fixture, mockOperations, now } from './fixtures/operations';
 
 // UI contract fixtures only: these tests do not claim backend, protocol, or Bedrock verification.
-const now = new Date().toISOString();
-const approval = { id: 'approval-1', incidentId: 'incident-1', name: 'restart_switch', targetDeviceId: 'switch-1', risk: 'approval_required', status: 'pending', hash: 'exact-server-proposal-hash', expiresAt: new Date(Date.now() + 1_800_000).toISOString(), evidenceIds: ['observation-1'], preconditions: { generation: 1, sourceMode: 'simulated', kind: 'switch' }, policyVersion: 'test-policy-1' };
-function fixture() {
-  return {
-    devices: [
-      { id: 'switch-1', name: 'Campus switch', room: 'Network closet', kind: 'switch', health: 'unknown', reachability: 'unknown', auth: 'unknown', observedAt: null, sourceMode: 'simulated', conflict: false, metrics: {} },
-      { id: 'display-1', name: 'Room display', room: 'Room B', kind: 'display', health: 'warning', reachability: 'reachable', auth: 'failed', observedAt: now, sourceMode: 'simulated', conflict: true, metrics: { temperatureC: 38 } }
-    ],
-    incidents: [{ id: 'incident-1', summary: 'Upstream switch is unreachable', cause: 'Likely upstream outage', status: 'awaiting_approval', severity: 'high', deviceIds: ['switch-1', 'display-1'], createdAt: now, updatedAt: now, diagnosis: { summary: 'An upstream outage is likely.', cause: 'Switch and dependents are unreachable.', evidenceIds: ['observation-1'], alternatives: ['Power loss'], uncertainty: 'Synthetic test fixture.', provider: 'fixture' }, report: null as Record<string, unknown> | null, evidence: [{ id: 'observation-1', kind: 'observation', deviceId: 'switch-1', source: 'simulator.local', observedAt: now, reachability: 'unreachable', health: 'error', auth: 'ok', metrics: { portsUp: 0 } }] }],
-    approvals: [{ ...approval }],
-    events: [{ id: 'event-1', incidentId: 'incident-1', type: 'diagnosis.validated', createdAt: now, data: { evidenceIds: ['observation-1'] } }],
-    connectors: [{ id: 'ping', name: 'Ping', category: 'lan', status: 'simulator-tested' }, { id: 'appspace', name: 'Appspace', category: 'cloud', status: 'planned' }, ...Array.from({ length: 55 }, (_, index) => ({ id: `test-${index}`, name: `Catalog fixture ${index + 1}`, category: 'test-fixture', status: 'planned' }))],
-    discovery: [{ id: 'candidate-1', name: 'Candidate projector', address: 'simulator://projector', status: 'candidate' }],
-    mode: 'fixture', budget: { spentUsd: 0, limitUsd: 6, reservedUsd: 0 }
-  };
-}
-
 test.use({ launchOptions: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE ? { executablePath: process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE } : {} });
-
-async function mockOperations(page: Page, role = 'manager', state = fixture()) {
-  const actions: { path: string; body: Record<string, unknown>; csrf: string | undefined; key: string | undefined }[] = [];
-  await page.route('**/api/**', async (route) => {
-    const request = route.request();
-    const path = new URL(request.url()).pathname;
-    if (path === '/api/v1/auth/me') return route.fulfill({ json: { user: { displayName: 'Test Manager', tenantName: 'Synthetic UI Test', role } } });
-    if (path === '/api/v1/auth/csrf') return route.fulfill({ json: { csrfToken: 'test-csrf-token' } });
-    if(path === '/api/v2/enterprise')return route.fulfill({json:{topology:[],impact:[],controls:{stopped:false,detectorMode:'observe',replayVerified:false},anomalies:[],baselines:[],artifacts:[],analyses:[],memory:{retrievalMode:'lexical-only',results:[]},providers:{reasoning:'fixture'}}});
-    if (path === '/api/v2/state') return route.fulfill({ json: state });
-    if (request.method() === 'POST') {
-      actions.push({ path, body: request.postDataJSON() as Record<string, unknown>, csrf: request.headers()['x-csrf-token'], key: request.headers()['idempotency-key'] });
-      return route.fulfill({ json: { accepted: true } });
-    }
-    return route.fulfill({ status: 404, json: { detail: 'Unexpected test request' } });
-  });
-  return actions;
-}
 
 test.describe('Operations UI with explicit API fixtures', () => {
   test('shows Gemini mode explicitly without claiming Bedrock inference', async ({ page }) => {
@@ -45,6 +10,7 @@ test.describe('Operations UI with explicit API fixtures', () => {
     state.mode = 'gemini';
     await mockOperations(page, 'manager', state);
     await page.goto('/operations');
+    await page.getByText('Investigation mode & usage budget', { exact: true }).click();
     await expect(page.getByText('Strands + Google Gemini', { exact: true })).toBeVisible();
     await expect(page.getByText('Strands + Amazon Bedrock', { exact: true })).toHaveCount(0);
   });
@@ -60,6 +26,7 @@ test.describe('Operations UI with explicit API fixtures', () => {
   test('preserves unknown health, authentication, source conflicts, and catalog status', async ({ page }) => {
     await mockOperations(page);
     await page.goto('/operations');
+    await page.getByText('Investigation mode & usage budget', { exact: true }).click();
     await expect(page.getByText('Deterministic fixture', { exact: true })).toBeVisible();
     await page.getByRole('button',{name:'Rooms & Equipment',exact:true}).click();
     const switchRow = page.getByRole('row').filter({ hasText: 'Campus switch' });
@@ -80,27 +47,27 @@ test.describe('Operations UI with explicit API fixtures', () => {
   test('submits the exact reviewed proposal, CSRF, note, and an idempotency key', async ({ page }) => {
     const actions = await mockOperations(page);
     await page.goto('/operations');
-    await page.getByRole('button', { name: /Awaiting review/ }).click();
-    await page.getByText('Proposal hash, preconditions and exact arguments',{exact:true}).click();
+    await page.getByRole('button', { name: /Pending approvals/i }).click();
+    await page.getByText(/Technical details: exact proposal & safety checks/i,{exact:true}).click();
     await expect(page.getByText(approval.hash)).toBeVisible();
     await expect(page.getByText(/Reachability: unreachable. Health: error/)).toBeVisible();
     await expect(page.getByText('test-policy-1')).toBeVisible();
     await page.getByLabel('Decision note').fill('Approved for the synthetic lab scenario.');
-    await page.getByRole('button', { name: 'Approve operation', exact: true }).click();
+    await page.getByRole('button', { name: /^Approve Operation$/i, exact: true }).click();
     await expect(page.getByRole('status')).toContainText('Approval recorded');
     expect(actions).toHaveLength(1);
     expect(actions[0]).toMatchObject({ path: '/api/v2/approvals/approval-1/decision', body: { decision: 'approved', proposalHash: approval.hash, reason: 'Approved for the synthetic lab scenario.' }, csrf: 'test-csrf-token' });
     expect(actions[0]?.key).toMatch(/^[a-f0-9-]{36}$/);
-    await expect(page.getByText('awaiting approval', { exact: true })).toHaveCount(2);
+    await expect(page.locator('.ops-status').filter({ hasText: /^awaiting approval$/i })).toHaveCount(2);
   });
 
   test('hides privileged controls from technicians', async ({ page }) => {
     await mockOperations(page, 'technician');
     await page.goto('/operations');
-    await page.getByRole('button', { name: /Awaiting review/ }).click();
+    await page.getByRole('button', { name: /Pending approvals/i }).click();
     await expect(page.getByText('A manager, admin, or owner must review this proposal.')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Approve operation' })).toHaveCount(0);
-    await expect(page.getByRole('button', { name: /Demo scenarios/ })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Approve Operation$/i })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /Operational Scenarios/i })).toHaveCount(0);
     await page.getByRole('button', { name: 'Administration', exact: true }).click();
     await expect(page.getByRole('button', { name: 'Enroll candidate' })).toHaveCount(0);
   });
@@ -110,18 +77,18 @@ test.describe('Operations UI with explicit API fixtures', () => {
     state.approvals[0]!.expiresAt = '2020-01-01T00:00:00.000Z';
     await mockOperations(page, 'manager', state);
     await page.goto('/operations');
-    await page.getByRole('button', { name: /Open incidents/ }).click();
+    await page.getByRole('button', { name: /Open incidents/i }).click();
     await expect(page.getByText('expired', { exact: true })).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Approve operation' })).toHaveCount(0);
+    await expect(page.getByRole('button', { name: /^Approve Operation$/i })).toHaveCount(0);
   });
 
   test('runs a scenario and enrolls only a selected candidate on a narrow screen', async ({ page }, testInfo) => {
     const actions = await mockOperations(page);
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/operations');
-    await page.getByRole('button', { name: /Demo scenarios/ }).click();
+    await page.getByRole('button', { name: /Operational Scenarios/i }).click();
     await page.getByRole('button', { name: /Telemetry service Investigate/ }).click();
-    await expect(page.getByRole('status')).toContainText('fault injected');
+    await expect(page.getByRole('status')).toContainText('drill initiated');
     expect(actions[0]?.body).toEqual({ scenario: 'service_hang' });
     await page.getByRole('button',{name:/Navigation ·/}).click();
     await page.getByRole('button', { name: 'Administration', exact: true }).click();
@@ -141,13 +108,13 @@ test.describe('Operations UI with explicit API fixtures', () => {
     state.approvals[0]!.status = 'executed';
     const actions = await mockOperations(page, 'manager', state);
     await page.goto('/operations');
-    await page.getByRole('button', { name: /Open incidents/ }).click();
-    await expect(page.getByRole('heading', { name: 'Draft incident report' })).toBeVisible();
+    await page.getByRole('button', { name: /Open incidents/i }).click();
+    await expect(page.getByRole('heading', { name: /Draft Incident Report/i })).toBeVisible();
     expect(actions).toHaveLength(0);
-    await page.getByText('Review and publish a runbook', { exact: true }).click();
-    await page.getByLabel('Runbook title').fill('Review upstream switch dependencies');
-    await page.getByLabel('Reviewed runbook content').fill('Check fresh switch reachability and configured downstream dependencies. Require manager approval for restart and confirm three fresh healthy samples afterward.');
-    await page.getByRole('button', { name: 'Publish reviewed runbook' }).click();
+    await page.getByText(/Review & Publish Runbook/i, { exact: true }).click();
+    await page.getByLabel(/Runbook Title/i).fill('Review upstream switch dependencies');
+    await page.getByLabel(/Reviewed Runbook Content/i).fill('Check fresh switch reachability and configured downstream dependencies. Require manager approval for restart and confirm three fresh healthy samples afterward.');
+    await page.getByRole('button', { name: /Publish Reviewed Runbook/i }).click();
     await expect(page.getByRole('status')).toContainText('Reviewed runbook published');
     expect(actions[0]).toMatchObject({ path: '/api/v2/incidents/incident-1/publish-runbook', body: { title: 'Review upstream switch dependencies' } });
   });
@@ -178,7 +145,7 @@ test('real authenticated operations screen reads backend state', async ({ page }
   await expect(page.getByRole('table').getByText('Core Distribution Switch', { exact: true })).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath('operations-live-fleet.png'), fullPage: true });
-  await page.getByRole('button', { name: /Open incidents/ }).click();
+  await page.getByRole('button', { name: /Open incidents/i }).click();
   await expect(page.getByRole('heading', { name: 'Incidents', level: 1, exact: true })).toBeVisible();
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.screenshot({ path: testInfo.outputPath('operations-live-incidents.png'), fullPage: true });
@@ -192,12 +159,12 @@ test('theme preferences, history, missing incidents and mobile layout',async({pa
  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
  await page.getByLabel('Color theme').selectOption('dark');await page.reload();
  await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
- await page.screenshot({path:'docs/screenshots/09-operations-overview-dark.png',fullPage:true});
+ await page.screenshot({path:testInfo.outputPath('overview-dark.png'),fullPage:true});
  await page.getByLabel('Color theme').selectOption('system');await page.emulateMedia({colorScheme:'light'});
  await expect(page.locator('html')).toHaveAttribute('data-theme','light');
  await page.getByRole('button',{name:'Rooms & Equipment',exact:true}).click();await expect(page).toHaveURL(/keep=yes/);
  await page.goBack();await expect(page.getByRole('heading',{name:'Overview',exact:true})).toBeVisible();
- await page.screenshot({path:'docs/screenshots/10-operations-overview-light.png',fullPage:true});
+ await page.screenshot({path:testInfo.outputPath('overview-light.png'),fullPage:true});
  await page.goto('/operations?view=incidents&incident=missing');await expect(page.getByRole('heading',{name:'Incident unavailable'})).toBeVisible();
  await page.setViewportSize({width:390,height:844});expect(await page.evaluate(()=>document.documentElement.scrollWidth<=innerWidth)).toBe(true);
 });
@@ -209,7 +176,7 @@ test('theme works without storage and recovery errors remain explicit',async({pa
  await expect(page.getByRole('heading',{name:'Incidents',level:1,exact:true})).toBeVisible();
  await page.getByLabel('Color theme').selectOption('dark');await expect(page.locator('html')).toHaveAttribute('data-theme','dark');
  await expect(page.getByText('Recovery verification failed. Command acknowledgment did not establish recovery.')).toBeVisible();
- await expect(page.getByRole('button',{name:'Approve operation',exact:true})).toHaveCount(0);
+ await expect(page.getByRole('button',{name:/^Approve Operation$/i,exact:true})).toHaveCount(0);
 });
 
 test('System tracks OS changes with blocked storage while explicit choices remain stable',async({page})=>{
