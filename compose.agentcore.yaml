@@ -9,4 +9,4 @@ services:
       AWS_SHARED_CREDENTIALS_FILE: /run/agentcore-credentials
       QWEN_MODEL_ID: ${QWEN_MODEL_ID:-qwen3.7-max}
     volumes:
-      - /mnt/c/Users/Usama Aslam/.aws/credentials:/run/agentcore-credentials:ro
+      - /home/usama/.aws/credentials:/run/agentcore-credentials:ro
